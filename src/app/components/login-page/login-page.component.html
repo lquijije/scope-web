@@ -1,5 +1,5 @@
 
-<div class="limiter">
+<!-- <div class="limiter">
   <div class="container-login100">
     <div class="wrap-login100">
       <form class="login100-form validate-form">
@@ -14,10 +14,11 @@
         </div>
 
         <div class="wrap-input100 validate-input mb-5" data-validate="Ingrese Clave">
-          <input class="input100" type="password" name="pass">
+          <input class="input100" type="password" name="pass" id="ipwd">
           <span class="focus-input100" data-placeholder="Clave"></span>
+          <span toggle="#password-field" class="fa fa-fw fa-eye-slash field-icon toggle-password"></span>
         </div>
-
+        
         <div class="container-login100-form-btn">
           <button class="login100-form-btn">
             Ingresar
@@ -26,19 +27,92 @@
       </form>
     </div>
   </div>
-</div>
+</div>  -->
 
-<!-- <script>
-  (function ($) {
-      $('.input100').each(function () {
-        $(this).on('blur', function () {
-          if ($(this).val().trim() != "") {
-            $(this).addClass('has-val');
-          }
-          else {
-            $(this).removeClass('has-val');
-          }
-        });
-      });
-  })(jQuery);
-</script> -->
+<div class="container-login">
+  <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
+      <mat-card class="text-center">
+        <mat-card-content>
+          <div class="example-form">
+            <h1>Bienvenido a Scope Web</h1>
+            <h6>Inicia sesi&oacute;n para comenzar.</h6>
+          </div>
+          <form class="example-form" (submit)="login()">
+              <mat-grid-list cols="10" rowHeight="75px">
+                <mat-grid-tile [rowspan]="1" class="login-icon">
+                  <mat-icon>account_box</mat-icon>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="8">
+              
+                  <mat-form-field class="justifier">
+                    <input matInput placeholder="Email" [(ngModel)]="username" id="lgUser" name="username"  value="lquijije" required>
+                  </mat-form-field>
+              
+                </mat-grid-tile>
+              </mat-grid-list>
+               
+              <mat-grid-list cols="10" rowHeight="100px">
+                <mat-grid-tile [rowspan]="1" class="login-icon">
+                  <mat-icon>lock</mat-icon>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="8">
+                  <mat-form-field class="justifier">
+                    <input matInput placeholder="Password" [(ngModel)]="password" type="password" id="lgPwd" name="password" required>
+                    <span toggle="#password-field" class="fa fa-2x fa-eye field-icon toggle-password"></span>
+                  </mat-form-field>
+                </mat-grid-tile>
+              </mat-grid-list>
+              <input class="justifier btn btn-primary" type="submit" value="Ingresar">
+          </form>
+           <!-- <mat-spinner [style.display]="showSpinner ? 'block' : 'none'"></mat-spinner>  -->
+        </mat-card-content>
+        <mat-card-actions>
+          
+        </mat-card-actions>
+      </mat-card>
+  </div>
+</div> 
+
+
+<!-- 
+<mat-grid-list cols="3">
+  <mat-grid-tile></mat-grid-tile>
+  <mat-grid-tile>
+    <div class="login-container">
+      <div class="login-box-header" color="primary">
+        Bienvenido
+      </div>
+      <div class="login-box-body">
+        <mat-grid-list cols="9" rowHeight="75px">
+          <mat-grid-tile [rowspan]="1" class="login-icon">
+            <mat-icon>lock</mat-icon>
+          </mat-grid-tile>
+          <mat-grid-tile [colspan]="7">
+            
+            <mat-form-field class="justifier">
+              <input matInput placeholder="Username" [(ngModel)]="username" name="username" required>
+            </mat-form-field>
+            
+          </mat-grid-tile>
+        </mat-grid-list>
+        <mat-grid-list cols="9" rowHeight="100px">
+          <mat-grid-tile [rowspan]="1" class="login-icon">
+            <mat-icon>remove_red_eye</mat-icon>
+          </mat-grid-tile>
+          <mat-grid-tile [colspan]="7">
+            <mat-form-field class="justifier">
+              <input matInput placeholder="Password" [(ngModel)]="password" type="password" name="password" required>
+            </mat-form-field>
+          </mat-grid-tile>
+        </mat-grid-list>
+        <button mat-raised-button class="login-button" color="primary">
+          <mat-icon>input</mat-icon> Login
+        </button>
+
+      </div>
+    </div>
+  </mat-grid-tile>
+
+  <mat-grid-tile></mat-grid-tile>
+
+</mat-grid-list> -->
