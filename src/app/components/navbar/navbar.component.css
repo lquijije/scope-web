@@ -1,3 +1,67 @@
 .text-logo{
     color: rgb(192, 225, 255);
 }
+
+.navbar-toggler1 {
+  padding: 0.25rem 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+
+.navbar-toggler1:hover, .navbar-toggler1:focus {
+  text-decoration: none;
+}
+
+.navbar-toggler1:not(:disabled):not(.disabled) {
+  cursor: pointer;
+}
+
+.navbar-toggler1-icon {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+  content: "";
+  background: no-repeat center center;
+  background-size: 100% 100%;
+}
+.navbar-toggle1 {
+  border-color: transparent; /* Removes border color */
+  float: left; /* Move navbar toggle1 to left */
+}
+.navbar-toggle1 .icon-bar {
+  background-color: #f00; /* Changes regular toggle1 color */
+}
+.navbar-toggle1 .icon-bar:hover {
+  background-color: #fff; /* Changes toggle1 color on hover */
+}
+
+.my-full-width-menu {
+  max-width: none;
+  width: 100vw;
+  margin-left: -8px;
+  margin-top: 24px;
+}
+a.text-dark{
+  font-family: 'Dosis', sans-serif;
+  font-size: 1.1em;
+}
+
+a.menu{
+  --webkit-transition: all .2s;
+  --o-transition: all .2s;
+  transition: all .2s;
+}
+
+a:hover.menu{
+  padding-left:1.8em;
+}
+
+.mnu-list{
+  -webkit-box-shadow: 4px 8px 31px -6px rgba(0,0,0,0.75);
+  -moz-box-shadow: 4px 8px 31px -6px rgba(0,0,0,0.75);
+  box-shadow: 4px 8px 31px -6px rgba(0,0,0,0.75);
+}

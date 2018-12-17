@@ -33,3 +33,7 @@ input.btn{
   position: relative;
   z-index: 2;
 }
+
+body{
+  font-family: 'Dosis', sans-serif;
+}

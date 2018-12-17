@@ -1,11 +1,25 @@
 <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-primary">
   <!-- <div class="container-fluid"> -->
     
-    <button class="navbar-toggler mr-auto" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01"
-      aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler mr-auto" 
+            type="button" 
+            data-toggle="collapse" 
+            data-target="#navbarColor01" 
+            aria-controls="navbarColor01"
+            aria-expanded="false" 
+            aria-label="Toggle navigation" *ngIf="!isLogin">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <a class="navbar-brand mr-auto" href="#" routerLink="/"><h3>Scope <span class="text-logo">Web</span></h3> </a>
+
+    <button class="navbar-toggler1 mr-auto btn-toogle-menu" (click)="drawer.toggle()" type="button" *ngIf="isLogin">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <a class="navbar-brand mr-auto pl-3" href="#" routerLink="/">
+      <h3>Scope 
+        <span class="text-logo">Web</span>
+      </h3> 
+    </a>
 
     <div class="collapse navbar-collapse" id="navbarColor01">
       <ul class="navbar-nav ml-auto">
@@ -15,10 +29,130 @@
         <li class="nav-item d-none">
           <a class="nav-link" href="#" routerLink="/register">Registrar</a>
         </li>
-        <li class="nav-item" *ngIf="isLogin">
-          <a class="nav-link" href="#" (click)='logout()'>Salir</a>
+        <li class="nav-item active" *ngIf="isLogin">
+          <!-- <a class="nav-link" href="#" (click)='logout()'>{{userName}}</a> -->
+          <a [matMenuTriggerFor]="menu" class="nav-link" href="javascript:void(0)">
+            <i class="fa fa-user"></i>
+            <span class="px-2"> {{userName}} </span>
+            <i class="fa fa-angle-down"></i>
+          </a>
+          <mat-menu #menu="matMenu" color="primary">
+            <button mat-menu-item routerLink="/register">
+                <mat-icon>account_box</mat-icon>
+                <span>Ver Perfil</span>
+            </button>
+            <button mat-menu-item (click)='logout()'>
+                <mat-icon>clear</mat-icon>
+                <span>Salir</span>
+            </button>
+          </mat-menu>
         </li>
       </ul>
     </div>
-  <!-- </div> -->
 </nav>
+
+<mat-sidenav-container class="example-container1">
+    <mat-sidenav class="border-0" #drawer mode="side"  opened role="navigation" >
+      <div class="mnu-list bg-primary text-center py-2 px-5 mb-0" style="width: 95%;" *ngIf="isLogin">
+        <h1 class="text-white"><i class="fa fa-user-circle"></i></h1>
+        <h5 class="text-white"><i class="fa fa-th-large"></i> MENU PRINCIPAL</h5>
+      </div>
+      <mat-nav-list class="mnu-list pt-0" style="width: 95%;" *ngIf="isLogin">
+        <div class="card bg-light">
+          <div class="card-header btn btn-link w-100 py-0 pr-5 pt-2" id="headingFour" data-toggle="collapse" data-target="#collapseFour"
+            aria-expanded="true" aria-controls="collapseFour">
+            <h4 class="mb-0 d-flex justify-content-start">
+              <h4 class="text-primary" mat-list-item>
+                <i class="fa fa-list-alt mr-2"></i> &Oacute;rdenes de trabajo
+              </h4>
+            </h4>
+          </div>
+          <div id="collapseFour" class="collapse show" aria-labelledby="headingFour" data-parent="#accordion">
+            <div class="card-body p-0 pl-4" style="background:rgb(228, 227, 227); ">
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1"  routerLink='/ordermant'>
+                <i class="fa fa-list-alt text-primary mr-2"></i>Creaci&oacute;n de &oacute;rdenes
+              </a>
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1"  routerLink='/orderinquiry'>
+                <i class="fa fa-search text-primary mr-2"></i>Consulta de &oacute;rdenes
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-light">
+          <div class="card-header btn btn-link w-100 py-0 pr-5 pt-2" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo"
+            aria-expanded="true" aria-controls="collapseTwo">
+            <h4 class="mb-0 d-flex justify-content-start">
+              <h4 class="text-primary" mat-list-item>
+                <i class="fa fa-users mr-2"></i> Clientes
+              </h4>
+            </h4>
+          </div>
+          <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div class="card-body p-0 pl-4" style="background:rgb(228, 227, 227); ">
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/customermant'>
+                <i class="fa fa-user-plus text-primary mr-2"></i>Mantenimiento de clientes
+              </a>
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/brandmant'>
+                <i class="fa fa-delicious text-primary mr-2"></i>Mantenimiento de marcas
+              </a>
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/assocbrand'>
+                <i class="fa fa-retweet text-primary mr-2"></i>Asociaci&oacute;n de marcas
+              </a>
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/skumant'>
+                <i class="fa fa-barcode text-primary mr-2"></i>Sku's
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-light">
+          <div class="card-header btn btn-link w-100 py-0 pr-5 pt-2" id="headingThree" data-toggle="collapse" data-target="#collapseThree"
+            aria-expanded="true" aria-controls="collapseThree">
+            <h4 class="mb-0 d-flex justify-content-start">
+              <h4 class="text-primary" mat-list-item>
+                <i class="fa fa-shopping-cart mr-2"></i> Cadenas supermercado
+              </h4>
+            </h4>
+          </div>
+          <div id="collapseThree" class="collapse show" aria-labelledby="headingThree" data-parent="#accordion">
+            <div class="card-body p-0 pl-4" style="background:rgb(228, 227, 227); ">
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/chainmant'>
+                <i class="fa fa-cart-plus text-primary mr-2"></i>Mantenimiento de cadenas
+              </a>
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/storemant'>
+                <i class="fa fa-shopping-bag text-primary mr-2"></i>Mantenimiento de locales
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-light">
+          <div class="card-header btn btn-link w-100 py-0 pr-5 pt-2" id="headingOne" data-toggle="collapse" data-target="#collapseOne"
+            aria-expanded="true" aria-controls="collapseOne">
+            <h4 class="mb-0 d-flex justify-content-start">
+              <h4 class="text-primary">
+                <i class="fa fa-user mr-2"></i> Usuarios
+              </h4>
+            </h4>
+          </div>
+          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body p-0 pl-4" style="background:rgb(228, 227, 227); ">
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/usrmant'>
+                <i class="fa fa-user-plus text-primary mr-2"></i>Mantenimiento de usuarios
+              </a>
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/usrchngpass'>
+                <i class="fa fa-lock text-primary mr-2"></i>Cambio de Clave
+              </a>
+            </div>
+          </div>
+        </div>
+      </mat-nav-list>
+      
+    </mat-sidenav>    
+  
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
