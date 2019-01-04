@@ -22,9 +22,8 @@ export class RegisterPageComponent implements OnInit {
   }
 
   onSubmitRegisterAddUser() {
-    this.authServ.registerUser(
-      this.email
-      , this.password).then( (res) => {
+    this.authServ.registerUser(this.email, this.password).then( (res) => {
+      console.log(res);
         const user = this.authServ.afAuth.auth.currentUser;
         user.updateProfile({
           displayName: this.nombres,

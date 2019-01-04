@@ -52,12 +52,12 @@
 </nav>
 
 <mat-sidenav-container class="example-container1">
-    <mat-sidenav class="border-0" #drawer mode="side"  opened role="navigation" >
-      <div class="mnu-list bg-primary text-center py-2 px-5 mb-0" style="width: 95%;" *ngIf="isLogin">
+    <mat-sidenav class="border-0" #drawer mode="side"  role="navigation" >
+      <div class="mnu-list bg-primary text-center py-2 px-5 mb-0" *ngIf="isLogin">
         <h1 class="text-white"><i class="fa fa-user-circle"></i></h1>
         <h5 class="text-white"><i class="fa fa-th-large"></i> MENU PRINCIPAL</h5>
       </div>
-      <mat-nav-list class="mnu-list pt-0" style="width: 95%;" *ngIf="isLogin">
+      <mat-nav-list class="mnu-list pt-0" *ngIf="isLogin">
         <div class="card bg-light">
           <div class="card-header btn btn-link w-100 py-0 pr-5 pt-2" id="headingFour" data-toggle="collapse" data-target="#collapseFour"
             aria-expanded="true" aria-controls="collapseFour">

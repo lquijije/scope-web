@@ -31,6 +31,10 @@ export class AuthService {
     return this.afAuth.authState.pipe(map ( auth => auth ));
   }
 
+  // getUser() {
+  //   return this.afAuth.auth.currentUser;
+  // }
+
   logout() {
     return this.afAuth.auth.signOut();
   }

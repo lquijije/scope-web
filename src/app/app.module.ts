@@ -15,8 +15,11 @@ import { NotFoundPageComponent } from './components/not-found-page/not-found-pag
 import { AlertDialogComponent } from './components/dialog-components/alert-dialog/alert-dialog.component';
 
 import { AuthService } from './services/auth.service';
+import { UsersService } from './services/users.service';
+
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
 
 import { environment } from '../environments/environment';
 import { UserManPageComponent } from './components/users/user-man-page/user-man-page.component';
@@ -58,12 +61,13 @@ import { OrderInquiryPageComponent } from './components/work-orders/order-inquir
     AppRoutingModule,
     FormsModule,
     AngularFireAuthModule,
+    AngularFirestoreModule,
     AngularFireModule.initializeApp(environment.firebaseConfig)
   ],
   entryComponents: [
     AlertDialogComponent
   ],
-  providers: [AuthService],
+  providers: [AuthService, UsersService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
