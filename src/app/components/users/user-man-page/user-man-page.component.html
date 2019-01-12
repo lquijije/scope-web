@@ -1,5 +1,41 @@
 <div class="row p-5 w-100" style="height: 90vh;">
-  <p>
-    user-man-page works!
-  </p>
+  <div class="col">
+    <div class="row">
+      <div class="col-12 col-xl-8 offset-xl-2">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Usuarios</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Mantenimiento de usuarios</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-xl-8 offset-xl-2">
+        <table id="table_users" class="table table-bordered table-sm">
+          <thead class="text-center bg-primary text-white">
+            <th>Nombre</th>
+            <th></th>
+            <th></th>
+            <th>Email</th>
+            <th>C&eacute;dula</th>
+            <th>Estado</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of userList">
+              <td>{{user.nombre}}</td>
+              <td><i class="fa fa-edit"></i></td>
+              <td><i class="fa fa-trash"></i></td>
+              <td>{{user.email}}</td>
+              <td>{{user.cedula}}</td>
+              <td>{{user.estado}}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

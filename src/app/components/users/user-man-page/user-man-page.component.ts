@@ -8,12 +8,15 @@ import { UsersService } from '../../../services/users.service';
   styleUrls: ['./user-man-page.component.css']
 })
 export class UserManPageComponent implements OnInit {
+  userList: any;
+  constructor(private us: UsersService) {
 
-  constructor(private us: UsersService) { }
+   }
 
   ngOnInit() {
     this.us.getUsers().subscribe(users => {
       console.log(users);
+      this.userList = users;
     });
   }
 

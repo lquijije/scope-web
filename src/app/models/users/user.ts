@@ -4,4 +4,5 @@ export interface IUser {
     genero?: string;
     email?: string;
     password?: string;
+    estado?: string;
 }
