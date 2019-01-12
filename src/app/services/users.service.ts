@@ -12,10 +12,22 @@ export class UsersService {
   userObs: Observable<IUser[]>;
   userDoc: AngularFirestoreDocument<IUser>;
   constructor(public afs: AngularFirestore ) {
-    this.userObs = afs.collection('users').valueChanges();
+    //this.userObs = afs.collection('users').valueChanges();
+    this.userCollection = afs.collection<IUser>('users');
+    this.userObs = this.userCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IUser;
+        const id = a.payload.doc.id;
+        return {id, ...data};
+      }))
+    );
   }
 
   getUsers() {
     return this.userObs;
+  }
+
+  addUser(user: IUser){
+    this.userCollection.add(user);
   }
 }
