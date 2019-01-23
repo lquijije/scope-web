@@ -16,6 +16,7 @@ import { AlertDialogComponent } from './components/dialog-components/alert-dialo
 
 import { AuthService } from './services/auth.service';
 import { UsersService } from './services/users.service';
+import { SupermaketsService } from './services/supermakets.service';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
@@ -67,7 +68,7 @@ import { OrderInquiryPageComponent } from './components/work-orders/order-inquir
   entryComponents: [
     AlertDialogComponent
   ],
-  providers: [AuthService, UsersService],
+  providers: [AuthService, UsersService, SupermaketsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

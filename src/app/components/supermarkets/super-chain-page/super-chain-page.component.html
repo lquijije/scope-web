@@ -1,5 +1,67 @@
 <div class="row p-5 w-100" style="height: 90vh;">
-  <p>
-    super-chain-page works!
-  </p>
+    <div class="col">
+        <div class="row">
+          <div class="col-12 col-xl-8 offset-xl-2">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Cadenas Supermercados</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Mantenimiento de cadenas</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+        <div class="row" id='pnlList'>
+            <div class="col-12 col-xl-8 offset-xl-2">
+                <div class="row">
+                  <div class="col">
+                    <button (click)='nuevo()' type="button" class="btn btn-round btn-outline-success ml-1">
+                      Nueva Cadena
+                    </button>
+                  </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col">
+                      <table id="table_chains" class="table table-bordered table-sm">
+                        <thead class="text-center bg-primary text-white">
+                          <th>Nombre</th>
+                          <th></th>
+                          <th></th>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let chain of chainList">
+                            <td>{{chain.nombre}}</td>
+                            <td class='text-center'><a href="javascript:void(0);"><i class="fa fa-edit"></i></a></td>
+                            <td class='text-center'><a href="javascript:void(0);"><i class="fa fa-trash"></i></a></td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <div class="row d-none" id='pnlEdit'>
+            <div class="col-12 col-xl-6 offset-xl-3">
+              <div class="card-body">
+                  <h4 class="text-center"><i class="fa fa-shopping"></i> Nueva Cadena</h4>
+                  <form (submit)="onSubmit()">
+                      <div class="form-group">
+                        <label for="nombres"><i class="fa fa-user"></i> Nombre:</label>
+                        <input type="text" name="nombres" id="nombres"  class="form-control">
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          <input type="button" value="Salir" class="btn btn-default btn-sm btn-block btn-lg" (click)='salir()'>
+                        </div>
+                        <div class="col">
+                          <input type="submit" value="Grabar" class="btn btn-primary btn-sm btn-block btn-lg">
+                        </div>
+                      </div>
+                    </form>
+              </div>
+            </div>
+        </div>
+    </div>
 </div>  

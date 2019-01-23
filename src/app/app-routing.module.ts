@@ -18,7 +18,7 @@ import { OrderInquiryPageComponent } from './components/work-orders/order-inquir
 const routes: Routes = [
   {
     path: '',
-    component: HomePageComponent
+    component: HomePageComponent,
   },
   {
     path: 'login',
@@ -71,7 +71,7 @@ const routes: Routes = [
   {
     path: '**',
     component: NotFoundPageComponent
-  },
+  }
 ];
 
 @NgModule({

@@ -138,11 +138,14 @@
           </div>
           <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body p-0 pl-4" style="background:rgb(228, 227, 227); ">
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/usrmant'>
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/usrmant' pageTransition="slide">
                 <i class="fa fa-user-plus text-primary mr-2"></i>Mantenimiento de usuarios
               </a>
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/usrchngpass'>
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/usrchngpass' pageTransition="slide">
                 <i class="fa fa-lock text-primary mr-2"></i>Cambio de Clave
+              </a>
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" (click)='logout()' href="javascript:void(0)">
+                <i class="fa fa-times text-primary mr-2"></i>Salir
               </a>
             </div>
           </div>
