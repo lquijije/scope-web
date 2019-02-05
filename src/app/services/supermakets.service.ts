@@ -28,7 +28,17 @@ export class SupermaketsService {
     return this.superChainObs;
   }
 
-  addSuperChain(superChain: ISuperChain){
+  addSuperChain(superChain: ISuperChain) {
     this.superChainCollection.add(superChain);
+  }
+
+  delSuperChain(chain: ISuperChain) {
+    this.superChainDoc = this.afs.doc(`super-chain/${chain.id}`);
+    this.superChainDoc.delete();
+  }
+
+  updSuperChain(chain: ISuperChain) {
+    this.superChainDoc = this.afs.doc(`super-chain/${chain.id}`);
+    this.superChainDoc.update(chain);
   }
 }

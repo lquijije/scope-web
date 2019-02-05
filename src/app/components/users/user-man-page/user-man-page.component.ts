@@ -15,7 +15,6 @@ declare var $: any;
 export class UserManPageComponent implements OnInit {
   userList: any;
   constructor(private us: UsersService) {
-    
    }
 
   ngOnInit() {
@@ -25,7 +24,7 @@ export class UserManPageComponent implements OnInit {
       this.userList = users;
     });
   }
-  consultar(){
+  consultar() {
     /*   $('#table_users tbody tr').remove();
       var rows = '';
       this.userList.forEach( (d) => {
@@ -36,19 +35,18 @@ export class UserManPageComponent implements OnInit {
           rows += '<td>' + d.cedula + '</td>' ;
           rows += '<td>' + d.estado + '</td></tr>' ;
       });
-      
       $('#table_users tbody').append(rows); */
   }
-  nuevo(){
+  nuevo() {
     $('#pnlEdit').removeClass('d-none');
-    $('#pnlList').addClass('d-none');  
+    $('#pnlList').addClass('d-none');
   }
 
-  salir(){
+  salir() {
     $('#pnlEdit').addClass('d-none');
-    $('#pnlList').removeClass('d-none');  
+    $('#pnlList').removeClass('d-none');
   }
-  onSubmitRegisterAddUser(){
+  onSubmitRegisterAddUser() {
 
   }
 }

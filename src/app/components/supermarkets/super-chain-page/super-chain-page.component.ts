@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ISuperChain } from '../../../models/supermarkets/super-chain';
 import { SupermaketsService } from '../../../services/supermakets.service';
+import { NgForm } from '@angular/forms/src/directives/ng_form';
+import { MatDialog } from '@angular/material';
+import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
+
 import * as $ from 'jquery';
 declare var $: any;
 
@@ -11,24 +15,72 @@ declare var $: any;
 })
 export class SuperChainPageComponent implements OnInit {
   chainList: any;
-  constructor(private sc: SupermaketsService) { }
+  chain: ISuperChain = {
+    nombre: '',
+    estado: ''
+  };
+  editState: any = false;
+  constructor(public dialog: MatDialog,
+    private sc: SupermaketsService) { }
 
   ngOnInit() {
-    console.log(this.sc.getSuperChain());
     this.sc.getSuperChain().subscribe(chains => {
-      console.log(chains);
-      this.chainList = chains;
+      this.chainList = chains
+      .filter(ch => ch.estado === 'A')
+        .sort((a, b) => {
+          return a.nombre < b.nombre ? -1 : 1;
+        });
     });
   }
-  nuevo(){
-    $('#pnlEdit').removeClass('d-none');
-    $('#pnlList').addClass('d-none');  
+  nuevo() {
+    this.showEditView();
   }
 
-  salir(){
-    $('#pnlEdit').addClass('d-none');
-    $('#pnlList').removeClass('d-none');  
+  salir() {
+    this.clearObject();
+    this.closeEditView();
   }
-  onSubmit(){}
-  
+  onSubmit(myForm: NgForm) {
+    if (!this.editState) {
+      this.chain.estado = 'A';
+      this.sc.addSuperChain(this.chain);
+    } else {
+      this.sc.updSuperChain(this.chain);
+      this.editState = false;
+    }
+    this.clearObject();
+    this.salir();
+  }
+  edit(chain: ISuperChain) {
+    this.editState = true;
+    this.showEditView();
+    this.chain = Object.assign({}, chain);
+  }
+  delete(chain: ISuperChain) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: { title: 'Confirmación', msg: 'Desea eliminar la cadena ' + chain.nombre + '?' }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        chain.estado = 'I';
+        // this.sc.updSuperChain(chain); // Cambia estado a I
+        this.sc.delSuperChain(chain); // Elimina permanentemente de la base
+      }
+    });
+  }
+  showEditView() {
+    $('#pnlEdit').removeClass('d-none');
+    $('#pnlList').addClass('d-none');
+  }
+  closeEditView() {
+    $('#pnlEdit').addClass('d-none');
+    $('#pnlList').removeClass('d-none');
+  }
+  clearObject() {
+    this.chain = {
+      nombre: '',
+      estado: 'A'
+    };
+  }
 }

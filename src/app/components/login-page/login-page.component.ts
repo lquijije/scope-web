@@ -38,11 +38,11 @@ export class LoginPageComponent implements OnInit {
 
   login(): void {
     if (!this.username) {
-      this.openDialog('Scope Alert!', 'Ingrese email');
+      this.openAlert('Scope Alert!', 'Ingrese email');
       return;
     }
     if (!this.password) {
-      this.openDialog('Scope Alert!', 'Password es requerido');
+      this.openAlert('Scope Alert!', 'Password es requerido');
       return;
     }
     this.authService.loginUser(this.username, this.password)
@@ -50,19 +50,19 @@ export class LoginPageComponent implements OnInit {
       this.router.navigate(['/']);
     }).catch((err) => {
       this.router.navigate(['/login']);
-      this.openDialog('Authentication Error!', err.message );
+      this.openAlert('Authentication Error!', err.message );
       return;
     });
   }
 
-  openDialog(tit: string, msg: string): void {
+  openAlert(tit: string, msg: string): void {
     const dialogRef = this.dialog.open(AlertDialogComponent, {
       width: '250px',
       data: { title: tit , msg: msg }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      // console.log(result);
+      console.log(result);
     });
   }
 

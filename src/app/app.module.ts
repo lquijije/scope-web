@@ -33,6 +33,7 @@ import { SkuMantPageComponent } from './components/customers/sku-mant-page/sku-m
 import { AssocBrandsPageComponent } from './components/customers/assoc-brands-page/assoc-brands-page.component';
 import { OrderMantPageComponent } from './components/work-orders/order-mant-page/order-mant-page.component';
 import { OrderInquiryPageComponent } from './components/work-orders/order-inquiry-page/order-inquiry-page.component';
+import { ConfirmDialogComponent } from './components/dialog-components/confirm-dialog/confirm-dialog.component';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import { OrderInquiryPageComponent } from './components/work-orders/order-inquir
     SkuMantPageComponent,
     AssocBrandsPageComponent,
     OrderMantPageComponent,
-    OrderInquiryPageComponent
+    OrderInquiryPageComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -66,7 +68,8 @@ import { OrderInquiryPageComponent } from './components/work-orders/order-inquir
     AngularFireModule.initializeApp(environment.firebaseConfig)
   ],
   entryComponents: [
-    AlertDialogComponent
+    AlertDialogComponent,
+    ConfirmDialogComponent
   ],
   providers: [AuthService, UsersService, SupermaketsService],
   bootstrap: [AppComponent]

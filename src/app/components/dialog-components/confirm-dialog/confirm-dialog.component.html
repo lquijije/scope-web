@@ -1,0 +1,12 @@
+<h2 mat-dialog-title class="text-center">
+  <strong>{{data.title}}</strong>
+</h2>
+
+<mat-dialog-content class="pb-3">
+  {{data.msg}}
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button class="bg-light" (click)='no()'>No</button>
+  <button mat-button class="bg-primary text-white" (click)='yes()'>Si</button>
+</mat-dialog-actions>

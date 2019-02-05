@@ -17,7 +17,7 @@ export class AlertDialogComponent implements OnInit {
   }
 
   ok(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(true);
   }
 }
 
