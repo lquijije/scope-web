@@ -27,13 +27,15 @@
               "node_modules/font-awesome/css/font-awesome.css",
               "src/styles.css",
               "src/theme.scss",
-              "node_modules/select2/dist/css/select2.min.css"
+              "node_modules/select2/dist/css/select2.min.css",
+              "node_modules/jquery-datetimepicker/build/jquery.datetimepicker.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
               "node_modules/popper.js/dist/umd/popper.js",
               "node_modules/bootstrap/dist/js/bootstrap.js",
-              "node_modules/select2/dist/js/select2.min.js"
+              "node_modules/select2/dist/js/select2.min.js",
+              "node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.js"
             ]
           },
           "configurations": {

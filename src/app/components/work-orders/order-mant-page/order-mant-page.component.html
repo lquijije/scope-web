@@ -11,5 +11,63 @@
             </nav>
           </div>
         </div>
+        <div class="row" id='pnlEdit'>
+            <div class="col-12 col-xl-8 offset-xl-2">
+              <div class="card-body">
+                  <h4 class="text-center">Orden de Trabajo</h4>
+                  <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
+                    <div class="row">
+                        <div class="col-12 col-md-4">
+                          <select class="form-control" id="cmbChain">
+                              <option *ngFor="let chain of chainList" value="{{chain.id}}">{{chain.nombre}}</option>
+                          </select>
+                        </div>
+                        <div class="col-12 col-md-4">
+                          <select class="form-control" id="cmbStore">
+                              <option *ngFor="let store of storeList" value="{{store.id}}">{{store.nombre}}</option>
+                          </select>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <select class="form-control" id="cmbSeller">
+                                <option value=''></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col">
+                          <select class="form-control w-100" id="cmbCustomer">
+                              <option *ngFor="let customer of customerList" value="{{customer.id}}">{{customer.razonsocial}}</option>
+                          </select>
+                        </div>
+                        <div class="col">
+                          <select class="form-control w-100" id="cmbBrand" multiple>
+                              <option *ngFor="let brand of brandList" value="{{brand.id}}">{{brand.nombre}}</option>
+                          </select>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                      <div class="col">
+                          <mat-form-field class="w-100">
+                            <input matInput placeholder="Fecha Visita" name="txFeVis" value="" id="txFeVis" data-date-format="yyyy-mm-dd" class="text-blue" type="text">
+                          </mat-form-field>
+                      </div>
+                      <div class="col pt-2">
+                          <button (click)='calendarizar()' type="button" class="btn btn-round btn-outline-warning">
+                              Calendarizar
+                          </button>
+                      </div>
+                    </div>
+                    <div class="row pt-2 d-flex justify-content-end">
+                      <div class="col col-sm-4 col-xl-3">
+                        <input type="button" value="Limpiar" class="btn btn-default btn-sm btn-block btn-lg" (click)='limpiar()'>
+                      </div>
+                      <div class="col col-sm-4 col-xl-3">
+                        <input type="submit" value="Crear Orden" class="btn btn-primary btn-sm btn-block btn-lg">
+                      </div>
+                    </div>
+                  </form>
+              </div>
+            </div>
+        </div>
     </div>
 </div>

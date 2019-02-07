@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { IUser } from '../../../models/users/user';
 import { UsersService } from '../../../services/users.service';
 import { Router, NavigationEnd } from '@angular/router';
+import { MatDialog } from '@angular/material';
+import { NgForm } from '@angular/forms/src/directives/ng_form';
+import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
+import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
 
 import * as $ from 'jquery';
 declare var $: any;
@@ -14,39 +18,87 @@ declare var $: any;
 
 export class UserManPageComponent implements OnInit {
   userList: any;
-  constructor(private us: UsersService) {
+  user: IUser = {
+    cedula: '',
+    nombre: '',
+    genero: '',
+    email: '',
+    estado: '',
+    perfil: ''
+  };
+  editState: any = false;
+  actionName: string ='';
+  constructor(public dialog: MatDialog,
+    private us: UsersService) {
    }
 
   ngOnInit() {
-    console.log(this.us.getUsers());
     this.us.getUsers().subscribe(users => {
       console.log(users);
       this.userList = users;
     });
   }
-  consultar() {
-    /*   $('#table_users tbody tr').remove();
-      var rows = '';
-      this.userList.forEach( (d) => {
-          rows += '<tr><td>' + d.nombre + '</td>' ;
-          rows += '<td><i class="fa fa-edit"></i></td>' ;
-          rows += '<td><i class="fa fa-trash"></i></td>' ;
-          rows += '<td>' + d.email + '</td>' ;
-          rows += '<td>' + d.cedula + '</td>' ;
-          rows += '<td>' + d.estado + '</td></tr>' ;
-      });
-      $('#table_users tbody').append(rows); */
-  }
   nuevo() {
-    $('#pnlEdit').removeClass('d-none');
-    $('#pnlList').addClass('d-none');
+    this.showEditView();
   }
 
   salir() {
+    this.clearObject();
+    this.closeEditView();
+  }
+  onSubmitRegisterAddUser() {
+    if (!this.editState) {
+      this.user.estado = 'A';
+      this.us.addUser(this.user);
+    } else {
+      this.us.updUser(this.user);
+      this.editState = false;
+    }
+    this.clearObject();
+    this.salir();
+  }
+  edit(user: IUser) {
+    this.editState = true;
+    this.showEditView();
+    this.user = Object.assign({}, user);
+  }
+  delete(user: IUser) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: { title: 'Confirmación', msg: 'Desea eliminar el usuario ' + user.nombre + '?' }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        user.estado = 'I';
+        // this.us.delUser(user); // Cambia estado a I
+        this.us.delUser(user); // Elimina permanentemente de la base
+      }
+    });
+  }
+  showEditView() {
+    if(!this.editState){
+      this.actionName = 'Nuevo';
+      $('#colPwd').removeClass('d-none');
+    }else{
+      this.actionName = 'Editar';
+      $('#colPwd').addClass('d-none');
+    }
+    $('#pnlEdit').removeClass('d-none');
+    $('#pnlList').addClass('d-none');
+  }
+  closeEditView() {
     $('#pnlEdit').addClass('d-none');
     $('#pnlList').removeClass('d-none');
   }
-  onSubmitRegisterAddUser() {
-
+  clearObject() {
+    this.editState = false;
+    this.user = {
+      cedula: '',
+      nombre: '',
+      genero: '',
+      email: '',
+      estado: '',
+      perfil: ''
+    };
   }
 }

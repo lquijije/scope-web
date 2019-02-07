@@ -19,6 +19,7 @@ import { UsersService } from './services/users.service';
 import { SupermaketsService } from './services/supermakets.service';
 import { CustomerService } from './services/customer.service';
 import { GeneralService } from './services/general.service';
+import { WorkOrdersService } from './services/work-orders.service';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
@@ -77,7 +78,8 @@ import { ConfirmDialogComponent } from './components/dialog-components/confirm-d
               UsersService, 
               SupermaketsService,
               CustomerService,
-              GeneralService
+              GeneralService,
+              WorkOrdersService
              ],
   bootstrap: [AppComponent]
 })

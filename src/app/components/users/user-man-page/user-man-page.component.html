@@ -15,9 +15,6 @@
       <div class="col-12 col-xl-8 offset-xl-2">
           <div class="row">
             <div class="col">
-              <button (click)='consultar()' type="button" class="btn btn-round btn-outline-primary d-none">
-                  Consultar
-              </button>
               <button (click)='nuevo()' type="button" class="btn btn-round btn-outline-success ml-1">
                 Nuevo Usuario
               </button>
@@ -37,8 +34,8 @@
                   <tbody>
                     <tr *ngFor="let user of userList">
                       <td>{{user.nombre}}</td>
-                      <td class='text-center'> <a href="javascript:void(0);"> <i class="fa fa-edit"></i></a></td>
-                      <td class='text-center'> <a href="javascript:void(0);"> <i class="fa fa-trash"></i></a></td>
+                      <td class='text-center'> <a href="javascript:void(0);" (click)="edit(user)"> <i class="fa fa-edit"></i></a></td>
+                      <td class='text-center'> <a href="javascript:void(0);" (click)="delete(user)"> <i class="fa fa-trash"></i></a></td>
                       <td>{{user.email}}</td>
                       <td class='text-center'>{{user.cedula}}</td>
                       <td class='text-center'>{{user.estado}}</td>
@@ -54,18 +51,15 @@
     <div class="row d-none" id='pnlEdit'>
         <div class="col-12 col-xl-8 offset-xl-2 bg-light">
           <div class="card-body">
-              <h4 class="text-center"><i class="fa fa-user"></i> Nuevo Usuario</h4>
+              <h4 class="text-center"><i class="fa fa-user"></i> {{actionName}} Usuario</h4>
               <form (submit)="onSubmitRegisterAddUser()">
+                <mat-form-field class="w-100">
+                    <input matInput placeholder="Cedula" #cedula="ngModel"  [(ngModel)]="user.cedula" id="cedula" name="cedula"  value="" required>
+                </mat-form-field>
+                <mat-form-field class="w-100">
+                    <input matInput placeholder="Nombres" #nombre="ngModel"  [(ngModel)]="user.nombre" id="nombre" name="nombre"  value="" required>
+                </mat-form-field>
                 <div class="form-group">
-                  <label for="cedula"><i class="fa fa-address-card"></i> C&eacute;dula</label>
-                  <input type="text" name="cedula" id="cedula" class="form-control">
-                </div>
-                <div class="form-group">
-                  <label for="nombres"><i class="fa fa-user"></i> Nombres</label>
-                  <input type="text" name="nombres" id="nombres" class="form-control">
-                </div>
-                <div class="form-group">
-                  <label for="genero"><i class="fa fa-genderless"></i> G&eacute;nero</label>
                   <div class="row">
                     <div class="col-3 col-offset-3">
                       <div class="custom-control custom-radio">
@@ -81,19 +75,23 @@
                     </div>
                   </div>
                 </div>
-                <div class="form-group">
-                  <label for="email"><i class="fa fa-envelope"></i> Email</label>
-                  <input type="email" name="email" id="email" class="form-control">
-                </div>
-                <div class="form-group">
-                  <label for="email"><i class="fa fa-lock"></i> Password</label>
-                  <input type="password" name="password" id="password" class="form-control">
-                </div>
                 <div class="row">
                   <div class="col">
+                      <mat-form-field class="w-100">
+                          <input type="email" matInput placeholder="Email" #email="ngModel"  [(ngModel)]="user.email" id="email" name="email"  value="" required>
+                      </mat-form-field>
+                  </div>
+                  <div class="col" id="colPwd">
+                      <mat-form-field class="w-100">
+                          <input type="password" matInput placeholder="Password"  id="password" name="password"  value="" required>
+                      </mat-form-field>
+                  </div>
+                </div>
+                <div class="row d-flex justify-content-end">
+                  <div class="col col-sm-4 col-xl-3">
                     <input type="button" value="Salir" class="btn btn-default btn-block btn-lg" (click)='salir()'>
                   </div>
-                  <div class="col">
+                  <div class="col col-sm-4 col-xl-3">
                     <input type="submit" value="Grabar" class="btn btn-primary btn-md btn-block btn-lg">
                   </div>
                 </div>
