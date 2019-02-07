@@ -75,8 +75,6 @@ export class SkuMantPageComponent implements OnInit {
         if (idBrand!=''){
           self.tempIdBrand = idBrand;
           self.tempNameBrand = nameBrand;
-          console.log(self.tempIdCustomer);
-          console.log(idBrand);
           self.cs.getSkuFromCustomerAndBrand(self.tempIdCustomer, idBrand).subscribe(skus => {      
             self.skuList = skus;
             console.log(skus);

@@ -5,7 +5,7 @@ import { IBrand } from '../models/customers/brands';
 import { ISku } from '../models/customers/skus';
 import { IAssociatedBrands } from '../models/customers/associated-brands';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, groupBy } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -100,6 +100,7 @@ export class CustomerService {
       }))
     );
   }
+
   addBrand(brand: IBrand) {
     this.brandCollection.add(brand);
   }
@@ -117,6 +118,7 @@ export class CustomerService {
   getSkus(){
     return this.skuObs;
   }
+
   getSkuFromCustomerAndBrand(customer: string, brand: string){
     this.skuCollection = this.afs.collection<ISku>('sku',
     ref => ref.where('cliente','==',customer)
@@ -141,5 +143,21 @@ export class CustomerService {
   updSku(sku: ISku) {
     this.skuDoc = this.afs.doc(`sku/${sku.id}`);
     this.skuDoc.update(sku);
+  }
+
+  getAssociatedBrands(){
+    return this.asocBrandsObs;
+  }
+
+  getAssociatedBrandsGroup(){
+    this.asocBrandsCollection = this.afs.collection<IAssociatedBrands>('associated-brands');
+  }
+
+  addAssocBrand(assoc: IAssociatedBrands){
+    this.asocBrandsCollection.add(assoc);
+  }
+  delAssocBrand(assoc: IAssociatedBrands) {
+    this.asocBrandsDoc = this.afs.doc(`associated-brands/${assoc.id}`);
+    this.asocBrandsDoc.delete();
   }
 }
