@@ -11,5 +11,89 @@
             </nav>
           </div>
         </div>
+        <div class="row" id='pnlList'>
+            <div class="col-12 col-xl-8 offset-xl-2">
+                <div class="row">
+                    <div class="col-12 col-md-5 col-xl-4">
+                      <select class="form-control w-100" id="cmbCustomer">
+                          <option *ngFor="let customer of customerList" value="{{customer.id}}">{{customer.razonsocial}}</option>
+                      </select>
+                    </div>
+                    <div class="col-12 col-md-5 col-xl-4">
+                        <select class="form-control w-100" id="cmbBrand">
+                            <option *ngFor="let brand of brandList" value="{{brand.id}}">{{brand.nombre}}</option>
+                        </select>
+                      </div>
+                    <div class="col-12 col-md-2 col-xl-4 d-flex justify-content-md-end">
+                      <button (click)='nuevo()' type="button" class="btn btn-round btn-outline-success ml-1">
+                          Nuevo SKU
+                      </button>
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col">
+                      <table id="table_brands" class="table table-bordered table-sm">
+                        <thead class="text-center bg-primary text-white">
+                          <th>Nombre</th>
+                          <th></th>
+                          <th></th>
+                          <th>Descripci&oacute;n</th>
+                          <th>Presentaci&oacute;n</th>
+                          <th>Sabor</th>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let sku of skuList">
+                            <td>{{sku.sku}}</td>
+                            <td class='text-center'><a class="text-primary" href="javascript:void(0);" (click)="edit(sku)"><i class="fa fa-edit"></i></a></td>
+                            <td class='text-center'><a class="text-danger" href="javascript:void(0);" (click)="delete(sku)"><i class="fa fa-trash"></i></a></td>
+                            <td>{{sku.descripcion}}</td>
+                            <td>{{sku.presentacion}}</td>
+                            <td>{{sku.sabor}}</td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                        </tfoot>
+                      </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row d-none" id='pnlEdit'>
+            <div class="col-12 col-xl-6 offset-xl-3">
+              <div class="card-body">
+                  <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} Sku</h4>
+                  <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
+                    <div class="row">
+                      <div class="col">
+                        <strong>{{tempNameCustomer}}</strong>
+                      </div>
+                      <div class="col">
+                          <strong>{{tempNameBrand}}</strong>
+                      </div>
+                    </div>
+                      <mat-form-field class="w-100">
+                          <input matInput placeholder="Sku"  [(ngModel)]="sku.sku" id="sku" name="sku"  value="" required>
+                      </mat-form-field>
+                      <mat-form-field class="w-100">
+                          <input matInput placeholder="Descripci&oacute;n"  [(ngModel)]="sku.descripcion" id="descripcion" name="descripcion"  value="" required>
+                      </mat-form-field>
+                      <mat-form-field class="w-100">
+                          <input matInput placeholder="Presentaci&oacute;n"  [(ngModel)]="sku.presentacion" id="presentacion" name="presentacion"  value="">
+                      </mat-form-field>
+                      <mat-form-field class="w-100">
+                          <input matInput placeholder="Sabor"  [(ngModel)]="sku.sabor" id="sabor" name="sabor"  value="">
+                      </mat-form-field>
+                      <div class="row d-flex justify-content-end">
+                        <div class="col col-sm-4 col-xl-3">
+                          <input type="button" value="Salir" class="btn btn-default btn-sm btn-block btn-lg" (click)='salir()'>
+                        </div>
+                        <div class="col col-sm-4 col-xl-3">
+                          <input type="submit" value="Grabar" class="btn btn-primary btn-sm btn-block btn-lg">
+                        </div>
+                      </div>
+                    </form>
+              </div>
+            </div>
+        </div>
     </div>
 </div>

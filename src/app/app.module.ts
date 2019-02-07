@@ -17,6 +17,8 @@ import { AlertDialogComponent } from './components/dialog-components/alert-dialo
 import { AuthService } from './services/auth.service';
 import { UsersService } from './services/users.service';
 import { SupermaketsService } from './services/supermakets.service';
+import { CustomerService } from './services/customer.service';
+import { GeneralService } from './services/general.service';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
@@ -71,7 +73,12 @@ import { ConfirmDialogComponent } from './components/dialog-components/confirm-d
     AlertDialogComponent,
     ConfirmDialogComponent
   ],
-  providers: [AuthService, UsersService, SupermaketsService],
+  providers: [AuthService, 
+              UsersService, 
+              SupermaketsService,
+              CustomerService,
+              GeneralService
+             ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

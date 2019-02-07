@@ -11,5 +11,79 @@
             </nav>
           </div>
         </div>
+        <div class="row" id='pnlList'>
+            <div class="col-12 col-xl-8 offset-xl-2">
+                <div class="row">
+                  <div class="col">
+                    <button (click)='nuevo()' type="button" class="btn btn-round btn-outline-success ml-1">
+                      Nuevo Cliente
+                    </button>
+                  </div>
+                </div>
+                <div class="row mt-1">
+                    <div class="col">
+                      <table id="table_customers" class="table table-bordered table-sm">
+                        <thead class="text-center bg-primary text-white">
+                          <th>Ruc</th>
+                          <th></th>
+                          <th></th>
+                          <th>Raz&oacute;n Social</th>
+                          <th>Direcci&oacute;n</th>
+                          <th>Tel&eacute;fono</th>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let customer of customerList">
+                            <td>{{customer.ruc}}</td>
+                            <td class='text-center'><a class="text-primary" href="javascript:void(0);" (click)="edit(customer)"><i class="fa fa-edit"></i></a></td>
+                            <td class='text-center'><a class="text-danger" href="javascript:void(0);" (click)="delete(customer)"><i class="fa fa-trash"></i></a></td>
+                            <td>{{customer.razonsocial}}</td>
+                            <td>{{customer.direccion}}</td>
+                            <td>{{customer.telefono}}</td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <div class="row d-none" id='pnlEdit'>
+            <div class="col-12 col-xl-6 offset-xl-3">
+              <div class="card-body">
+                  <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} Cliente</h4>
+                  <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
+                       <div class="form-group">
+                        <label for="ruc"><i class="fa fa-address-card"></i> Ruc:</label>
+                        <input [(ngModel)]="customer.ruc" #ruc="ngModel" type="text" name="ruc" id="ruc"  class="form-control">
+                      </div>
+                      <!-- <mat-form-field class="w-100">
+                          <input matInput placeholder="Ruc" #ruc="ngModel"  [(ngModel)]="customer.ruc" id="ruc" name="ruc"  value="" required>
+                      </mat-form-field> -->
+                      <div class="form-group">
+                          <label for="razon"><i class="fa fa-bookmark"></i> Raz&oacute;n Social:</label>
+                          <input [(ngModel)]="customer.razonsocial" #razonsocial="ngModel" type="text" name="razon" id="razon"  class="form-control">
+                      </div>
+                      <div class="form-group">
+                          <label for="telf"><i class="fa fa-phone"></i> Telefono:</label>
+                          <input [(ngModel)]="customer.telefono" #telefono="ngModel" type="text" name="telf" id="telf"  class="form-control">
+                      </div>
+                      <div class="form-group">
+                          <label for="direccion"><i class="fa fa-address-book"></i> Direcci&oacute;n:</label>
+                          <textarea [(ngModel)]="customer.direccion" #direccion="ngModel" name="direccion" id="direccion"  class="form-control">
+                          </textarea>
+                      </div>
+                      <div class="row justify-content-end">
+                        <div class="col col-sm-4 col-xl-3">
+                          <input type="button" value="Salir" class="btn btn-default btn-sm btn-block btn-lg" (click)='salir()'>
+                        </div>
+                        <div class="col col-sm-4 col-xl-3">
+                          <input type="submit" value="Grabar" class="btn btn-primary btn-sm btn-block btn-lg">
+                        </div>
+                      </div>
+                    </form>
+              </div>
+            </div>
+        </div>
     </div>
 </div>

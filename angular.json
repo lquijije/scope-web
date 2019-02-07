@@ -26,12 +26,14 @@
               "node_modules/bootswatch/dist/cosmo/bootstrap.css",
               "node_modules/font-awesome/css/font-awesome.css",
               "src/styles.css",
-              "src/theme.scss"
+              "src/theme.scss",
+              "node_modules/select2/dist/css/select2.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
               "node_modules/popper.js/dist/umd/popper.js",
-              "node_modules/bootstrap/dist/js/bootstrap.js"
+              "node_modules/bootstrap/dist/js/bootstrap.js",
+              "node_modules/select2/dist/js/select2.min.js"
             ]
           },
           "configurations": {

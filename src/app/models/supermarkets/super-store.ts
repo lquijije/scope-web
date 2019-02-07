@@ -1,8 +1,11 @@
 export interface ISuperStore {
-    nombre?: string;
+    id?: string;
+    cadena?: string; 
     ciudad?: string;
     direccion?: string;
-    telefono?: string;
     estado?: string;
-    chain?: string;
+    nombre?: string;    
+    telefono?: string;
+    tipo?: string;
+    zona?: string;    
 }

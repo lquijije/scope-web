@@ -17,9 +17,11 @@ export class SuperChainPageComponent implements OnInit {
   chainList: any;
   chain: ISuperChain = {
     nombre: '',
+    alias: '',
     estado: ''
   };
   editState: any = false;
+  actionName: string ='';
   constructor(public dialog: MatDialog,
     private sc: SupermaketsService) { }
 
@@ -70,6 +72,11 @@ export class SuperChainPageComponent implements OnInit {
     });
   }
   showEditView() {
+    if(!this.editState){
+      this.actionName = 'Nueva';
+    }else{
+      this.actionName = 'Editar';
+    }
     $('#pnlEdit').removeClass('d-none');
     $('#pnlList').addClass('d-none');
   }
@@ -78,8 +85,10 @@ export class SuperChainPageComponent implements OnInit {
     $('#pnlList').removeClass('d-none');
   }
   clearObject() {
+    this.editState = false;
     this.chain = {
       nombre: '',
+      alias: '',
       estado: 'A'
     };
   }

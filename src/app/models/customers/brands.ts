@@ -1,6 +1,6 @@
-export interface ISuperChain {
+export interface IBrand {
     id?: string;
     nombre?: string;
-    alias?: string;
+    cliente?: string;
     estado?: string;
 }

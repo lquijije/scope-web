@@ -27,12 +27,14 @@
                           <th>Nombre</th>
                           <th></th>
                           <th></th>
+                          <th>Alias</th>
                         </thead>
                         <tbody>
                           <tr *ngFor="let chain of chainList">
                             <td>{{chain.nombre}}</td>
                             <td class='text-center'><a class="text-primary" href="javascript:void(0);" (click)="edit(chain)"><i class="fa fa-edit"></i></a></td>
                             <td class='text-center'><a class="text-danger" href="javascript:void(0);" (click)="delete(chain)"><i class="fa fa-trash"></i></a></td>
+                            <td>{{chain.alias}}</td>
                           </tr>
                         </tbody>
                         <tfoot>
@@ -45,13 +47,21 @@
         <div class="row d-none" id='pnlEdit'>
             <div class="col-12 col-xl-6 offset-xl-3">
               <div class="card-body">
-                  <h4 class="text-center"><i class="fa fa-shopping"></i> Nueva Cadena</h4>
+                  <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} Cadena</h4>
                   <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
-                      <div class="form-group">
+                      <!-- <div class="form-group">
                         <label for="nombres"><i class="fa fa-cart-plus"></i> Nombre:</label>
                         <input [(ngModel)]="chain.nombre" #nombre="ngModel" type="text" name="nombres" id="nombres"  class="form-control">
-                      </div>
-                      <div class="row">
+                      </div> -->
+                      
+                      <mat-form-field class="w-100">
+                          <input matInput placeholder="Nombre" #nombre="ngModel"  [(ngModel)]="chain.nombre" id="nombres" name="nombres"  value="" required>
+                      </mat-form-field>
+                      <mat-form-field class="w-100">
+                          <input matInput placeholder="Alias" #alias="ngModel"  [(ngModel)]="chain.alias" id="alias" name="alias"  value="" required>
+                      </mat-form-field>
+                  
+                      <div class="row d-flex justify-content-end">
                         <div class="col col-sm-4 col-xl-3">
                           <input type="button" value="Salir" class="btn btn-default btn-sm btn-block btn-lg" (click)='salir()'>
                         </div>

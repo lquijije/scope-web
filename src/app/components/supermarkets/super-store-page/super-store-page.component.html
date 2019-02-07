@@ -11,5 +11,108 @@
             </nav>
           </div>
         </div>
+        <div class="row" id='pnlList'>
+          <div class="col-12 col-xl-8 offset-xl-2">
+              <div class="row">
+                  <div class="col-12 col-md-2 col-xl-2">
+                    <label for="">Cadena:</label>
+                  </div>
+                  <div class="col-12 col-md-5 col-xl-4">
+                    <select class="form-control w-100" id="cmbChain">
+                        <option *ngFor="let chain of chainList" value="{{chain.id}}">{{chain.nombre}}</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-5 col-xl-6 d-flex justify-content-md-end">
+                    <button (click)='nuevo()' type="button" class="btn btn-round btn-outline-success ml-1">
+                        Nuevo Local
+                    </button>
+                  </div>
+              </div>
+              <div class="row mt-1">
+                <div class="col">
+                 
+                </div>
+              </div>
+              <div class="row mt-1">
+                  <div class="col">
+                    <table id="table_chains" class="table table-bordered table-sm">
+                      <thead class="text-center bg-primary text-white">
+                        <th>Nombre</th>
+                        <th></th>
+                        <th></th>
+                        <th>Tipo</th>
+                        <th>Ciudad</th>
+                        <th>Telefono</th>
+                        <th>Zona</th>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let store of storeList">
+                          <td>{{store.nombre}}</td>
+                          <td class='text-center'><a class="text-primary" href="javascript:void(0);" (click)="edit(store)"><i class="fa fa-edit"></i></a></td>
+                          <td class='text-center'><a class="text-danger" href="javascript:void(0);" (click)="delete(store)"><i class="fa fa-trash"></i></a></td>
+                          <td>{{store.tipo}}</td>
+                          <td>{{store.ciudad}}</td>
+                          <td>{{store.telefono}}</td>
+                          <td>{{store.zona}}</td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+          </div>
+        </div>
+      <div class="row d-none" id='pnlEdit'>
+          <div class="col-12 col-xl-6 offset-xl-3">
+            <div class="card-body">
+                <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} Local de {{tempNameChain}}</h4>
+                <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
+                    <!-- <div class="form-group">
+                      <label for="nombres"><i class="fa fa-cart-plus"></i> Nombre:</label>
+                      <input [(ngModel)]="chain.nombre" #nombre="ngModel" type="text" name="nombres" id="nombres"  class="form-control">
+                    </div> -->
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Nombre"  [(ngModel)]="store.nombre" id="tienda" name="tienda"  value="" required>
+                    </mat-form-field>
+                    <div class="row">
+                      <div class="col pt-3">
+                          <select class="form-control w-100" id="cmbCity">
+                              <option *ngFor="let city of cityList" value="{{city.id}}">{{city.nombre}}</option>
+                          </select>
+                      </div>
+                      <div class="col">
+                          <mat-form-field class="w-100">
+                              <input matInput placeholder="Zona"  [(ngModel)]="store.zona" id="zona" name="zona"  value="">
+                          </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                          <mat-form-field class="w-100">
+                              <input matInput placeholder="Tipo"  [(ngModel)]="store.tipo" id="tipo" name="tipo"  value="">
+                          </mat-form-field>
+                      </div>
+                      <div class="col">
+                        <mat-form-field class="w-100">
+                            <input matInput placeholder="Tel&eacute;fono"  [(ngModel)]="store.telefono" id="telefono" name="telefono"  value="">
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <mat-form-field class="w-100">
+                        <input matInput placeholder="Direcci&oacute;n"  [(ngModel)]="store.direccion" id="direccion" name="direccion"  value="">
+                    </mat-form-field>
+                    <div class="row d-flex justify-content-end">
+                      <div class="col col-sm-4 col-xl-3">
+                        <input type="button" value="Salir" class="btn btn-default btn-sm btn-block btn-lg" (click)='salir()'>
+                      </div>
+                      <div class="col col-sm-4 col-xl-3">
+                        <input type="submit" value="Grabar" class="btn btn-primary btn-sm btn-block btn-lg">
+                      </div>
+                    </div>
+                  </form>
+            </div>
+          </div>
+      </div>
     </div>
 </div>  
