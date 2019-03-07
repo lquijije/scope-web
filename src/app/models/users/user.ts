@@ -1,3 +1,5 @@
+import { IProfile } from "./profile";
+
 export interface IUser {
     id?: string;
     cedula?: string;
@@ -5,5 +7,5 @@ export interface IUser {
     genero?: string;
     email?: string;
     estado?: string;
-    perfil?: string;
+    perfil?: IProfile[];
 }

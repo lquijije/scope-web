@@ -53,21 +53,43 @@
           <div class="card-body">
               <h4 class="text-center"><i class="fa fa-user"></i> {{actionName}} Usuario</h4>
               <form (submit)="onSubmitRegisterAddUser()">
-                <mat-form-field class="w-100">
-                    <input matInput placeholder="Cedula" #cedula="ngModel"  [(ngModel)]="user.cedula" id="cedula" name="cedula"  value="" required>
-                </mat-form-field>
-                <mat-form-field class="w-100">
-                    <input matInput placeholder="Nombres" #nombre="ngModel"  [(ngModel)]="user.nombre" id="nombre" name="nombre"  value="" required>
-                </mat-form-field>
+                <div class="row">
+                  <div class="col">
+                      <mat-form-field class="w-100">
+                          <input matInput placeholder="Cedula" #cedula="ngModel"  [(ngModel)]="user.cedula" id="cedula" name="cedula"  value="" required>
+                      </mat-form-field>
+                      <mat-form-field class="w-100">
+                          <input matInput placeholder="Nombres" #nombre="ngModel"  [(ngModel)]="user.nombre" id="nombre" name="nombre"  value="" required>
+                      </mat-form-field>
+                  </div>
+                  <div class="col">
+                      <fieldset class="scheduler-border">
+                        <legend class="scheduler-border"> Perfiles </legend>
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" id="chk-adm" class="custom-control-input">
+                            <label class="custom-control-label" for="chk-adm">Administrador</label>
+                          </div>
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" id="chk-merc" class="custom-control-input">
+                            <label class="custom-control-label" for="chk-merc">Mercaderista</label>
+                          </div>
+                          <div class="custom-control custom-checkbox">
+                            <input type="checkbox" id="chk-clt" class="custom-control-input">
+                            <label class="custom-control-label" for="chk-clt">Cliente</label>
+                          </div>
+                      </fieldset>
+                  </div>
+                </div>
+                
                 <div class="form-group">
                   <div class="row">
-                    <div class="col-3 col-offset-3">
+                    <div class="col-12 col-sm-5 col-xl-3">
                       <div class="custom-control custom-radio">
-                        <input type="radio" id="rd-masc" name="genero" class="custom-control-input">
+                        <input type="radio" id="rd-masc" name="genero" class="custom-control-input" checked>
                         <label class="custom-control-label" for="rd-masc">Masculino</label>
                       </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-12 col-sm-5 col-xl-3">
                       <div class="custom-control custom-radio">
                         <input type="radio" id="rd-fem" name="genero" class="custom-control-input">
                         <label class="custom-control-label" for="rd-fem">Femenino</label>

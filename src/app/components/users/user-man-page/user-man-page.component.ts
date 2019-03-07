@@ -8,6 +8,7 @@ import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/c
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
 
 import * as $ from 'jquery';
+import { IProfile } from 'src/app/models/users/profile';
 declare var $: any;
 
 @Component({
@@ -17,14 +18,15 @@ declare var $: any;
 })
 
 export class UserManPageComponent implements OnInit {
-  userList: any;
+  userList: IUser[];
+  profileList: IProfile[];
   user: IUser = {
     cedula: '',
     nombre: '',
     genero: '',
     email: '',
     estado: '',
-    perfil: ''
+    perfil: []
   };
   editState: any = false;
   actionName: string ='';
@@ -34,8 +36,10 @@ export class UserManPageComponent implements OnInit {
 
   ngOnInit() {
     this.us.getUsers().subscribe(users => {
-      console.log(users);
       this.userList = users;
+    });
+    this.us.getProfiles().subscribe(profiles => {
+      this.profileList = profiles;
     });
   }
   nuevo() {
@@ -47,6 +51,27 @@ export class UserManPageComponent implements OnInit {
     this.closeEditView();
   }
   onSubmitRegisterAddUser() {
+    if($('#rd-masc').is(':checked')){
+      this.user.genero = 'Masculino';
+    }else{
+      this.user.genero = 'Femenino';
+    }
+    this.user.perfil = [];
+    if($('#chk-adm').is(':checked')){
+      this.user.perfil.push(
+        this.profileList.find(e => e.nombre == 'Administrador')
+      );
+    }
+    if($('#chk-merc').is(':checked')){
+      this.user.perfil.push(
+        this.profileList.find(e => e.nombre == 'Mercaderista')
+      );
+    }
+    if($('#chk-clt').is(':checked')){
+      this.user.perfil.push(
+        this.profileList.find(e => e.nombre == 'Cliente')
+      );
+    }
     if (!this.editState) {
       this.user.estado = 'A';
       this.us.addUser(this.user);
@@ -59,6 +84,34 @@ export class UserManPageComponent implements OnInit {
   }
   edit(user: IUser) {
     this.editState = true;
+    if(user.genero == 'Masculino'){
+      $('#rd-fem').removeAttr('checked');
+      $('#rd-masc').attr('checked', true);
+    }else{
+      $('#rd-masc').removeAttr('checked');
+      $('#rd-fem').attr('checked', true);
+    }
+    
+    if($('#chk-adm').is(':checked')){
+      $('#chk-adm').removeAttr('checked');
+    }
+    if($('#chk-merc').is(':checked')){
+      $('#chk-merc').removeAttr('checked');
+    }
+    if($('#chk-clt').is(':checked')){
+      $('#chk-clt').removeAttr('checked');
+    }
+    $.each(user.perfil,function(e,d){
+      if(d.nombre == 'Administrador'){
+        $('#chk-adm').attr('checked', true);
+      }
+      if(d.nombre == 'Mercaderista'){
+        $('#chk-merc').attr('checked', true);
+      }
+      if(d.nombre == 'Cliente'){
+        $('#chk-clt').attr('checked', true);
+      }
+    });
     this.showEditView();
     this.user = Object.assign({}, user);
   }
@@ -98,7 +151,7 @@ export class UserManPageComponent implements OnInit {
       genero: '',
       email: '',
       estado: '',
-      perfil: ''
+      perfil: []
     };
   }
 }

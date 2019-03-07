@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { IUser } from '../models/users/user';
+import { IProfile } from '../models/users/profile';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -11,9 +12,23 @@ export class UsersService {
   userCollection: AngularFirestoreCollection<IUser>;
   userObs: Observable<IUser[]>;
   userDoc: AngularFirestoreDocument<IUser>;
+
+  profileCollection: AngularFirestoreCollection<IProfile>;
+  profileObs: Observable<IProfile[]>;
+
   constructor(public afs: AngularFirestore ) {
     this.userCollection = afs.collection<IUser>('users');
+    this.profileCollection = afs.collection<IProfile>('profile');
+
     this.userObs = this.userCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IUser;
+        const id = a.payload.doc.id;
+        return {id, ...data};
+      }))
+    );
+
+    this.profileObs = this.profileCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as IUser;
         const id = a.payload.doc.id;
@@ -24,6 +39,10 @@ export class UsersService {
 
   getUsers() {
     return this.userObs;
+  }
+
+  getProfiles() {
+    return this.profileObs;
   }
 
   addUser(user: IUser){

@@ -154,5 +154,13 @@ export class OrderMantPageComponent implements OnInit {
         });
     });
   }
+  onSubmit(myForm: NgForm){
 
+  }
+  calendarizar(){
+
+  }
+  limpiar(){
+
+  }
 }
