@@ -31,7 +31,8 @@ export class UserManPageComponent implements OnInit {
   editState: any = false;
   actionName: string ='';
   constructor(public dialog: MatDialog,
-    private us: UsersService) {
+    private us: UsersService,
+    private router: Router) {
    }
 
   ngOnInit() {
@@ -43,6 +44,12 @@ export class UserManPageComponent implements OnInit {
     });
   }
   nuevo() {
+    $('#email').prop('readonly', false);
+    $('#chk-adm').prop('checked', false);  
+    $('#chk-merc').prop('checked', false);  
+    $('#chk-clt').prop('checked', false);
+    $('#rd-fem').prop('checked', false);
+    $('#rd-masc').prop('checked', true);
     this.showEditView();
   }
 
@@ -81,35 +88,37 @@ export class UserManPageComponent implements OnInit {
     }
     this.clearObject();
     this.salir();
+    
   }
   edit(user: IUser) {
     this.editState = true;
+    $('#email').prop('readonly', true);
     if(user.genero == 'Masculino'){
-      $('#rd-fem').removeAttr('checked');
-      $('#rd-masc').attr('checked', true);
+      $('#rd-fem').prop('checked', false);
+      $('#rd-masc').prop('checked', true);
     }else{
-      $('#rd-masc').removeAttr('checked');
-      $('#rd-fem').attr('checked', true);
+      $('#rd-masc').prop('checked', false);
+      $('#rd-fem').prop('checked', true);
     }
     
     if($('#chk-adm').is(':checked')){
-      $('#chk-adm').removeAttr('checked');
+      $('#chk-adm').prop('checked', false);
     }
     if($('#chk-merc').is(':checked')){
-      $('#chk-merc').removeAttr('checked');
+      $('#chk-merc').prop('checked', false);
     }
     if($('#chk-clt').is(':checked')){
-      $('#chk-clt').removeAttr('checked');
+      $('#chk-clt').prop('checked', false);
     }
     $.each(user.perfil,function(e,d){
       if(d.nombre == 'Administrador'){
-        $('#chk-adm').attr('checked', true);
+        $('#chk-adm').prop('checked', true);
       }
       if(d.nombre == 'Mercaderista'){
-        $('#chk-merc').attr('checked', true);
+        $('#chk-merc').prop('checked', true);
       }
       if(d.nombre == 'Cliente'){
-        $('#chk-clt').attr('checked', true);
+        $('#chk-clt').prop('checked', true);
       }
     });
     this.showEditView();
@@ -136,6 +145,7 @@ export class UserManPageComponent implements OnInit {
       this.actionName = 'Editar';
       $('#colPwd').addClass('d-none');
     }
+
     $('#pnlEdit').removeClass('d-none');
     $('#pnlList').addClass('d-none');
   }

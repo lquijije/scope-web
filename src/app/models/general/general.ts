@@ -4,3 +4,7 @@ export interface ICity {
     nombre?: string;
     pais?: string;s
 }
+
+export interface IPriority {
+    nombre?: string;
+}

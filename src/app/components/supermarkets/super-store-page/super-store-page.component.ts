@@ -18,6 +18,7 @@ declare var $: any;
 export class SuperStorePageComponent implements OnInit {
   chainList: any;
   cityList: any;
+  zoneList: any;
   store: ISuperStore = {
     cadena: '', 
     ciudad: '',
@@ -62,7 +63,6 @@ export class SuperStorePageComponent implements OnInit {
         self.tempNameChain = nameChain;
         self.sc.getSuperStoreFromChain(idChain).subscribe(stores => {      
           self.storeList = stores;
-          console.log(self.storeList);
         });
       }
     });
@@ -79,9 +79,16 @@ export class SuperStorePageComponent implements OnInit {
           return a.nombre < b.nombre ? -1 : 1;
         });
     });
+    this.ge.getZone().subscribe(zones => {
+      this.zoneList = zones
+        .sort((a, b) => {
+          return a.nombre < b.nombre ? -1 : 1;
+        });
+    });
   }
   onSubmit(myForm: NgForm) {
     this.store.ciudad = $('#cmbCity').select2('data')[0].text;
+    this.store.zona  = $('#cmbZone').select2('data')[0].text;
     if (!this.editState) {
       this.store.estado = 'A';
       this.store.cadena = this.tempIdChain;
@@ -108,6 +115,7 @@ export class SuperStorePageComponent implements OnInit {
     this.editState = true;
     this.showEditView();
     this.selectCityByStore(store);
+    this.selectZoneByStore(store);
     this.store = Object.assign({}, store);
   }
   delete(store: ISuperStore){
@@ -141,9 +149,22 @@ export class SuperStorePageComponent implements OnInit {
           }
       }
     });
+    var n3 = new Option('', '', true, true);
+    $('#cmbZone').append(n2).trigger('change');
+    $('#cmbZone').select2({
+      placeholder: "Zona",
+      language: {
+          "noResults": function () {
+              return "";
+          }
+      }
+    });
   }
   selectCityByStore(store: ISuperStore){
     $("#cmbCity").val($("#cmbCity option:contains('"+store.ciudad+"')").val()).trigger('change');
+  }
+  selectZoneByStore(store: ISuperStore){
+    $("#cmbZone").val($("#cmbZone option:contains('"+store.zona+"')").val()).trigger('change');
   }
   closeEditView() {
     $('#pnlEdit').addClass('d-none');

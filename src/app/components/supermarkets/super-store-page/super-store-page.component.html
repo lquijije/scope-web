@@ -1,12 +1,13 @@
-<div class="row p-5 w-100" style="height: 90vh;">
-    <div class="col">
+<div class="pt-2 px-xs-0 px-sm-3 px-md-5 w-100" style="height: 90vh;">
+    <div class="col p-0">
         <div class="row">
           <div class="col-12 col-xl-8 offset-xl-2">
             <nav aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="javascript:void(0)">Cadenas Supermercados</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Mantenimiento de Locales de Cadena</li>
+              <ol class="breadcrumb" style="border-radius: 5px;">
+                  <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
+                  <li class="breadcrumb-item d-block d-sm-none"><a href="javascript:void(0)">...</a></li>
+                <li class="breadcrumb-item d-none d-sm-block"><a href="javascript:void(0)">Cadenas Supermercados</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><strong>Mantenimiento de Locales de Cadena</strong></li>
               </ol>
             </nav>
           </div>
@@ -76,18 +77,23 @@
                         <input matInput placeholder="Nombre"  [(ngModel)]="store.nombre" id="tienda" name="tienda"  value="" required>
                     </mat-form-field>
                     <div class="row">
-                      <div class="col pt-3">
+                      <div class="col">
+                          <label class="small">Ciudad</label> 
                           <select class="form-control w-100" id="cmbCity">
                               <option *ngFor="let city of cityList" value="{{city.id}}">{{city.nombre}}</option>
                           </select>
                       </div>
                       <div class="col">
-                          <mat-form-field class="w-100">
+                          <!-- <mat-form-field class="w-100">
                               <input matInput placeholder="Zona"  [(ngModel)]="store.zona" id="zona" name="zona"  value="">
-                          </mat-form-field>
+                          </mat-form-field> -->
+                          <label class="small">Zona</label> 
+                          <select class="form-control w-100" id="cmbZone">
+                              <option *ngFor="let zone of zoneList" value="{{zone.id}}">{{zone.nombre}}</option>
+                          </select>
                       </div>
                     </div>
-                    <div class="row">
+                    <div class="row mt-3">
                       <div class="col">
                           <mat-form-field class="w-100">
                               <input matInput placeholder="Tipo"  [(ngModel)]="store.tipo" id="tipo" name="tipo"  value="">

@@ -1,12 +1,13 @@
-<div class="row p-5 w-100" style="height: 90vh;">
-    <div class="col">
+<div class="pt-2 px-xs-0 px-sm-3 px-md-5 w-100" style="height: 90vh;">
+    <div class="col p-0">
         <div class="row">
           <div class="col-12 col-xl-8 offset-xl-2">
             <nav aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="javascript:void(0)">Ordenes de Trabajo</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Mantenimiento de Ordenes</li>
+              <ol class="breadcrumb" style="border-radius: 5px;">
+                <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
+                <li class="breadcrumb-item d-block d-sm-none"><a href="javascript:void(0)">...</a></li>
+                <li class="breadcrumb-item d-none d-sm-block"><a href="javascript:void(0)">Ordenes de Trabajo</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><strong>Mantenimiento de Ordenes</strong></li>
               </ol>
             </nav>
           </div>
@@ -14,47 +15,80 @@
         <div class="row" id='pnlEdit'>
             <div class="col-12 col-xl-8 offset-xl-2">
               <div class="card-body">
-                  <h4 class="text-center">Orden de Trabajo</h4>
+                  <h4 class="text-center"><strong> Orden de Trabajo </strong></h4>
                   <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
                     <div class="row">
-                        <div class="col-12 col-md-4">
-                          <select class="form-control" id="cmbChain">
-                              <option *ngFor="let chain of chainList" value="{{chain.id}}">{{chain.nombre}}</option>
-                          </select>
+                      <div class="col-12 col-md-9 p-0">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="d-flex flex-column">
+                                  <span for="" class="text-primary"> Mercaderista:</span>
+                                  <select class="form-control" id="cmbMerchant">
+                                      <option *ngFor="let merchant of merchantList" value="{{merchant.id}}">{{merchant.nombre}}</option>
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="d-flex flex-column">
+                                    <span for="" class="text-primary"> Prioridad:</span>
+                                  <select class="form-control" id="cmbPriority" >
+                                      <option *ngFor="let priority of priorityList" value="{{priority.id}}">{{priority.nombre}}</option>
+                                  </select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-12 col-md-4">
-                          <select class="form-control" id="cmbStore">
-                              <option *ngFor="let store of storeList" value="{{store.id}}">{{store.nombre}}</option>
-                          </select>
+                        <div class="row pt-2">
+                            <div class="col-12 col-md-6">
+                                <div class="d-flex flex-column">
+                                    <span for="" class="text-primary">Cadena:</span>
+                                  <select class="form-control" id="cmbChain">
+                                      <option *ngFor="let chain of chainList" value="{{chain.id}}">{{chain.nombre}}</option>
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="d-flex flex-column">
+                                    <span for="" class="text-primary">Tienda:</span>
+                                  <select class="form-control" id="cmbStore">
+                                      <option *ngFor="let store of storeList" value="{{store.id}}">{{store.nombre}}</option>
+                                  </select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-12 col-md-4">
-                            <select class="form-control" id="cmbSeller">
-                                <option value=''></option>
-                            </select>
+                        <div class="row pt-2">
+                            <div class="col-12 col-md-6">
+                                <div class="d-flex flex-column">
+                                    <span for="" class="text-primary">Cliente:</span>
+                                  <select class="form-control" id="cmbCustomer">
+                                      <option *ngFor="let customer of customerList" value="{{customer.id}}">{{customer.razonsocial}}</option>
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="d-flex flex-column">
+                                  <span for="" class="text-primary"> Marca:</span>
+                                  <select class="form-control" id="cmbBrand" multiple>
+                                      <option *ngFor="let brand of brandList" value="{{brand.id}}">{{brand.nombre}}</option>
+                                  </select>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row pt-2">
-                        <div class="col">
-                          <select class="form-control w-100" id="cmbCustomer">
-                              <option *ngFor="let customer of customerList" value="{{customer.id}}">{{customer.razonsocial}}</option>
-                          </select>
-                        </div>
-                        <div class="col">
-                          <select class="form-control w-100" id="cmbBrand" multiple>
-                              <option *ngFor="let brand of brandList" value="{{brand.id}}">{{brand.nombre}}</option>
-                          </select>
-                        </div>
-                    </div>
-                    <div class="row pt-2">
-                      <div class="col">
-                          <mat-form-field class="w-100">
-                            <input matInput placeholder="Fecha Visita" name="txFeVis" value="" id="txFeVis" data-date-format="yyyy-mm-dd" class="text-blue" type="text">
-                          </mat-form-field>
                       </div>
-                      <div class="col pt-2">
-                          <button (click)='calendarizar()' type="button" class="btn btn-round btn-outline-warning">
-                              Calendarizar
-                          </button>
+                      <div class="col-12 col-md-3">
+                        <div class="row">
+                          <div class="col d-flex flex-column">
+                              <!-- <mat-form-field class="w-100">
+                                <input matInput placeholder="Fecha Visita" name="txFeVis" value="" id="txFeVis" data-date-format="yyyy-mm-dd" class="text-blue" type="text" autocomplete="off">
+                              </mat-form-field>
+                              <button class="btn btn-sm btn-outline-warning w-100">
+                                <i class="fa fa-calendar"></i> Calendarizar
+                              </button> -->
+                              <span for="" class="text-primary"> Fecha Visita:</span>
+                              <div id="calendar">
+                                
+                              </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div class="row pt-2 d-flex justify-content-end">

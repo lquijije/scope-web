@@ -37,6 +37,7 @@ import { AssocBrandsPageComponent } from './components/customers/assoc-brands-pa
 import { OrderMantPageComponent } from './components/work-orders/order-mant-page/order-mant-page.component';
 import { OrderInquiryPageComponent } from './components/work-orders/order-inquiry-page/order-inquiry-page.component';
 import { ConfirmDialogComponent } from './components/dialog-components/confirm-dialog/confirm-dialog.component';
+import { ZonePageComponent } from './components/supermarkets/zone-page/zone-page.component';
 
 
 @NgModule({
@@ -58,7 +59,8 @@ import { ConfirmDialogComponent } from './components/dialog-components/confirm-d
     AssocBrandsPageComponent,
     OrderMantPageComponent,
     OrderInquiryPageComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    ZonePageComponent
   ],
   imports: [
     BrowserModule,

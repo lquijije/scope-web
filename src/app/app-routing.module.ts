@@ -12,6 +12,7 @@ import { AssocBrandsPageComponent } from './components/customers/assoc-brands-pa
 import { SkuMantPageComponent } from './components/customers/sku-mant-page/sku-mant-page.component';
 import { SuperChainPageComponent } from './components/supermarkets/super-chain-page/super-chain-page.component';
 import { SuperStorePageComponent } from './components/supermarkets/super-store-page/super-store-page.component';
+import { ZonePageComponent } from './components/supermarkets/zone-page/zone-page.component';
 import { OrderMantPageComponent } from './components/work-orders/order-mant-page/order-mant-page.component';
 import { OrderInquiryPageComponent } from './components/work-orders/order-inquiry-page/order-inquiry-page.component';
 
@@ -67,6 +68,10 @@ const routes: Routes = [
   {
     path: 'orderinquiry',
     component: OrderInquiryPageComponent
+  },
+  {
+    path: 'zonemant',
+    component: ZonePageComponent
   },
   {
     path: '**',

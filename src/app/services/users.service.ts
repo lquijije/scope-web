@@ -16,6 +16,8 @@ export class UsersService {
   profileCollection: AngularFirestoreCollection<IProfile>;
   profileObs: Observable<IProfile[]>;
 
+  merchantCollection: AngularFirestoreCollection<IUser>;
+
   constructor(public afs: AngularFirestore ) {
     this.userCollection = afs.collection<IUser>('users');
     this.profileCollection = afs.collection<IProfile>('profile');
@@ -56,5 +58,21 @@ export class UsersService {
   delUser(user: IUser) {
     this.userDoc = this.afs.doc(`users/${user.id}`);
     this.userDoc.delete();
+  }
+
+  getMerchants(){
+    this.merchantCollection = this.afs.collection<IUser>('users',
+    ref => ref.where('perfil','array-contains',
+    {
+      id: "fekR2vrdZHB5VkywvIL4",
+      nombre: "Mercaderista"
+    }));
+    return this.merchantCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IUser;
+        const id = a.payload.doc.id;
+        return {id, ...data};
+      }))
+    );
   }
 }
