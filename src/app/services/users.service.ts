@@ -43,11 +43,24 @@ export class UsersService {
     return this.userObs;
   }
 
+  getUserByEmail(email: string) {
+    let userByEmailCollection: AngularFirestoreCollection<IUser>;
+    userByEmailCollection = this.afs.collection<IUser>('users',
+      ref => ref.where('email', '==', email));
+    return userByEmailCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IUser;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
+
   getProfiles() {
     return this.profileObs;
   }
 
-  addUser(user: IUser){
+  addUser(user: IUser) {
     this.userCollection.add(user);
   }
 
@@ -60,12 +73,12 @@ export class UsersService {
     this.userDoc.delete();
   }
 
-  getMerchants(){
+  getMerchants() {
     this.merchantCollection = this.afs.collection<IUser>('users',
-    ref => ref.where('perfil','array-contains',
+    ref => ref.where('perfil', 'array-contains',
     {
-      id: "fekR2vrdZHB5VkywvIL4",
-      nombre: "Mercaderista"
+      id: 'fekR2vrdZHB5VkywvIL4',
+      nombre: 'Mercaderista'
     }));
     return this.merchantCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {

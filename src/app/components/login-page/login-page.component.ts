@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { AlertDialogComponent } from '../dialog-components/alert-dialog/alert-dialog.component';
-
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 

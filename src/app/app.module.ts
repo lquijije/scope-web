@@ -25,6 +25,7 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 
+import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { UserManPageComponent } from './components/users/user-man-page/user-man-page.component';
 import { UserChangePassPageComponent } from './components/users/user-change-pass-page/user-change-pass-page.component';
@@ -64,6 +65,7 @@ import { ZonePageComponent } from './components/supermarkets/zone-page/zone-page
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     BrowserAnimationsModule,
     MaterialModule,
     AppRoutingModule,

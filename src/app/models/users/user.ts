@@ -1,4 +1,4 @@
-import { IProfile } from "./profile";
+import { IProfile } from './profile';
 
 export interface IUser {
     id?: string;
@@ -6,6 +6,7 @@ export interface IUser {
     nombre?: string;
     genero?: string;
     email?: string;
+    password?: string;
     estado?: string;
     perfil?: IProfile[];
 }

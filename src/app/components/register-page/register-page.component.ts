@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { IUser } from '../../models/users/user';
 import { Router } from '@angular/router';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-register-page',
@@ -8,35 +10,39 @@ import { Router } from '@angular/router';
   styleUrls: ['./register-page.component.css']
 })
 export class RegisterPageComponent implements OnInit {
-  public cedula: string;
-  public nombres: string;
-  public email: string;
-  public password: string;
-
+  userList: IUser[];
+  user: IUser = {
+    cedula: '',
+    nombre: '',
+    genero: '',
+    email: '',
+    password: '',
+    estado: '',
+    perfil: []
+  };
   constructor(
     public authServ: AuthService,
-    public router: Router
+    public router: Router,
+    private us: UsersService,
   ) { }
 
   ngOnInit() {
+    this.authServ.getAuth().subscribe((data: {}) => {
+      if (data) {
+        const currentUser = this.authServ.getCurrentUser();
+        this.user.nombre = currentUser.displayName;
+        this.user.email = currentUser.email;
+        if (this.user.email !== '') {
+          this.us.getUserByEmail(this.user.email).subscribe(users => {
+            this.userList = users;
+            this.user = this.userList[0];
+            //console.log(this.user);
+          });
+        }
+      }
+    });
   }
 
   onSubmitRegisterAddUser() {
-    this.authServ.registerUser(this.email, this.password).then( (res) => {
-      console.log(res);
-        const user = this.authServ.afAuth.auth.currentUser;
-        user.updateProfile({
-          displayName: this.nombres,
-          photoURL: ''
-        }).then(function () {
-          console.log(user);
-        }, function (error) {
-          // An error happened.
-        });
-        // console.log(res);
-        this.router.navigate(['/']);
-      }).catch( (err) => {
-        console.log(err);
-      });
   }
 }
