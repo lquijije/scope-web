@@ -174,7 +174,7 @@ export class AssocBrandsPageComponent implements OnInit {
   nuevo(){
     this.showEditView();
   }
-  deleteSku(sku: ISku){
+  deleteSku(sku: ISku) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '300px',
       data: { title: 'Confirmación', msg: 'Desea excluir el SKU ' + sku.sku + '?' }
@@ -188,17 +188,17 @@ export class AssocBrandsPageComponent implements OnInit {
       }
     });
   }
-  delete(assoc: IAssociatedBrands){
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+  delete(assoc: IAssociatedBrands) {
+   /* const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '300px',
       data: { title: 'Confirmación', msg: 'Desea eliminar la Asociaci&oacute;n selecionada?' }
     });
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        //this.cs.updBrand(brand); // Cambia estado a I
+      if (result) {*/
+        // this.cs.updBrand(brand); // Cambia estado a I
         this.cs.delAssocBrand(assoc); // Elimina permanentemente de la base
-      }
-    });
+     /*}
+    });*/
   }
   details(assoc: IAssociatedBrands){
     this.assocBrandDetail = assoc;

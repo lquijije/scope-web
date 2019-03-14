@@ -65,8 +65,13 @@ export class UsersService {
   }
 
   updUser(user: IUser) {
-    this.userDoc = this.afs.doc(`users/${user.id}`);
-    this.userDoc.update(user);
+    return new Promise((resolve, reject) => {
+      this.userDoc = this.afs.doc(`users/${user.id}`);
+      this.userDoc.update(user).then(
+        (voidRes) => {},
+        err => reject(err)
+      );
+    });
   }
   delUser(user: IUser) {
     this.userDoc = this.afs.doc(`users/${user.id}`);

@@ -14,12 +14,12 @@
         </div>
         <div class="row" id='pnlEdit'>
             <div class="col-12 col-xl-8 offset-xl-2">
-              <div class="card-body">
+              <div class="card-body bg-light border border-primary rounded pl-lg-5">
                   <h4 class="text-center"><strong> Orden de Trabajo </strong></h4>
                   <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
                     <div class="row">
                       <div class="col-12 col-md-9 p-0">
-                        <div class="row">
+                        <div class="row pt-2">
                             <div class="col-12 col-md-6">
                                 <div class="d-flex flex-column">
                                   <span for="" class="text-primary"> Mercaderista:</span>
@@ -37,7 +37,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row pt-2">
+                        <div class="row pt-3">
                             <div class="col-12 col-md-6">
                                 <div class="d-flex flex-column">
                                     <span for="" class="text-primary">Cadena:</span>
@@ -55,7 +55,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row pt-2">
+                        <div class="row pt-3">
                             <div class="col-12 col-md-6">
                                 <div class="d-flex flex-column">
                                     <span for="" class="text-primary">Cliente:</span>
@@ -73,16 +73,18 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row pt-4 d-flex justify-content-end">
+                          <div class="col-12 col-sm-4 col-xl-3">
+                            <input type="button" value="Limpiar" class="btn btn-outline-secondary rounded btn-sm btn-block btn-lg" (click)='limpiar()'>
+                          </div>
+                          <div class="col-12 col-sm-4 col-xl-3">
+                            <input type="submit" value="Crear Orden" class="btn btn-primary rounded btn-sm btn-block btn-lg">
+                          </div>
+                        </div>
                       </div>
                       <div class="col-12 col-md-3">
                         <div class="row">
                           <div class="col d-flex flex-column">
-                              <!-- <mat-form-field class="w-100">
-                                <input matInput placeholder="Fecha Visita" name="txFeVis" value="" id="txFeVis" data-date-format="yyyy-mm-dd" class="text-blue" type="text" autocomplete="off">
-                              </mat-form-field>
-                              <button class="btn btn-sm btn-outline-warning w-100">
-                                <i class="fa fa-calendar"></i> Calendarizar
-                              </button> -->
                               <span for="" class="text-primary"> Fecha Visita:</span>
                               <div id="calendar">
                                 
@@ -91,15 +93,35 @@
                         </div>
                       </div>
                     </div>
-                    <div class="row pt-2 d-flex justify-content-end">
-                      <div class="col col-sm-4 col-xl-3">
-                        <input type="button" value="Limpiar" class="btn btn-default btn-sm btn-block btn-lg" (click)='limpiar()'>
-                      </div>
-                      <div class="col col-sm-4 col-xl-3">
-                        <input type="submit" value="Crear Orden" class="btn btn-primary btn-sm btn-block btn-lg">
-                      </div>
-                    </div>
                   </form>
+              </div>
+              <div class="card card-block mt-2 dvskulist">
+                <div class="col">
+                  <table id="table_skus" class="table table-bordered table-sm">
+                    <thead class="text-center bg-dark text-white">
+                      <th></th>
+                      <th>Cliente</th>
+                      <th>Marca</th>
+                      <th>Producto</th>
+                      <th>Presentaci&oacute;n</th>
+                      <th>Sabor</th>
+                      <th>SKU</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let sku of skuList">
+                        <td class='text-center'> <a href="javascript:void(0);" (click)="exclude(sku)"> <i class="fa fa-trash"></i></a></td>
+                        <td>{{sku.ds_cliente}}</td>
+                        <td>{{sku.ds_marca}}</td>
+                        <td>{{sku.descripcion}}</td>
+                        <td>{{sku.presentacion}}</td>
+                        <td>{{sku.sabor}}</td>
+                        <td class='text-center'>{{sku.sku}}</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                    </tfoot>
+                  </table>
+                </div>
               </div>
             </div>
         </div>

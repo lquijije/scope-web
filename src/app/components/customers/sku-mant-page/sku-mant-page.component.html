@@ -26,8 +26,8 @@
                         </select>
                       </div>
                     <div class="col-12 col-md-2 col-xl-4 d-flex justify-content-md-end">
-                      <button (click)='nuevo()' type="button" class="btn btn-round btn-outline-success ml-1">
-                          Nuevo SKU
+                      <button (click)='nuevo()' type="button" class="btn rounded btn-outline-success ml-1">
+                        <i class="fa fa-plus"></i>  Nuevo SKU
                       </button>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                     <div class="col">
                       <table id="table_skus" class="table table-bordered table-sm">
                         <thead class="text-center bg-primary text-white">
-                          <th>Nombre</th>
+                          <th>SKU</th>
                           <th></th>
                           <th></th>
                           <th>Descripci&oacute;n</th>
@@ -86,10 +86,10 @@
                       </mat-form-field>
                       <div class="row d-flex justify-content-end">
                         <div class="col col-sm-4 col-xl-3">
-                          <input type="button" value="Salir" class="btn btn-default btn-sm btn-block btn-lg" (click)='salir()'>
+                          <input type="button" value="Salir" class="btn btn-default rounded btn-sm btn-block btn-lg" (click)='salir()'>
                         </div>
                         <div class="col col-sm-4 col-xl-3">
-                          <input type="submit" value="Grabar" class="btn btn-primary btn-sm btn-block btn-lg">
+                          <input type="submit" value="Grabar" class="btn btn-primary rounded btn-sm btn-block btn-lg">
                         </div>
                       </div>
                     </form>

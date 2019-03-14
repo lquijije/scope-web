@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { ISuperChain } from '../models/supermarkets/super-chain';
 import { ISuperStore } from '../models/supermarkets/super-store';
+import { ICustomer } from '../models/customers/customers';
 import { IAssociatedBrands } from '../models/supermarkets/associated-brands';
 import { IZone } from '../models/supermarkets/zone';
 import { Observable } from 'rxjs';
@@ -20,13 +21,15 @@ export class SupermaketsService {
   superStoreObs: Observable<ISuperStore[]>;
   superStoreDoc: AngularFirestoreDocument<ISuperStore>;
 
+  associateCollection: AngularFirestoreCollection<IAssociatedBrands>;
+
   zoneCollection: AngularFirestoreCollection<IZone>;
   zoneObs: Observable<IZone[]>;
   zoneDoc: AngularFirestoreDocument<IZone>;
 
   afs: AngularFirestore;
   constructor(public objafs: AngularFirestore ) {
-    this.afs=objafs;
+    this.afs = objafs;
     this.superChainCollection = this.afs.collection<ISuperChain>('super-chain');
     this.superStoreCollection = this.afs.collection<ISuperStore>('super-store');
     this.zoneCollection = this.afs.collection<IZone>('zone');
@@ -65,10 +68,10 @@ export class SupermaketsService {
     this.superChainDoc.update(chain);
   }
 
-  getSuperStoreFromChain(id: string){
-    this.superStoreCollection = this.afs.collection<ISuperStore>('super-store',
-    ref => ref.where('cadena','==',id));
-    return this.superStoreCollection.snapshotChanges().pipe(
+  getSuperStoreFromChain(id: string) {
+    this.associateCollection = this.afs.collection<ISuperStore>('super-store',
+    ref => ref.where('cadena', '==', id));
+    return this.associateCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as ISuperStore;
         const id = a.payload.doc.id;
@@ -77,14 +80,53 @@ export class SupermaketsService {
     );
   }
 
-  getSuperStoreFromChainAssociate(chainObj: any){
+  getSuperStoreFromChainAssociate(chainObj: any) {
     this.superStoreCollection = this.afs.collection<IAssociatedBrands>('associated-brands',
-    ref => ref.where('cadena','array-contains',chainObj));
+      ref => ref.where('cadena', '==', chainObj));
     return this.superStoreCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as ISuperStore;
+        const data = a.payload.doc.data() as IAssociatedBrands;
         const id = a.payload.doc.id;
         return {id, ...data};
+      }))
+    );
+  }
+  getCustomersFromChainStoreAssociate(chainObj: any, storeObj: any) {
+    this.associateCollection = this.afs.collection<IAssociatedBrands>('associated-brands',
+      ref => ref.where('cadena', '==', chainObj)
+        .where('local', '==', storeObj));
+    return this.associateCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IAssociatedBrands;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
+  getBrandsFromChainStoreCustomerAssociate(chainObj: any, storeObj: any, customerObj: any) {
+    this.associateCollection = this.afs.collection<IAssociatedBrands>('associated-brands',
+      ref => ref.where('cadena', '==', chainObj)
+        .where('local', '==', storeObj)
+        .where('cliente', '==', customerObj));
+    return this.associateCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IAssociatedBrands;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
+  getSkusFromChainStoreCustomerBrandAssociate(chainObj: any, storeObj: any, customerObj: any, brandObj: any) {
+    this.associateCollection = this.afs.collection<IAssociatedBrands>('associated-brands',
+      ref => ref.where('cadena', '==', chainObj)
+        .where('local', '==', storeObj)
+        .where('cliente', '==', customerObj)
+        .where('marca', '==', brandObj));
+    return this.associateCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IAssociatedBrands;
+        const id = a.payload.doc.id;
+        return { id, ...data };
       }))
     );
   }

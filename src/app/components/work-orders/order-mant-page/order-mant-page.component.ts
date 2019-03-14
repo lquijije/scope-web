@@ -10,21 +10,52 @@ import { MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
-import * as $ from 'jquery';
 import { IAssociatedBrands } from 'src/app/models/customers/associated-brands';
-declare var $: any;
+import { IWorkOrder } from 'src/app/models/work-orders/work-order';
+import { of } from 'rxjs';
+import { groupBy, mergeMap, reduce, map } from 'rxjs/operators';
 
+import * as $ from 'jquery';
+import { ICustomer } from 'src/app/models/customers/customers';
+import { IUser } from 'src/app/models/users/user';
+
+declare var $: any;
+export interface IChainObj {
+  id?: string;
+  nombre?: string;
+}
+export interface IStoreObj {
+  id?: string;
+  nombre?: string;
+}
+export interface ICustomerObj {
+  id?: string;
+  razonsocial?: string;
+}
+export interface IBrandObj {
+  id?: string;
+  razojnsocial?: string;
+}
 @Component({
   selector: 'app-order-mant-page',
   templateUrl: './order-mant-page.component.html',
   styleUrls: ['./order-mant-page.component.css']
 })
+
 export class OrderMantPageComponent implements OnInit {
-  customerList: any;
-  brandList: any;
+  undefined: any;
   chainList: any;
-  storeList: any;
+  chainObj: IChainObj;
+  storeList: any = [];
+  storeObj: IStoreObj;
+  customerList: any = [];
+  customerObj: ICustomerObj;
+  brandList: any = [];
+  brandObj: any;
+  skuList: any;
+  workOrderList: any = [];
   merchantList: any;
+  merchantObj: IUser;
   priorityList: any;
   oStatusList: any;
   tempIdChain: string;
@@ -45,12 +76,9 @@ export class OrderMantPageComponent implements OnInit {
     private gs: GeneralService) { }
 
   ngOnInit() {
-    var self = this;
+    const self = this;
     $('#calendar').multiDatesPicker({
-      dateFormat: "y-m-d",
-      beforeShow: function(){    
-        $(".ui-datepicker").css('font-size', 5) 
-      }
+      dateFormat: 'yy-mm-dd'
     });
     $('.ui-datepicker').css('font-size', 12);
     $('#txFeVis').datetimepicker({
@@ -59,122 +87,182 @@ export class OrderMantPageComponent implements OnInit {
         timepicker: false,
         closeOnDateSelect: true
     });
-    var n0 = new Option('', '', true, true);
+    const n0 = new Option('', '', true, true);
     $('#cmbMerchant').append(n0).trigger('change');
     $('#cmbMerchant').select2({
-      placeholder: "Seleccione Mercaderista",
+      placeholder: 'Seleccione Mercaderista',
       language: {
-          "noResults": function () {
-              return "";
+          'noResults': function () {
+              return '';
           }
       }
     });
-    var n1 = new Option('', '', true, true);
+    const n1 = new Option('', '', true, true);
     $('#cmbChain').append(n1).trigger('change');
     $('#cmbChain').select2({
-      placeholder: "Seleccione Cadena",
+      placeholder: 'Seleccione Cadena',
       language: {
-          "noResults": function () {
-              return "";
+          'noResults': function () {
+              return '';
           }
       }
     });
-    var n2 = new Option('', '', true, true);
+    const n2 = new Option('', '', true, true);
     $('#cmbCustomer').append(n2).trigger('change');
     $('#cmbCustomer').select2({
-      placeholder: "Seleccione Cliente",
+      placeholder: 'Seleccione Cliente',
       language: {
-          "noResults": function () {
-              return "";
+          'noResults': function () {
+              return '';
           }
       }
     });
-    var n3 = new Option('', '', true, true);
+    const n3 = new Option('', '', true, true);
     $('#cmbStore').append(n3).trigger('change');
     $('#cmbStore').select2({
-      placeholder: "Seleccione Local",
+      placeholder: 'Seleccione Local',
       language: {
-          "noResults": function () {
-              return "";
+          'noResults': function () {
+              return '';
           }
       }
     });
-    var n4 = new Option('', '', true, true);
+    const n4 = new Option('', '', true, true);
     $('#cmbBrand').append(n4).trigger('change');
     $('#cmbBrand').select2({
-      placeholder: "Seleccione Marca",
+      placeholder: 'Seleccione Marca',
       language: {
-          "noResults": function () {
-              return "";
+          'noResults': function () {
+              return '';
           }
       }
     });
-    var n5 = new Option('', '', true, true);
-    $('#cmbPriority').append(n5).trigger('change');
+    $('#cmbPriority').val('UwJiKYkri6euQnKzEzy1').trigger('change');
     $('#cmbPriority').select2({
-      placeholder: "Seleccione Prioridad",
+      placeholder: 'Seleccione Prioridad',
       language: {
-          "noResults": function () {
-              return "";
-          }
+        'noResults': function () {
+          return '';
+        }
       }
     });
-    $('#cmbChain').on('select2:select',function(e){
-      var idChain = e.params.data.id;
-      var nameChain = e.params.data.text;
-      if (idChain!=''){
+    $('#cmbMerchant').on('select2:select', function (e) {
+      const idMerchant = e.params.data.id;
+      const nameMerchant = e.params.data.text;
+      if (idMerchant !== '') {
+        self.merchantObj = {
+          id: idMerchant,
+          nombre: nameMerchant
+        };
+      }
+    });
+    $('#cmbChain').on('select2:select', function(e) {
+      const idChain = e.params.data.id;
+      const nameChain = e.params.data.text;
+      if (idChain !== '') {
         self.tempIdChain = idChain;
         self.tempNameChain = nameChain;
-        self.sc.getSuperStoreFromChainAssociate(
-          {
-            id: idChain,
-            nombre: nameChain
+        self.chainObj = {
+          id: idChain,
+          nombre: nameChain
+        };
+        self.storeList = [];
+        self.customerList = [];
+        self.brandList = [];
+        self.skuList = [];
+        self.sc.getSuperStoreFromChainAssociate(self.chainObj).subscribe(associated => {
+          if (associated) {
+            (associated as IAssociatedBrands[]).forEach(i => self.storeList.push(i.local));
+            self.storeList = self.removeDuplicates(self.storeList);
           }
-        ).subscribe(stores => {      
-          self.storeList = stores;
         });
       }
     });
-    $('#cmbStore').on('select2:select',function(e){
-      var idStore = e.params.data.id;
-      var nameStore = e.params.data.text;
-      if (idStore!=''){
-        self.tempIdStore = idStore;
-        self.tempNameStore = nameStore;
-      }
-    });
-    $('#cmbCustomer').on('select2:select',function(e){
-      var idCustomer = e.params.data.id;
-      var nameCustomer = e.params.data.text;
-      if (idCustomer!=''){
-        self.tempIdCustomer = idCustomer;
-        self.tempNameCustomer = nameCustomer;
-        self.cs.getBrandFromCustomer(idCustomer).subscribe(brands => {      
-          self.brandList = brands;
-        });
-      }
-    });
-    $('#cmbBrand').on('select2:select',function(e){
-      if(self.tempIdCustomer!=''){
-        var idBrand = e.params.data.id;
-        var nameBrand = e.params.data.text;
-        if (idBrand!=''){
-          self.tempIdBrand = idBrand;
-          self.tempNameBrand = nameBrand;
-          self.cs.getSkuFromCustomerAndBrand(self.tempIdCustomer, idBrand).subscribe(skus => {      
-            //self.skuList = skus;
+    $('#cmbStore').on('select2:select', function(e) {
+      const idStore = e.params.data.id;
+      const nameStore = e.params.data.text;
+      if (idStore !== '') {
+        if (self.chainObj) {
+          self.tempIdStore = idStore;
+          self.tempNameStore = nameStore;
+          self.storeObj = {
+            id: idStore,
+            nombre: nameStore
+          };
+          self.customerList = [];
+          self.brandList = [];
+          self.skuList = [];
+          self.sc.getCustomersFromChainStoreAssociate(self.chainObj, self.storeObj).subscribe(associated => {
+            if (associated) {
+              (associated as IAssociatedBrands[]).forEach(i => self.customerList.push(i.cliente));
+              self.customerList = self.removeDuplicates(self.customerList);
+            }
           });
         }
-      }else{
-        this.openAlert('Scope Alert','Escoja un cliente');
       }
     });
-    this.cs.getCustomer().subscribe(customers => {
-      this.customerList = customers
-      .filter(ch => ch.estado === 'A')
-        .sort((a, b) => {
-          return a.razonsocial < b.razonsocial ? -1 : 1;
-        });
+    $('#cmbCustomer').on('select2:select', function(e) {
+      const idCustomer = e.params.data.id;
+      const nameCustomer = e.params.data.text;
+      if (idCustomer !== '') {
+        if (self.chainObj) {
+          if (self.storeObj) {
+            self.tempIdCustomer = idCustomer;
+            self.tempNameCustomer = nameCustomer;
+            self.customerObj = {
+              id: idCustomer,
+              razonsocial: nameCustomer
+            };
+            self.brandList = [];
+            // self.skuList = [];
+            self.sc.getBrandsFromChainStoreCustomerAssociate(self.chainObj, self.storeObj, self.customerObj ).subscribe(associated => {
+              if (associated) {
+                (associated as IAssociatedBrands[]).forEach(i => self.brandList.push(i.marca));
+                self.brandList = self.removeDuplicates(self.brandList);
+              }
+            });
+          }
+        }
+      }
+    });
+    $('#cmbBrand').on('select2:select', function(e) {
+      if (self.tempIdCustomer !== '') {
+        const idBrand = e.params.data.id;
+        const nameBrand  =  e. params.data.text;
+        if (idBrand !== '') {
+          if (self.chainObj) {
+            if (self.storeObj) {
+              if (self.customerObj) {
+                self.tempIdBrand = idBrand;
+                self.tempNameBrand = name;
+                self.brandObj = {
+                  id: idBrand,
+                  nombre: nameBrand
+                };
+                self.sc.getSkusFromChainStoreCustomerBrandAssociate(self.chainObj, self.storeObj, self.customerObj, self.brandObj)
+                .subscribe(associated => {
+                  if (associated) {
+                    (associated as IAssociatedBrands[]).forEach(i => i.sku.forEach(s => {
+                      s['ds_cliente'] = i.cliente.razonsocial;
+                      s['ds_marca'] = i.marca.nombre;
+                      
+                      self.skuList.push(s);
+                    }));
+                    self.skuList = self.removeDuplicates(self.skuList);
+                  }
+                });
+              }
+            }
+          }
+        }
+      } else {
+        this.openAlert('Scope Alert', 'Escoja un cliente');
+      }
+    });
+    $('#cmbBrand').on('select2:unselect', function (e) {
+      const idBrand = e.params.data.id;
+      const nameBrand = e.params.data.text;
+      // TODO: Quitar los skus de la marca removida
     });
     this.sc.getSuperChain().subscribe(chains => {
       this.chainList = chains
@@ -192,17 +280,104 @@ export class OrderMantPageComponent implements OnInit {
     this.gs.getPriority().subscribe(priorities => {
       this.priorityList = priorities
         .sort((a, b) => {
-          return a.nombre < b.nombre ? -1 : 1;
+          return a.nombre > b.nombre ? -1 : 1;
         });
     });
   }
-  onSubmit(myForm: NgForm){
+  removeDuplicates(arr) {
+    const obj = {};
+    for (let i = 0, len = arr.length; i < len; i++) {
+        obj[arr[i]['id']] = arr[i];
+    }
+    arr = new Array();
+    for (const key in obj) {
+      if (key) {
+        arr.push(obj[key]);
+      }
+    }
+    return arr;
+  }
+  onSubmit(myForm: NgForm) {
+    const dates = $('#calendar').multiDatesPicker('getDates');
+    if (dates.length === 0) {
+      this.openAlert('Scope Alert!', 'No ha seleccionado una fecha de visita');
+      return false;
+    }
+    if (!this.chainObj) {
+      this.openAlert('Scope Alert!', 'No ha seleccionado una cadena de supermercado');
+      return false;
+    }
+    if (!this.storeObj) {
+      this.openAlert('Scope Alert!', 'No ha seleccionado una tienda de supermercado');
+      return false;
+    }
+    if (!this.customerObj) {
+      this.openAlert('Scope Alert!', 'No ha seleccionado un cliente');
+      return false;
+    }
+    if (!this.skuList) {
+      this.openAlert('Scope Alert!', 'No ha ingresado productos (sku)');
+      return false;
+    }
+    if (this.skuList.lengh === 0) {
+      this.openAlert('Scope Alert!', 'No ha ingresado productos (sku)');
+      return false;
+    }
+
+    dates.forEach(i => {
+      this.workOrderList.push({
+        numero: this.chainObj.nombre.trim().replace(' ', '').substr(0, 3) + '-' + this.generateUID(),
+        cadena: this.chainObj,
+        local: this.storeObj,
+        mercaderista: this.merchantObj,
+        fecha: i,
+        estado: { id: 'LT4ytmo1DoCbXR3cj8k2', nombre: 'CREADA'},
+        sku: this.skuList
+      });
+    });
+    this.ow.addWorkOrders(this.workOrderList).then(msg => {
+      const strOrders = this.workOrderList.map(x => {
+        return x.numero;
+      });
+      this.openAlert('Scope Error', `Se generaron las siguientes órdenes:  ${strOrders.join()}`);
+    }).catch(err => {
+      this.openAlert('Scope Error', `No se generaron algunas órdenes, ${err.message}`);
+    });
+    this.limpiar();
+  }
+  calendarizar() {
 
   }
-  calendarizar(){
-
+  limpiar() {
+    this.chainObj = this.undefined;
+    this.storeObj = this.undefined;
+    this.customerObj = this.undefined;
+    this.brandObj = this.undefined;
+    this.merchantObj = this.undefined;
+    $('#cmbMerchant').val('').trigger('change');
+    $('#cmbChain').val('').trigger('change');
+    this.storeList = [];
+    this.customerList = [];
+    this.brandList = [];
+    this.skuList = [];
+    $('#calendar').multiDatesPicker('resetDates');
   }
-  limpiar(){
+  exclude(sku: any) {
+    const index: number = this.skuList.indexOf(sku);
+    if (index !== -1) {
+      this.skuList.splice(index, 1);
+    }
+  }
+  openAlert(tit: string, msg: string): void {
+    const dialogRef = this.dialog.open(AlertDialogComponent, {
+      width: '350px',
+      data: { title: tit, msg: msg }
+    });
 
+    dialogRef.afterClosed().subscribe((result) => {
+    });
+  }
+  generateUID() {
+    return Math.floor(1e5 + (Math.random() * 5e5));
   }
 }

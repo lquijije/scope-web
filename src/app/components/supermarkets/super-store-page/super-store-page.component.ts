@@ -62,7 +62,9 @@ export class SuperStorePageComponent implements OnInit {
         self.tempIdChain = idChain;
         self.tempNameChain = nameChain;
         self.sc.getSuperStoreFromChain(idChain).subscribe(stores => {      
-          self.storeList = stores;
+          self.storeList = stores.sort((a, b) => {
+            return a.nombre < b.nombre ? -1 : 1;
+          });
         });
       }
     });
@@ -150,7 +152,7 @@ export class SuperStorePageComponent implements OnInit {
       }
     });
     var n3 = new Option('', '', true, true);
-    $('#cmbZone').append(n2).trigger('change');
+    $('#cmbZone').append(n3).trigger('change');
     $('#cmbZone').select2({
       placeholder: "Zona",
       language: {

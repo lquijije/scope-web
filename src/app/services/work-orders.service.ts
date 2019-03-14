@@ -18,8 +18,8 @@ export class WorkOrdersService {
   oStatusDoc: AngularFirestoreDocument<IOrderStatus>;
 
   afs: AngularFirestore;
-  constructor(public objafs: AngularFirestore) { 
-    this.afs=objafs;
+  constructor(public objafs: AngularFirestore) {
+    this.afs = objafs;
     this.wOrderCollection = this.afs.collection<IWorkOrder>('work-orders');
     this.oStatusCollection = this.afs.collection<IWorkOrder>('order-status');
 
@@ -41,7 +41,31 @@ export class WorkOrdersService {
   getWorkOrders() {
     return this.wOrderObs;
   }
-  getOrderStatus(){
+  getOrderStatus() {
     return this.oStatusObs;
+  }
+  addWorkOrder(wOrder: IWorkOrder) {
+    return new Promise((resolve, reject) => {
+      this.wOrderCollection.add(wOrder).then(
+        data => resolve('OK'),
+        err => reject(err)
+      );
+    });
+  }
+  addWorkOrders(wOrders: IWorkOrder[]) {
+    return new Promise((resolve, reject) => {
+      wOrders.forEach(w => {
+        this.wOrderCollection.add(w).then(
+          data => {
+            w['generada'] = true;
+            resolve('OK');
+          },
+          err => {
+            w['generada'] = false;
+            reject(err);
+          }
+        );
+      });
+    });
   }
 }

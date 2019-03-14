@@ -63,8 +63,11 @@ export class SkuMantPageComponent implements OnInit {
       if (idCustomer!=''){
         self.tempIdCustomer = idCustomer;
         self.tempNameCustomer = nameCustomer;
+        self.skuList = [];
         self.cs.getBrandFromCustomer(idCustomer).subscribe(brands => {      
           self.brandList = brands;
+          var n2 = new Option('', '', true, true);
+          $('#cmbBrand').append(n2).trigger('change');
         });
       }
     });

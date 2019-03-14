@@ -72,9 +72,9 @@ export class CustomerMantPageComponent implements OnInit {
     });
   }
   showEditView() {
-    if(!this.editState){
+    if (!this.editState) {
       this.actionName = 'Nuevo';
-    }else{
+    } else {
       this.actionName = 'Editar';
     }
     $('#pnlEdit').removeClass('d-none');
@@ -87,7 +87,6 @@ export class CustomerMantPageComponent implements OnInit {
   clearObject() {
     this.editState = false;
     this.customer = {
-      id:'',
       ruc: '',
       razonsocial: '',
       direccion: '',

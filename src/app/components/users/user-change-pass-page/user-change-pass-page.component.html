@@ -1,14 +1,53 @@
-<div class="row p-5 w-100" style="height: 90vh;"> 
-    <div class="col">
+<div class="pt-2 px-xs-0 px-sm-3 px-md-5 w-100" style="height: 90vh;"> 
+    <div class="col p-0">
         <div class="row">
           <div class="col-12 col-xl-8 offset-xl-2">
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="javascript:void(0)">Usuarios</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
+                <li class="breadcrumb-item d-block d-sm-none"><a href="javascript:void(0)">...</a></li>
+                <li class="breadcrumb-item d-none d-sm-block"><a href="javascript:void(0)">Usuarios</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Cambio de Clave</li>
               </ol>
             </nav>
+          </div>
+        </div>
+        <div class="row" id='pnlEdit'>
+          <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-4 offset-lg-4 bg-light">
+            <div class="card-body">
+              <h4 class="text-center"><i class="fa fa-key"></i> Cambio de Clave</h4>
+              <form (submit)="onSubmit()">
+                <div class="row">
+                  <div class="col">
+                    <mat-form-field class="w-100">
+                      <input matInput type="password" class = "text-primary"style="font-size: 1.5rem;" placeholder="Clave Actual" [(ngModel)]="curpass" id="password" name="password" value="" >
+                      <span toggle="#password-field" class="fa fa-2x fa-eye field-icon text-primary toggle-password0"></span>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <mat-form-field class="w-100">
+                      <input matInput type="password" class = "text-warning"style="font-size: 1.5rem;" placeholder="Nueva Clave" [(ngModel)]="newpas1" id="newpass1" name="newpass1" value="newpass1" >
+                      <span toggle="#password-field" class="fa fa-2x fa-eye field-icon text-warning toggle-password1"></span>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <mat-form-field class="w-100">
+                      <input matInput type="password" class = "text-warning"style="font-size: 1.5rem;" placeholder="Confirmar Clave" [(ngModel)]="newpas2" id="newpass2" name="newpass2" value="" >
+                      <span toggle="#password-field" class="fa fa-2x fa-eye field-icon text-warning toggle-password2"></span>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row d-flex justify-content-end">
+                  <div class="col">
+                    <input type="submit" value="Grabar" class="btn btn-primary rounded btn-md btn-block btn-lg">
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
     </div>

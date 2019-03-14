@@ -74,6 +74,7 @@ export class CustomerService {
   addCustomer(customer: ICustomer) {
     this.customerCollection.add(customer);
   }
+  
 
   delCustomer(customer: ICustomer) {
     this.customerDoc = this.afs.doc(`customer/${customer.id}`);

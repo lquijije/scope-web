@@ -47,7 +47,7 @@ export class BrandMantPageComponent implements OnInit {
       if (idCustomer!=''){
         self.tempIdCustomer = idCustomer;
         self.tempNameCustomer = nameCustomer;
-        self.cs.getBrandFromCustomer(idCustomer).subscribe(brands => {      
+        self.cs.getBrandFromCustomer(idCustomer).subscribe(brands => {
           self.brandList = brands;
           console.log(self.brandList);
         });
