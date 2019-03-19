@@ -307,6 +307,10 @@ export class OrderMantPageComponent implements OnInit {
       this.openAlert('Scope Alert!', 'No ha seleccionado una cadena de supermercado');
       return false;
     }
+    if (!this.merchantObj) {
+      this.openAlert('Scope Alert!', 'No ha seleccionado un mercaderista');
+      return false;
+    }
     if (!this.storeObj) {
       this.openAlert('Scope Alert!', 'No ha seleccionado una tienda de supermercado');
       return false;
@@ -339,7 +343,7 @@ export class OrderMantPageComponent implements OnInit {
       const strOrders = this.workOrderList.map(x => {
         return x.numero;
       });
-      this.openAlert('Scope Error', `Se generaron las siguientes órdenes:  ${strOrders.join()}`);
+      this.openAlert('Scope', `Se generaron las siguientes órdenes:  ${strOrders.join()}`);
     }).catch(err => {
       this.openAlert('Scope Error', `No se generaron algunas órdenes, ${err.message}`);
     });

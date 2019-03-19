@@ -15,11 +15,12 @@ import { SuperStorePageComponent } from './components/supermarkets/super-store-p
 import { ZonePageComponent } from './components/supermarkets/zone-page/zone-page.component';
 import { OrderMantPageComponent } from './components/work-orders/order-mant-page/order-mant-page.component';
 import { OrderInquiryPageComponent } from './components/work-orders/order-inquiry-page/order-inquiry-page.component';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   {
     path: '',
-    component: HomePageComponent,
+    component: HomePageComponent
   },
   {
     path: 'login',
