@@ -147,6 +147,7 @@ export class SupermaketsService {
 
 
   getZone() {
+    console.log('getZone');
     return this.zoneObs;
   }
 

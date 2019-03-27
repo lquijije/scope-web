@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ICustomer } from '../../../models/customers/customers';
 import { IBrand } from '../../../models/customers/brands';
 import { CustomerService } from '../../../services/customer.service';
@@ -7,6 +7,8 @@ import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
 import * as $ from 'jquery';
+import { Subscription } from 'rxjs';
+
 declare var $: any;
 
 @Component({
@@ -14,7 +16,7 @@ declare var $: any;
   templateUrl: './brand-mant-page.component.html',
   styleUrls: ['./brand-mant-page.component.css']
 })
-export class BrandMantPageComponent implements OnInit {
+export class BrandMantPageComponent implements OnInit, OnDestroy {
   customerList: any;
   brand: IBrand = {
     nombre: '', 
@@ -25,26 +27,27 @@ export class BrandMantPageComponent implements OnInit {
   editState: any = false;
   tempIdCustomer: string = '';
   tempNameCustomer: string = '';
-  actionName:string ='';
+  actionName: string = '';
+  customerSubscription: Subscription;
   constructor(public dialog: MatDialog,
     private cs: CustomerService) { }
 
   ngOnInit() {
-    var self = this;
-    var n1 = new Option('', '', true, true);
+    const self = this;
+    const n1 = new Option('', '', true, true);
     $('#cmbCustomer').append(n1).trigger('change');
     $('#cmbCustomer').select2({
-      placeholder: "Seleccione...",
+      placeholder: 'Seleccione...',
       language: {
-          "noResults": function () {
-              return "";
+          'noResults': function () {
+              return '';
           }
       }
     });
-    $('#cmbCustomer').on('select2:select',function(e){
-      var idCustomer = e.params.data.id;
-      var nameCustomer = e.params.data.text;
-      if (idCustomer!=''){
+    $('#cmbCustomer').on('select2:select', function(e) {
+      const idCustomer = e.params.data.id;
+      const nameCustomer = e.params.data.text;
+      if (idCustomer != '') {
         self.tempIdCustomer = idCustomer;
         self.tempNameCustomer = nameCustomer;
         self.cs.getBrandFromCustomer(idCustomer).subscribe(brands => {
@@ -53,13 +56,16 @@ export class BrandMantPageComponent implements OnInit {
         });
       }
     });
-    this.cs.getCustomer().subscribe(customers => {
+    this.customerSubscription = this.cs.getCustomer().subscribe(customers => {
       this.customerList = customers
       .filter(ch => ch.estado === 'A')
         .sort((a, b) => {
           return a.razonsocial < b.razonsocial ? -1 : 1;
         });
     });
+  }
+  ngOnDestroy() {
+    this.customerSubscription.unsubscribe();
   }
   onSubmit(myForm: NgForm) {
     if (!this.editState) {

@@ -64,6 +64,7 @@ import { ZonePageComponent } from './components/supermarkets/zone-page/zone-page
     ZonePageComponent
   ],
   imports: [
+    AngularFireModule.initializeApp(environment.firebaseConfig),
     BrowserModule,
     HttpClientModule,
     BrowserAnimationsModule,
@@ -71,15 +72,14 @@ import { ZonePageComponent } from './components/supermarkets/zone-page/zone-page
     AppRoutingModule,
     FormsModule,
     AngularFireAuthModule,
-    AngularFirestoreModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig)
+    AngularFirestoreModule
   ],
   entryComponents: [
     AlertDialogComponent,
     ConfirmDialogComponent
   ],
-  providers: [AuthService, 
-              UsersService, 
+  providers: [AuthService,
+              UsersService,
               SupermaketsService,
               CustomerService,
               GeneralService,

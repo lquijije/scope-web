@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ISku } from '../../../models/customers/skus';
 import { CustomerService } from '../../../services/customer.service';
 import { SupermaketsService } from '../../../services/supermakets.service';
@@ -8,6 +8,7 @@ import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/c
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
 import * as $ from 'jquery';
 import { IAssociatedBrands } from 'src/app/models/customers/associated-brands';
+import { Subscription } from 'rxjs';
 declare var $: any;
 
 @Component({
@@ -15,7 +16,7 @@ declare var $: any;
   templateUrl: './assoc-brands-page.component.html',
   styleUrls: ['./assoc-brands-page.component.css']
 })
-export class AssocBrandsPageComponent implements OnInit {
+export class AssocBrandsPageComponent implements OnInit, OnDestroy {
   customerList: any;
   brandList: any;
   chainList: any;
@@ -57,7 +58,10 @@ export class AssocBrandsPageComponent implements OnInit {
     cliente: '',
     marca: '',
     sku: []
-  };;
+  };
+  customerSubscription: Subscription;
+  superChainSubscription: Subscription;
+  assocSubscription: Subscription;
   constructor(public dialog: MatDialog,
     private cs: CustomerService,
     private sc: SupermaketsService) { }
@@ -78,7 +82,7 @@ export class AssocBrandsPageComponent implements OnInit {
     $('#cmbStore').on('select2:select',function(e){
       var idStore = e.params.data.id;
       var nameStore = e.params.data.text;
-      if (idStore!=''){
+      if (idStore!=''){ 
         self.tempIdStore = idStore;
         self.tempNameStore = nameStore;
       }
@@ -101,7 +105,7 @@ export class AssocBrandsPageComponent implements OnInit {
         if (idBrand!=''){
           self.tempIdBrand = idBrand;
           self.tempNameBrand = nameBrand;
-          self.cs.getSkuFromCustomerAndBrand(self.tempIdCustomer, idBrand).subscribe(skus => {      
+          self.cs.getSkuFromCustomerAndBrand(self.tempIdCustomer, idBrand).subscribe(skus => {
             self.skuList = skus;
           });
         }
@@ -109,24 +113,28 @@ export class AssocBrandsPageComponent implements OnInit {
         this.openAlert('Scope Alert','Escoja un cliente');
       }
     });
-    this.cs.getCustomer().subscribe(customers => {
+    this.customerSubscription = this.cs.getCustomer().subscribe(customers => {
       this.customerList = customers
       .filter(ch => ch.estado === 'A')
         .sort((a, b) => {
           return a.razonsocial < b.razonsocial ? -1 : 1;
         });
     });
-    this.sc.getSuperChain().subscribe(chains => {
+    this.superChainSubscription = this.sc.getSuperChain().subscribe(chains => {
       this.chainList = chains
       .filter(ch => ch.estado === 'A')
         .sort((a, b) => {
           return a.nombre < b.nombre ? -1 : 1;
         });
     });
-    this.cs.getAssociatedBrands().subscribe(assocBrands => {
+    this.assocSubscription = this.cs.getAssociatedBrands().subscribe(assocBrands => {
       this.assocBrandList = assocBrands;
-      console.log(this.assocBrandList);
     });
+  }
+  ngOnDestroy() {
+    this.customerSubscription.unsubscribe();
+    this.superChainSubscription.unsubscribe();
+    this.assocSubscription.unsubscribe();
   }
   onSubmit(myForm: NgForm){
     if($('#cmbChain').val()!=''){

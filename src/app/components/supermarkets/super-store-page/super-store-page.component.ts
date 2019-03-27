@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ISuperChain } from '../../../models/supermarkets/super-chain';
 import { SupermaketsService } from '../../../services/supermakets.service';
 import { GeneralService } from '../../../services/general.service';
@@ -7,6 +7,7 @@ import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
 import * as $ from 'jquery';
+import { Subscription } from 'rxjs';
 import { ISuperStore } from 'src/app/models/supermarkets/super-store';
 declare var $: any;
 
@@ -15,7 +16,7 @@ declare var $: any;
   templateUrl: './super-store-page.component.html',
   styleUrls: ['./super-store-page.component.css']
 })
-export class SuperStorePageComponent implements OnInit {
+export class SuperStorePageComponent implements OnInit, OnDestroy {
   chainList: any;
   cityList: any;
   zoneList: any;
@@ -34,59 +35,67 @@ export class SuperStorePageComponent implements OnInit {
     id: '0',
     nombre: '',
     estado: ''
-  }]; 
+  }];
   editState: any = false;
-  tempIdChain:string = '';
+  tempIdChain: string = '';
   tempNameChain: string = '';
   actionName: string = '';
+  chainSubscription: Subscription;
+  citySubscription: Subscription;
+  zoneSubscription: Subscription;
   constructor(public dialog: MatDialog,
     private sc: SupermaketsService,
     private ge: GeneralService) { }
 
   ngOnInit() {
-    var self = this;
-    var n1 = new Option('', '', true, true);
+    const self = this;
+    const n1 = new Option('', '', true, true);
     $('#cmbChain').append(n1).trigger('change');
     $('#cmbChain').select2({
-      placeholder: "Seleccione...",
+      placeholder: 'Seleccione...',
       language: {
-          "noResults": function () {
-              return "";
+          'noResults': function () {
+              return '';
           }
       }
     });
-    $('#cmbChain').on('select2:select',function(e){
-      var idChain = e.params.data.id;
-      var nameChain = e.params.data.text;
-      if (idChain!=''){
+    $('#cmbChain').on('select2:select', function(e) {
+      const idChain = e.params.data.id;
+      const nameChain = e.params.data.text;
+      if (idChain != '') {
         self.tempIdChain = idChain;
         self.tempNameChain = nameChain;
-        self.sc.getSuperStoreFromChain(idChain).subscribe(stores => {      
+        self.sc.getSuperStoreFromChain(idChain).subscribe(stores => {
           self.storeList = stores.sort((a, b) => {
             return a.nombre < b.nombre ? -1 : 1;
           });
         });
       }
     });
-    this.sc.getSuperChain().subscribe(chains => {
+    this.chainSubscription = this.sc.getSuperChain().subscribe(chains => {
       this.chainList = chains
       .filter(ch => ch.estado === 'A')
         .sort((a, b) => {
           return a.nombre < b.nombre ? -1 : 1;
         });
     });
-    this.ge.getCity().subscribe(cities => {
+    this.citySubscription = this.ge.getCity().subscribe(cities => {
       this.cityList = cities
         .sort((a, b) => {
           return a.nombre < b.nombre ? -1 : 1;
         });
     });
-    this.ge.getZone().subscribe(zones => {
+    this.zoneSubscription = this.ge.getZone().subscribe(zones => {
       this.zoneList = zones
         .sort((a, b) => {
           return a.nombre < b.nombre ? -1 : 1;
         });
     });
+  }
+  ngOnDestroy(): void {
+    this.chainSubscription.unsubscribe();
+    this.citySubscription.unsubscribe();
+    this.zoneSubscription.unsubscribe();
   }
   onSubmit(myForm: NgForm) {
     this.store.ciudad = $('#cmbCity').select2('data')[0].text;

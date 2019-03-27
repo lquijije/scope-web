@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ICustomer } from '../../../models/customers/customers';
 import { CustomerService } from '../../../services/customer.service';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import * as $ from 'jquery';
+import { Subscription } from 'rxjs';
+
 declare var $: any;
 @Component({
   selector: 'app-customer-mant-page',
   templateUrl: './customer-mant-page.component.html',
   styleUrls: ['./customer-mant-page.component.css']
 })
-export class CustomerMantPageComponent implements OnInit {
+export class CustomerMantPageComponent implements OnInit, OnDestroy {
   customerList: any;
   customer: ICustomer = {
     ruc: '',
@@ -22,17 +24,21 @@ export class CustomerMantPageComponent implements OnInit {
   };
   editState: any = false;
   actionName: string = '';
+  customerSubsription: Subscription;
   constructor(public dialog: MatDialog,
     private sc: CustomerService) { }
 
   ngOnInit() {
-    this.sc.getCustomer().subscribe(customers => {
+    this.customerSubsription = this.sc.getCustomer().subscribe(customers => {
       this.customerList = customers
       .filter(cus => cus.estado === 'A')
         .sort((a, b) => {
           return a.razonsocial < b.razonsocial ? -1 : 1;
         });
     });
+  }
+  ngOnDestroy() {
+    this.customerSubsription.unsubscribe();
   }
   nuevo() {
     this.showEditView();

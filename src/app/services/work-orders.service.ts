@@ -42,6 +42,16 @@ export class WorkOrdersService {
     return this.wOrderObs;
   }
 
+  getWorkOrdersList() {
+    return this.afs.collection<IWorkOrder>('work-orders').snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IWorkOrder;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
+
   getOrderStatus() {
     return this.oStatusObs;
   }

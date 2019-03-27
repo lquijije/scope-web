@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { IUser } from '../../../models/users/user';
 import { UsersService } from '../../../services/users.service';
 import { Router, NavigationEnd } from '@angular/router';
@@ -10,6 +10,7 @@ import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert
 import { FirebaseRestService } from '../../../services/firebase-rest.service';
 import { ICreateSession } from '../../../models/users/rest-firebase';
 import { IAccountInfo } from '../../../models/users/rest-firebase';
+import { Subscription } from 'rxjs';
 
 import * as $ from 'jquery';
 import { IProfile } from 'src/app/models/users/profile';
@@ -22,7 +23,7 @@ declare var $: any;
   styleUrls: ['./user-man-page.component.css']
 })
 
-export class UserManPageComponent implements OnInit {
+export class UserManPageComponent implements OnInit, OnDestroy {
   userList: IUser[];
   profileList: IProfile[];
   user: IUser = {
@@ -36,6 +37,8 @@ export class UserManPageComponent implements OnInit {
   };
   editState: any = false;
   actionName: any = '';
+  userSubscription: Subscription;
+  profileSubscription: Subscription;
   constructor(public dialog: MatDialog,
     private us: UsersService,
     private router: Router,
@@ -44,12 +47,16 @@ export class UserManPageComponent implements OnInit {
    }
 
   ngOnInit() {
-    this.us.getUsers().subscribe(users => {
+    this.userSubscription = this.us.getUsers().subscribe(users => {
       this.userList = users;
     });
-    this.us.getProfiles().subscribe(profiles => {
+    this.profileSubscription = this.us.getProfiles().subscribe(profiles => {
       this.profileList = profiles;
     });
+  }
+  ngOnDestroy() {
+    this.profileSubscription.unsubscribe();
+    this.userSubscription.unsubscribe();
   }
   nuevo() {
     $('#email').prop('readonly', false);

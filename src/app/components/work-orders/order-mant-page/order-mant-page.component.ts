@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ISku } from '../../../models/customers/skus';
 import { IOrderStatus } from '../../../models/work-orders/order-status';
 import { CustomerService } from '../../../services/customer.service';
@@ -14,7 +14,7 @@ import { IAssociatedBrands } from 'src/app/models/customers/associated-brands';
 import { IWorkOrder } from 'src/app/models/work-orders/work-order';
 import { of } from 'rxjs';
 import { groupBy, mergeMap, reduce, map } from 'rxjs/operators';
-
+import { Subscription } from 'rxjs';
 import * as $ from 'jquery';
 import { ICustomer } from 'src/app/models/customers/customers';
 import { IUser } from 'src/app/models/users/user';
@@ -42,7 +42,7 @@ export interface IBrandObj {
   styleUrls: ['./order-mant-page.component.css']
 })
 
-export class OrderMantPageComponent implements OnInit {
+export class OrderMantPageComponent implements OnInit, OnDestroy {
   undefined: any;
   chainList: any;
   chainObj: IChainObj;
@@ -69,6 +69,10 @@ export class OrderMantPageComponent implements OnInit {
   editState: any = false;
   actionName: string = '';
   sequential = 1;
+  superChainSubscription: Subscription;
+  merchantSubscription: Subscription;
+  prioritySubscription: Subscription;
+  workOrderSubscription: Subscription;
   constructor(public dialog: MatDialog,
     private cs: CustomerService,
     private sc: SupermaketsService,
@@ -277,20 +281,20 @@ export class OrderMantPageComponent implements OnInit {
       const nameBrand = e.params.data.text;
       // TODO: Quitar los skus de la marca removida
     });
-    this.sc.getSuperChain().subscribe(chains => {
+    this.superChainSubscription = this.sc.getSuperChain().subscribe(chains => {
       this.chainList = chains
       .filter(ch => ch.estado === 'A')
         .sort((a, b) => {
           return a.nombre < b.nombre ? -1 : 1;
         });
     });
-    this.us.getMerchants().subscribe(merchants => {
+    this.merchantSubscription = this.us.getMerchants().subscribe(merchants => {
       this.merchantList = merchants
         .sort((a, b) => {
           return a.nombre < b.nombre ? -1 : 1;
         });
     });
-    this.gs.getPriority().subscribe(priorities => {
+    this.workOrderSubscription = this.prioritySubscription = this.gs.getPriority().subscribe(priorities => {
       this.priorityList = priorities
         .sort((a, b) => {
           return a.nombre > b.nombre ? -1 : 1;
@@ -301,6 +305,12 @@ export class OrderMantPageComponent implements OnInit {
         this.sequential = d.length + 1;
       }
     });
+  }
+  ngOnDestroy() {
+    this.superChainSubscription.unsubscribe();
+    this.merchantSubscription.unsubscribe();
+    this.prioritySubscription.unsubscribe();
+    this.workOrderSubscription.unsubscribe();
   }
   removeDuplicates(arr) {
     const obj = {};
@@ -354,7 +364,7 @@ export class OrderMantPageComponent implements OnInit {
         mercaderista: this.merchantObj,
         visita: i + ' ' + $('#' + i).val(),
         creacion: new Date(),
-        estado: { id: 'LT4ytmo1DoCbXR3cj8k2', nombre: 'CREADA'},
+        estado: { id: 'eNyPUyFqo8SrwkKvDAgD', nombre: 'CREADA'},
         sku: this.skuList
       });
       this.sequential++;
