@@ -12,7 +12,8 @@ export interface IWorkOrder {
     cadena?: ISuperChain;
     local?: ISuperStore;
     mercaderista?: IUser;
-    fecha?: string;
+    visita?: string;
+    creacion?: Date;
     sku?: ISkuOrder[];
     estado: IOrderStatus;
 }

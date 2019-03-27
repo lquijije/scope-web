@@ -53,7 +53,7 @@ export class OrderMantPageComponent implements OnInit {
   brandList: any = [];
   brandObj: any;
   skuList: any;
-  workOrderList: any = [];
+  workOrderList: IWorkOrder[] = [];
   merchantList: any;
   merchantObj: IUser;
   priorityList: any;
@@ -68,6 +68,7 @@ export class OrderMantPageComponent implements OnInit {
   tempNameBrand: string;
   editState: any = false;
   actionName: string = '';
+  sequential = 1;
   constructor(public dialog: MatDialog,
     private cs: CustomerService,
     private sc: SupermaketsService,
@@ -78,6 +79,19 @@ export class OrderMantPageComponent implements OnInit {
   ngOnInit() {
     const self = this;
     $('#calendar').multiDatesPicker({
+      onSelect: function(e) {
+        const dates = $('#calendar').multiDatesPicker('getDates');
+        let htm = '';
+        dates.forEach(d => {
+          htm += `<div class="row">
+                    <div class="col d-flex flex-row align-items-center">
+                      <small>${d}</small>:
+                      <input type="time" class="form-control form-control-sm w-50" style="width=20px;!important" value="09:00" id="${d}"/>
+                    </div>
+                  </div>`;
+        });
+        $('#times').html(htm);
+      },
       dateFormat: 'yy-mm-dd'
     });
     $('.ui-datepicker').css('font-size', 12);
@@ -245,7 +259,6 @@ export class OrderMantPageComponent implements OnInit {
                     (associated as IAssociatedBrands[]).forEach(i => i.sku.forEach(s => {
                       s['ds_cliente'] = i.cliente.razonsocial;
                       s['ds_marca'] = i.marca.nombre;
-                      
                       self.skuList.push(s);
                     }));
                     self.skuList = self.removeDuplicates(self.skuList);
@@ -282,6 +295,11 @@ export class OrderMantPageComponent implements OnInit {
         .sort((a, b) => {
           return a.nombre > b.nombre ? -1 : 1;
         });
+    });
+    this.ow.getWorkOrders().subscribe(d => {
+      if (d) {
+        this.sequential = d.length + 1;
+      }
     });
   }
   removeDuplicates(arr) {
@@ -323,27 +341,29 @@ export class OrderMantPageComponent implements OnInit {
       this.openAlert('Scope Alert!', 'No ha ingresado productos (sku)');
       return false;
     }
-
     dates.forEach(i => {
       this.workOrderList.push({
-        numero: this.chainObj.nombre.trim().replace(' ', '').substr(0, 3) + '-' + this.generateUID(),
+        // numero: this.chainObj.nombre.trim().replace(' ', '').substr(0, 3) + '-' + this.generateUID(),
+        numero: ('00000' + this.sequential).slice(-5),
         cadena: this.chainObj,
         local: this.storeObj,
         mercaderista: this.merchantObj,
-        fecha: i,
+        visita: i + ' ' + $('#' + i).val(),
+        creacion: new Date(),
         estado: { id: 'LT4ytmo1DoCbXR3cj8k2', nombre: 'CREADA'},
         sku: this.skuList
       });
+      this.sequential++;
     });
     this.ow.addWorkOrders(this.workOrderList).then(msg => {
       const strOrders = this.workOrderList.map(x => {
         return x.numero;
       });
       this.openAlert('Scope Error', `Se generaron las siguientes órdenes:  ${strOrders.join()}`);
+      this.limpiar();
     }).catch(err => {
       this.openAlert('Scope Error', `No se generaron algunas órdenes, ${err.message}`);
     });
-    this.limpiar();
   }
   calendarizar() {
 
@@ -360,7 +380,9 @@ export class OrderMantPageComponent implements OnInit {
     this.customerList = [];
     this.brandList = [];
     this.skuList = [];
+    this.workOrderList = [];
     $('#calendar').multiDatesPicker('resetDates');
+    $('#times').html('');
   }
   exclude(sku: any) {
     const index: number = this.skuList.indexOf(sku);

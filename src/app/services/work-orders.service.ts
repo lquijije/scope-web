@@ -41,6 +41,7 @@ export class WorkOrdersService {
   getWorkOrders() {
     return this.wOrderObs;
   }
+
   getOrderStatus() {
     return this.oStatusObs;
   }
