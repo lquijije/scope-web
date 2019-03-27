@@ -325,6 +325,10 @@ export class OrderMantPageComponent implements OnInit {
       this.openAlert('Scope Alert!', 'No ha seleccionado una cadena de supermercado');
       return false;
     }
+    if (!this.merchantObj) {
+      this.openAlert('Scope Alert!', 'No ha seleccionado un mercaderista');
+      return false;
+    }
     if (!this.storeObj) {
       this.openAlert('Scope Alert!', 'No ha seleccionado una tienda de supermercado');
       return false;

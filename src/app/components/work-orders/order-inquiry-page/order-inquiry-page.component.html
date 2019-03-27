@@ -1,7 +1,7 @@
 <div class="pt-2 px-xs-0 px-sm-3 px-md-5 w-100" style="height: 90vh;">
     <div class="col p-0">
         <div class="row">
-          <div class="col-12 col-xl-8 offset-xl-2">
+          <div class="col-12">
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
@@ -12,6 +12,46 @@
             </nav>
           </div>
         </div>
-        
+        <div class="row">
+          <div class="col-12">
+            <div class="card-body bg-light border rounded">
+                <h4 class="text-center"><strong> Consulta de &oacute;rden de trabajo </strong></h4>
+
+                <div class="row mt-1">
+                  <div class="col">
+                    <table id="table_orders" class="table table-bordered table-sm">
+                      <thead class="text-center bg-primary text-white">
+                        <th># Orden</th>
+                        <th></th>
+                        <th>Cadena</th>
+                        <th>Local</th>
+                        <th>Mercaderista</th>
+                        <th>Estado</th>
+                        <th>Inicio</th>
+                        <th>Fin</th>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let order of orderList">
+                          <td>{{order.numero}}</td>
+                          <td></td>
+                          <td>{{order.cadena.nombre}}</td>
+                          <td>{{order.local.nombre}}</td>
+                          <td>{{order.mercaderista.nombre}}</td>
+                          <td>{{order.estado.nombre}}</td>
+                          <td>{{order.inicio}}</td>
+                          <td>{{order.fin}}</td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+
+
+
+            </div>
+          </div>
+        </div>
     </div>
 </div>
