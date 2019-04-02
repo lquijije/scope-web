@@ -14,30 +14,136 @@
         </div>
         <div class="row">
           <div class="col-12">
-            <div class="card-body bg-light border rounded">
+            <div class="card-body bg-light border rounded" id='pnlList'>
                 <h4 class="text-center"><strong> Consulta de &oacute;rden de trabajo </strong></h4>
-
+                <div class="row">
+                  <div class="col-12 col-md-3">
+                    <div class="col">
+                      <mat-form-field class="w-100">
+                        <input matInput placeholder="Fecha Desde: " type="text" name="" id="fedesde" [(ngModel)]="desde">
+                      </mat-form-field>
+                    </div>
+                    <div class="col">
+                      <mat-form-field class="w-100">
+                        <input matInput placeholder="Fecha Hasta: " type="text" name="" id="fehasta" [(ngModel)]="hasta">
+                      </mat-form-field>
+                    </div>
+                    <div class="col">
+                      <div class="custom-control custom-radio">
+                        <input type="radio" id="rd-crea" name="fecha" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="rd-crea">Creaci&oacute;n</label>
+                      </div>
+                      <div class="custom-control custom-radio pt-2">
+                        <input type="radio" id="rd-vis" name="fecha" class="custom-control-input">
+                        <label class="custom-control-label" for="rd-vis">Visita</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-9">
+                    <div class="row pt-3">
+                      <div class="col-12 col-md-6">
+                        <div class="d-flex flex-column">
+                          <span for="" class="text-primary">Mercaderista:</span>
+                          <select class="form-control" id="cmbMerchant">
+                            <option *ngFor="let merchant of merchantList" value="{{merchant.id}}">{{merchant.nombre}}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <div class="d-flex flex-column">
+                          <span for="" class="text-primary">Estado:</span>
+                          <select class="form-control" id="cmbStatus" multiple>
+                            <option *ngFor="let status of statusList" value="{{status.id}}">{{status.nombre}}</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row pt-3">
+                      <div class="col-12 col-md-6">
+                        <div class="d-flex flex-column">
+                          <span for="" class="text-primary">Cadena:</span>
+                          <select class="form-control" id="cmbChain">
+                            <option *ngFor="let chain of chainList" value="{{chain.id}}">{{chain.nombre}}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <div class="d-flex flex-column">
+                          <span for="" class="text-primary">Tienda:</span>
+                          <select class="form-control" id="cmbStore">
+                            <option *ngFor="let store of storeList" value="{{store.id}}">{{store.nombre}}</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row pt-3">
+                      <div class="col-12 col-md-6">
+                        <div class="d-flex flex-column">
+                          <span for="" class="text-primary">Cliente:</span>
+                          <select class="form-control" id="cmbCustomer">
+                            <option *ngFor="let customer of customerList" value="{{customer.id}}">{{customer.razonsocial}}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <div class="d-flex flex-column">
+                          <span for="" class="text-primary"> Marca:</span>
+                          <select class="form-control" id="cmbBrand" multiple>
+                            <option *ngFor="let brand of brandList" value="{{brand.id}}">{{brand.nombre}}</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row pt-4 d-flex align-items-center justify-content-end">
+                  <div class="col-12 col-md-4 d-flex align-items-center justify-content-end mt-2 mb-3">
+                    <button type="button" class="btn btn-link rounded btn-sm  px-4 pt-2 pb-2 btExp" (click)="exportAsXLSX()">
+                      <i class="fa fa-file-excel-o"></i> Exportar
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary rounded btn-sm ml-1 px-4 pt-2 pb-2 btLimp" (click)='limpiar()'>
+                      <i class="fa fa-eraser"></i> Limpiar Filtros
+                    </button>
+                    <button type="button" class="btn btn-primary rounded btn-sm px-4 pt-2 ml-1 pb-2 btProc" (click)="consultar()">
+                      <i class="fa fa-search"></i> Consultar
+                    </button>
+                  </div>                  
+                </div>
                 <div class="row mt-1">
                   <div class="col">
                     <table id="table_orders" class="table table-bordered table-sm">
                       <thead class="text-center bg-primary text-white">
                         <th># Orden</th>
+                        <th>Estado</th>
+                        <th></th>
                         <th></th>
                         <th>Cadena</th>
                         <th>Local</th>
                         <th>Mercaderista</th>
-                        <th>Estado</th>
+                        <th>Creaci&oacute;n</th>
+                        <th>Visita</th>
                         <th>Inicio</th>
                         <th>Fin</th>
                       </thead>
                       <tbody>
                         <tr *ngFor="let order of orderList">
                           <td>{{order.numero}}</td>
-                          <td></td>
+                          <td [ngClass]="{
+                            'text-success':order.estado.nombre === 'CREADA',
+                            'text-primary':order.estado.nombre === 'FINALIZADA',
+                            'text-warning':order.estado.nombre === 'EN PROGRESO',
+                            'text-semi-warning':order.estado.nombre === 'INICIADA'
+                          }">{{order.estado.nombre}}</td>
+                          <td class='text-center'><a class="text-info" href="javascript:void(0);" (click)="search(order)"><i
+                                class="fa fa-search"></i></a></td>
+                          <td class='text-center'><a class="text-danger" href="javascript:void(0);" (click)="delete(order)"><i
+                                class="fa fa-trash"></i></a></td>
                           <td>{{order.cadena.nombre}}</td>
                           <td>{{order.local.nombre}}</td>
                           <td>{{order.mercaderista.nombre}}</td>
-                          <td>{{order.estado.nombre}}</td>
+                          <td>{{order.creacion.toDate() | date: 'y-MM-dd HH:mm:ss'}}</td>
+                          <td>{{order.visita | date: 'y-MM-dd HH:mm:ss'}}</td>
                           <td>{{order.inicio}}</td>
                           <td>{{order.fin}}</td>
                         </tr>
@@ -47,9 +153,99 @@
                     </table>
                   </div>
                 </div>
-
-
-
+            </div>
+            <div class="card-body bg-light border rounded d-none" id='pnlDetail'>
+              <div class="row mt-1">
+                <div class="col-12 text-center">
+                  <h2 id="hTit">  </h2>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary">Cadena:</span>
+                    <label for="" id="lbCad"></label>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary">Local:</span>
+                    <label for="" id="lbLoc">}</label>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary">Creación:</span>
+                    <label for="" id="lbCrea"></label>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary">Estado:</span>
+                    <label for="" [ngClass]="{
+                            'text-success':estado === 'CREADA',
+                            'text-primary':estado === 'FINALIZADA',
+                            'text-warning':estado === 'EN PROGRESO',
+                            'text-semi-warning':estado === 'INICIADA'
+                          }" id="lbEst"></label>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary">Mercaderista:</span>
+                    <label for="" id="lbMer"></label>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary">Visita:</span>
+                    <label for="" id="lbVis"></label>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-1">
+                <div class="col">
+                  <table id="table_details" class="table table-bordered table-sm">
+                    <thead class="text-center bg-primary text-white">
+                      <th>Sku</th>
+                      <th>Descripcion</th>
+                      <th>Presentacion</th>
+                      <th>Sabor</th>
+                      <th>Cliente</th>
+                      <th>Marca</th>
+                      <th>Inicial</th>
+                      <th>Final</th>
+                      <th>Caras</th>
+                      <th>Sugerido</th>
+                      <th>Observacion</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let sku of skuList">
+                        <td>{{sku.sku}}</td>
+                        <td>{{sku.descripcion}}</td>
+                        <td>{{sku.presentacion}}</td>
+                        <td>{{sku.sabor}}</td>
+                        <td>{{sku.ds_cliente}}</td>
+                        <td>{{sku.ds_marca}}</td>
+                        <td>{{sku.inicial}}</td>
+                        <td>{{sku.final}}</td>
+                        <td>{{sku.caras}}</td>
+                        <td>{{sku.sugerido}}</td>
+                        <td>{{sku.observacion}}</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+              <div class="row d-flex justify-content-end">
+                <div class="col col-sm-3 col-xl-1">
+                  <input type="button" value="Salir" class="btn btn-secondary rounded btn-sm btn-block btn-lg" (click)='salir()'>
+                </div>
+              </div>
             </div>
           </div>
         </div>

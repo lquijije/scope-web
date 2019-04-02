@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
-import * as $ from 'jquery';
+// import * as $ from 'jquery';
 import { IAssociatedBrands } from 'src/app/models/customers/associated-brands';
 import { Subscription } from 'rxjs';
 declare var $: any;

@@ -15,7 +15,7 @@ import { IWorkOrder } from 'src/app/models/work-orders/work-order';
 import { of } from 'rxjs';
 import { groupBy, mergeMap, reduce, map } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
-import * as $ from 'jquery';
+// import * as $ from 'jquery';
 import { ICustomer } from 'src/app/models/customers/customers';
 import { IUser } from 'src/app/models/users/user';
 

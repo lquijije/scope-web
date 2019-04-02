@@ -12,7 +12,7 @@ import { ICreateSession } from '../../../models/users/rest-firebase';
 import { IAccountInfo } from '../../../models/users/rest-firebase';
 import { Subscription } from 'rxjs';
 
-import * as $ from 'jquery';
+// import * as $ from 'jquery';
 import { IProfile } from 'src/app/models/users/profile';
 import { restoreBindingIndex } from '@angular/core/src/render3/instructions';
 declare var $: any;

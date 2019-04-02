@@ -7,7 +7,7 @@ import { UsersService } from '../../../services/users.service';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase/app';
 
-import * as $ from 'jquery';
+// import * as $ from 'jquery';
 declare var $: any;
 @Component({
   selector: 'app-user-change-pass-page',

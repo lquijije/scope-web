@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { Subscription } from 'rxjs';
 
-import * as $ from 'jquery';
+// import * as $ from 'jquery';
 declare var $: any;
 
 @Component({

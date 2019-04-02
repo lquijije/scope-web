@@ -4,7 +4,7 @@ import { CustomerService } from '../../../services/customer.service';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
-import * as $ from 'jquery';
+// import * as $ from 'jquery';
 import { Subscription } from 'rxjs';
 
 declare var $: any;

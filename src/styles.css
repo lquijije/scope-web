@@ -31,3 +31,10 @@ legend.scheduler-border {
 	border: none;
 	font-size: 15px;
 }
+.text-semi-warning {
+  color: rgb(218, 196, 7);
+}
+.highlight {
+	background: #B3D5E9;
+	font-weight: bold;
+}
