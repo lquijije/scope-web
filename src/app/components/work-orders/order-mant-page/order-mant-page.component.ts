@@ -301,8 +301,11 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
         });
     });
     this.ow.getWorkOrders().subscribe(d => {
-      if (d) {
-        this.sequential = d.length + 1;
+      if (d.length > 0) {
+        // this.sequential = d.length + 1;
+        this.sequential = parseInt(d.reduce(function(a, b) {
+            return (parseInt(a.numero) > parseInt(b.numero)) ? a : b;
+        }).numero) + 1;
       }
     });
   }
@@ -373,7 +376,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
       const strOrders = this.workOrderList.map(x => {
         return x.numero;
       });
-      this.openAlert('Scope Error', `Se generaron las siguientes órdenes:  ${strOrders.join()}`);
+      this.openAlert('Scope Web', `Se generaron las siguientes órdenes:  ${strOrders.join()}`);
       this.limpiar();
     }).catch(err => {
       this.openAlert('Scope Error', `No se generaron algunas órdenes, ${err.message}`);
