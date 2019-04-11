@@ -68,16 +68,24 @@ export class BrandMantPageComponent implements OnInit, OnDestroy {
     this.customerSubscription.unsubscribe();
   }
   onSubmit(myForm: NgForm) {
-    if (!this.editState) {
-      this.brand.estado = 'A';
-      this.brand.cliente = this.tempIdCustomer;
-      this.cs.addBrand(this.brand);
+    if (myForm.valid) {
+      if (this.brand.nombre.trim() === '') {
+        this.openAlert('Scope Error', 'Nombre no puede estar vacío');
+        return;
+      }
+      if (!this.editState) {
+        this.brand.estado = 'A';
+        this.brand.cliente = this.tempIdCustomer;
+        this.cs.addBrand(this.brand);
+      } else {
+        this.cs.updBrand(this.brand);
+        this.editState = false;
+      }
+      this.clearObject();
+      this.salir();
     } else {
-      this.cs.updBrand(this.brand);
-      this.editState = false;
+      this.openAlert('Scope Error', 'Aún faltan campos requeridos.');
     }
-    this.clearObject();
-    this.salir();
   }
   salir(){
     this.clearObject();
@@ -131,7 +139,7 @@ export class BrandMantPageComponent implements OnInit, OnDestroy {
   }
   openAlert(tit: string, msg: string): void {
     const dialogRef = this.dialog.open(AlertDialogComponent, {
-      width: '250px',
+      width: '25%',
       data: { title: tit , msg: msg }
     });
 

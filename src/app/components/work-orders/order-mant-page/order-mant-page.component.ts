@@ -409,7 +409,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
   }
   openAlert(tit: string, msg: string): void {
     const dialogRef = this.dialog.open(AlertDialogComponent, {
-      width: '350px',
+      width: '25%',
       data: { title: tit, msg: msg }
     });
 

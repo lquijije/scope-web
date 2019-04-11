@@ -58,9 +58,12 @@
                   <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} Marca para {{tempNameCustomer}}</h4>
                   <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
                       <mat-form-field class="w-100">
-                          <input matInput placeholder="Nombre"  [(ngModel)]="brand.nombre" id="nombre" name="nombre"  value="" required>
+                          <input matInput placeholder="Nombre" #nombre="ngModel" [(ngModel)]="brand.nombre" id="nombre" name="nombre"  value="" required>
                       </mat-form-field>
-                      <div class="row d-flex justify-content-end">
+                      <div class="bg-warning rounded p-1 text-white" *ngIf="nombre.touched && !nombre.valid">
+                        <small> * Nombre es requerido</small>
+                      </div>
+                      <div class="row pt-2 d-flex justify-content-end">
                         <div class="col col-sm-4 col-xl-3">
                           <input type="button" value="Salir" class="btn btn-default rounded btn-sm btn-block btn-lg" (click)='salir()'>
                         </div>

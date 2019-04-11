@@ -91,7 +91,7 @@ export class RegisterPageComponent implements OnInit {
   }
   openAlert(tit: string, msg: string): void {
     const dialogRef = this.dialog.open(AlertDialogComponent, {
-      width: '250px',
+      width: '25%',
       data: { title: tit, msg: msg }
     });
 

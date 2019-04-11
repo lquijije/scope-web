@@ -69,25 +69,20 @@
             <div class="card-body">
                 <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} Local de {{tempNameChain}}</h4>
                 <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
-                    <!-- <div class="form-group">
-                      <label for="nombres"><i class="fa fa-cart-plus"></i> Nombre:</label>
-                      <input [(ngModel)]="chain.nombre" #nombre="ngModel" type="text" name="nombres" id="nombres"  class="form-control">
-                    </div> -->
                     <mat-form-field class="w-100">
-                        <input matInput placeholder="Nombre"  [(ngModel)]="store.nombre" id="tienda" name="tienda"  value="" required>
+                        <input matInput placeholder="Nombre" #tienda="ngModel" [(ngModel)]="store.nombre" id="tienda" name="tienda"  value="" required>
                     </mat-form-field>
                     <div class="row">
                       <div class="col">
-                          <label class="small">Ciudad</label> 
+                          <label class="small">Ciudad *</label> 
                           <select class="form-control w-100" id="cmbCity">
-                              <option *ngFor="let city of cityList" value="{{city.id}}">{{city.nombre}}</option>
+                              <option *ngFor="let city of cityList" value="{{city.id}}">
+                                {{city.nombre}}
+                              </option>
                           </select>
                       </div>
                       <div class="col">
-                          <!-- <mat-form-field class="w-100">
-                              <input matInput placeholder="Zona"  [(ngModel)]="store.zona" id="zona" name="zona"  value="">
-                          </mat-form-field> -->
-                          <label class="small">Zona</label> 
+                          <label class="small">Zona *</label> 
                           <select class="form-control w-100" id="cmbZone">
                               <option *ngFor="let zone of zoneList" value="{{zone.id}}">{{zone.nombre}}</option>
                           </select>
@@ -108,7 +103,12 @@
                     <mat-form-field class="w-100">
                         <input matInput placeholder="Direcci&oacute;n"  [(ngModel)]="store.direccion" id="direccion" name="direccion"  value="">
                     </mat-form-field>
-                    <div class="row d-flex justify-content-end">
+                    
+                    <div class="bg-warning rounded p-1 text-white" *ngIf="tienda.touched && !tienda.valid">
+                      <small> * Nombre de tienda es requerido</small>
+                    </div>
+                    
+                    <div class="row mt-2 d-flex justify-content-end">
                       <div class="col col-sm-4 col-xl-3">
                         <input type="button" value="Salir" class="btn btn-default rounded btn-sm btn-block btn-lg" (click)='salir()'>
                       </div>

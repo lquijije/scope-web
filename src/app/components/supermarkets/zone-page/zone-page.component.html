@@ -51,8 +51,13 @@
                       <mat-form-field class="w-100">
                           <input matInput placeholder="Nombre" #nombre="ngModel"  [(ngModel)]="zone.nombre" id="nombres" name="nombres"  value="" required>
                       </mat-form-field>
-                  
-                      <div class="row d-flex justify-content-end">
+                    
+                      <div *ngIf="nombre.touched && !nombre.valid" class="bg-warning rounded p-1">
+                        <div class="text-white" *ngIf="nombre.errors.required">
+                          <small> * Nombre de zona es requerido</small>
+                        </div>
+                      </div>
+                      <div class="row mt-2 d-flex justify-content-end">
                         <div class="col col-sm-4 col-xl-3">
                           <input type="button" value="Salir" class="btn btn-default rounded btn-sm btn-block btn-lg" (click)='salir()'>
                         </div>

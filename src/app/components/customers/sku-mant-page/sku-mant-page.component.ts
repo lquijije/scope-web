@@ -112,17 +112,33 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
     }
   }
   onSubmit(myForm: NgForm) {
-    if (!this.editState) {
-      this.sku.estado = 'A';
-      this.sku.cliente = this.tempIdCustomer;
-      this.sku.marca = this.tempIdBrand;
-      this.cs.addSku(this.sku);
+    if (myForm.valid) {
+      if (this.sku.sku.trim() === '') {
+        this.openAlert('Scope Error', 'SKU no puede estar vacío');
+        return;
+      }
+      if (this.sku.descripcion.trim() === '') {
+        this.openAlert('Scope Error', 'Descripción no puede estar vacía');
+        return;
+      }
+      if (this.sku.presentacion.trim() === '') {
+        this.openAlert('Scope Error', 'Presentación no puede estar vacía');
+        return;
+      }
+      if (!this.editState) {
+        this.sku.estado = 'A';
+        this.sku.cliente = this.tempIdCustomer;
+        this.sku.marca = this.tempIdBrand;
+        this.cs.addSku(this.sku);
+      } else {
+        this.cs.updSku(this.sku);
+        this.editState = false;
+      }
+      this.clearObject();
+      this.salir();
     } else {
-      this.cs.updSku(this.sku);
-      this.editState = false;
+      this.openAlert('Scope Error', 'Aún faltan campos requeridos.');
     }
-    this.clearObject();
-    this.salir();
   }
   salir() {
     this.closeEditView();
@@ -157,6 +173,7 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
   closeEditView() {
     $('#pnlEdit').addClass('d-none');
     $('#pnlList').removeClass('d-none');
+    this.clearObject();
   }
   clearObject() {
     this.editState = false;
@@ -172,7 +189,7 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
   }
   openAlert(tit: string, msg: string): void {
     const dialogRef = this.dialog.open(AlertDialogComponent, {
-      width: '250px',
+      width: '25%',
       data: { title: tit , msg: msg }
     });
 

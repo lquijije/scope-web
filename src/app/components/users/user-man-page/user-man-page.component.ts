@@ -72,52 +72,78 @@ export class UserManPageComponent implements OnInit, OnDestroy {
     this.clearObject();
     this.closeEditView();
   }
-  onSubmitRegisterAddUser() {
-    if ($('#rd-masc').is(':checked')) {
-      this.user.genero = 'Masculino';
+  onSubmitRegisterAddUser(myForm: NgForm) {
+    if (myForm.valid) {
+      if (this.user.cedula.trim() === '') {
+        this.openAlert('Scope Error', 'Campo Cédula no puede estar vacío');
+        return;
+      }
+      if (this.user.nombre.trim() === '') {
+        this.openAlert('Scope Error', 'Campo Nombre no puede estar vacío');
+        return;
+      }
+      if (this.user.email.trim() === '') {
+        this.openAlert('Scope Error', 'Campo Email no puede estar vacío');
+        return;
+      }
+      if (this.user.password.trim() === '') {
+        this.openAlert('Scope Error', 'Password no puede estar vacío');
+        return;
+      }
+
+      if ($('#rd-masc').is(':checked')) {
+        this.user.genero = 'Masculino';
+      } else {
+        this.user.genero = 'Femenino';
+      }
+      this.user.perfil = [];
+      if ($('#chk-adm').is(':checked')) {
+        this.user.perfil.push(
+          this.profileList.find(e => e.nombre == 'Administrador')
+        );
+      }
+      if ($('#chk-merc').is(':checked')) {
+        this.user.perfil.push(
+          this.profileList.find(e => e.nombre == 'Mercaderista')
+        );
+      }
+      if ($('#chk-clt').is(':checked')) {
+        this.user.perfil.push(
+          this.profileList.find(e => e.nombre == 'Cliente')
+        );
+      }
+      if (this.user.perfil.length === 0) {
+        this.openAlert('Scope Error', 'Debe elegir por lo menos un perfil');
+        return;
+      }
+      this.user.nombre = this.toTitleCase(this.user.nombre);
+      if (!this.editState) {
+        this.user.estado = 'A';
+        this.authServ.registerUser(this.user.email, this.user.password, this.user.nombre).then((res) => {
+          this.us.addUser(this.user);
+          this.clearObject();
+          this.salir();
+        }).catch((err) => {
+          this.openAlert('Sign Up Error!', err.message);
+        });
+      } else {
+        let response: ICreateSession;
+        this.rest.createSession(this.user.email, this.user.password).subscribe((data: {}) => {
+          response = data;
+          if (response) {
+            this.rest.updateProfile (response.idToken, this.user.nombre ).subscribe((res: {}) => {
+              if (res) {
+                this.us.updUser(this.user);
+                this.editState = false;
+                this.clearObject();
+                this.salir();
+              }
+            });
+          }
+        });
+      }
     } else {
-      this.user.genero = 'Femenino';
-    }
-    this.user.perfil = [];
-    if ($('#chk-adm').is(':checked')) {
-      this.user.perfil.push(
-        this.profileList.find(e => e.nombre == 'Administrador')
-      );
-    }
-    if ($('#chk-merc').is(':checked')) {
-      this.user.perfil.push(
-        this.profileList.find(e => e.nombre == 'Mercaderista')
-      );
-    }
-    if ($('#chk-clt').is(':checked')) {
-      this.user.perfil.push(
-        this.profileList.find(e => e.nombre == 'Cliente')
-      );
-    }
-    if (!this.editState) {
-      this.user.estado = 'A';
-      this.authServ.registerUser(this.user.email, this.user.password, this.user.nombre).then((res) => {
-        this.us.addUser(this.user);
-        this.clearObject();
-        this.salir();
-      }).catch((err) => {
-        this.openAlert('Sign Up Error!', err.message);
-      });
-    } else {
-      let response: ICreateSession;
-      this.rest.createSession(this.user.email, this.user.password).subscribe((data: {}) => {
-        response = data;
-        if (response) {
-          this.rest.updateProfile (response.idToken, this.user.nombre ).subscribe((res: {}) => {
-            if (res) {
-              this.us.updUser(this.user);
-              this.editState = false;
-              this.clearObject();
-              this.salir();
-            }
-          });
-        }
-      });
+      this.openAlert('Scope Error', 'Algunos atributos no son válidos.');
     }
   }
   edit(user: IUser) {
@@ -206,12 +232,25 @@ export class UserManPageComponent implements OnInit, OnDestroy {
   }
   openAlert(tit: string, msg: string): void {
     const dialogRef = this.dialog.open(AlertDialogComponent, {
-      width: '250px',
+      width: '25%',
       data: { title: tit, msg: msg }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       console.log(result);
     });
+  }
+  onlyNumber(e) {
+    if (e.which !== 8 && e.which !== 0 && (e.which < 48 || e.which > 57)) {
+      return false;
+    }
+  }
+  toTitleCase(str) {
+    return str.replace(
+      /\w\S*/g,
+      (txt) => {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      }
+    );
   }
 }

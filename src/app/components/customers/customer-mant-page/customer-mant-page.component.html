@@ -54,27 +54,32 @@
               <div class="card-body">
                   <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} Cliente</h4>
                   <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
-                       <div class="form-group">
+                      <mat-form-field class="w-100">
                         <label for="ruc"><i class="fa fa-address-card"></i> Ruc:</label>
-                        <input [(ngModel)]="customer.ruc" #ruc="ngModel" type="text" name="ruc" id="ruc"  class="form-control">
-                      </div>
-                      <!-- <mat-form-field class="w-100">
-                          <input matInput placeholder="Ruc" #ruc="ngModel"  [(ngModel)]="customer.ruc" id="ruc" name="ruc"  value="" required>
-                      </mat-form-field> -->
-                      <div class="form-group">
+                        <input matInput [(ngModel)]="customer.ruc" #ruc="ngModel" type="text" name="ruc" id="ruc"  class="form-control" minlength="13" maxlength="15" (keypress)="onlyNumber($event)" required>
+                      </mat-form-field>
+                      <mat-form-field class="w-100">
                           <label for="razon"><i class="fa fa-bookmark"></i> Raz&oacute;n Social:</label>
-                          <input [(ngModel)]="customer.razonsocial" #razonsocial="ngModel" type="text" name="razon" id="razon"  class="form-control">
-                      </div>
-                      <div class="form-group">
+                          <input matInput [(ngModel)]="customer.razonsocial" #razonsocial="ngModel" type="text" name="razon" id="razon"  class="form-control" required>
+                      </mat-form-field>
+                      <mat-form-field class="w-100">
                           <label for="telf"><i class="fa fa-phone"></i> Telefono:</label>
-                          <input [(ngModel)]="customer.telefono" #telefono="ngModel" type="text" name="telf" id="telf"  class="form-control">
-                      </div>
-                      <div class="form-group">
+                          <input matInput [(ngModel)]="customer.telefono" #telefono="ngModel" type="text" name="telf" id="telf"  class="form-control">
+                      </mat-form-field>
+                      <mat-form-field class="w-100">
                           <label for="direccion"><i class="fa fa-address-book"></i> Direcci&oacute;n:</label>
-                          <textarea [(ngModel)]="customer.direccion" #direccion="ngModel" name="direccion" id="direccion"  class="form-control">
+                          <textarea matInput [(ngModel)]="customer.direccion" rows="3" #direccion="ngModel" name="direccion" id="direccion"  class="form-control">
                           </textarea>
+                      </mat-form-field>
+                      <div class="bg-warning rounded p-1 text-white" *ngIf="ruc.touched && !ruc.valid">
+                        <div *ngIf="ruc.errors.required"><small> * Ruc es requerido</small></div>
+                        <div *ngIf="ruc.errors.minlength"><small> * Ruc debe contener mínimo
+                            {{ruc.errors.minlength.requiredLength}} caracteres</small></div>
                       </div>
-                      <div class="row justify-content-end">
+                      <div class="bg-warning rounded p-1 text-white" *ngIf="razonsocial.touched && !razonsocial.valid">
+                        <small> * Razon Social es requerida</small>
+                      </div>
+                      <div class="row pt-2 justify-content-end">
                         <div class="col col-sm-4 col-xl-3">
                           <input type="button" value="Salir" class="btn btn-default rounded btn-sm btn-block btn-lg" (click)='salir()'>
                         </div>

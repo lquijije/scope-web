@@ -4,6 +4,7 @@ import { CustomerService } from '../../../services/customer.service';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
+import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
 // import * as $ from 'jquery';
 import { Subscription } from 'rxjs';
 
@@ -49,15 +50,19 @@ export class CustomerMantPageComponent implements OnInit, OnDestroy {
     this.closeEditView();
   }
   onSubmit(myForm: NgForm) {
-    if (!this.editState) {
-      this.customer.estado = 'A';
-      this.sc.addCustomer(this.customer);
+    if (myForm.valid) {
+      if (!this.editState) {
+        this.customer.estado = 'A';
+        this.sc.addCustomer(this.customer);
+      } else {
+        this.sc.updCustomer(this.customer);
+        this.editState = false;
+      }
+      this.clearObject();
+      this.salir();
     } else {
-      this.sc.updCustomer(this.customer);
-      this.editState = false;
+      this.openAlert('Scope Error', 'Algunos atributos son requeridos.');
     }
-    this.clearObject();
-    this.salir();
   }
   edit(customer: ICustomer) {
     this.editState = true;
@@ -99,5 +104,20 @@ export class CustomerMantPageComponent implements OnInit, OnDestroy {
       telefono: '',
       estado: 'A'
     };
+  }
+  onlyNumber(e) {
+    if (e.which !== 8 && e.which !== 0 && (e.which < 48 || e.which > 57)) {
+      return false;
+    }
+  }
+  openAlert(tit: string, msg: string): void {
+    const dialogRef = this.dialog.open(AlertDialogComponent, {
+      width: '25%',
+      data: { title: tit, msg: msg }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(result);
+    });
   }
 }

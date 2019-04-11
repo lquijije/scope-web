@@ -3,6 +3,7 @@ import { CanActivate, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
 import { AngularFireAuth } from 'angularfire2/auth';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,16 +11,20 @@ import { AngularFireAuth } from 'angularfire2/auth';
 export class AuthGuard implements CanActivate {
   currentUser: any;
   constructor(public afAuth: AngularFireAuth,
-              private router: Router) {
+              private router: Router,
+          private authServ: AuthService) {
   }
-  canActivate() {
-    this.currentUser = this.afAuth.auth.currentUser;
-    // console.log(this.afAuth.auth.currentUser);
-    if (this.currentUser) {
-      return true;
-    } else {
-      this.router.navigate(['/login']);
-      return false;
-    }
+  canActivate(): Observable<boolean> {
+    return this.authServ.getAuth()
+    .pipe(
+      map(auth => {
+        if (auth) {
+          return true;
+        } else {
+          this.router.navigate(['/login']);
+          return false;
+        }
+      })
+    );
   }
 }

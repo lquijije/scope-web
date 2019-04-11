@@ -98,27 +98,43 @@ export class SuperStorePageComponent implements OnInit, OnDestroy {
     this.zoneSubscription.unsubscribe();
   }
   onSubmit(myForm: NgForm) {
-    this.store.ciudad = $('#cmbCity').select2('data')[0].text;
-    this.store.zona  = $('#cmbZone').select2('data')[0].text;
-    if (!this.editState) {
-      this.store.estado = 'A';
-      this.store.cadena = this.tempIdChain;
-      this.sc.addSuperStore(this.store);
+    if (myForm.valid) {
+      if (this.store.nombre.trim() === '') {
+        this.openAlert('Scope Error', 'Campo Nombre de tienda no puede estar vacío');
+        return;
+      }
+      if ($('#cmbCity').val() === '') {
+        this.openAlert('Scope Error', 'Debe escoger una ciudad para la tienda');
+        return;
+      }
+      if ($('#cmbZone').val() === '') {
+        this.openAlert('Scope Error', 'Debe escoger una zona para la tienda');
+        return;
+      }
+      this.store.ciudad = $('#cmbCity').select2('data')[0].text;
+      this.store.zona  = $('#cmbZone').select2('data')[0].text;
+      if (!this.editState) {
+        this.store.estado = 'A';
+        this.store.cadena = this.tempIdChain;
+        this.sc.addSuperStore(this.store);
+      } else {
+        this.sc.updSuperStore(this.store);
+        this.editState = false;
+      }
+      this.clearObject();
+      this.salir();
     } else {
-      this.sc.updSuperStore(this.store);
-      this.editState = false;
+      this.openAlert('Scope Error', 'Aún faltan campos requeridos');
     }
-    this.clearObject();
-    this.salir();
   }
-  salir(){
+  salir() {
     this.clearObject();
     this.closeEditView();
   }
-  nuevo(){
-    if($('#cmbChain').val()!=''){
+  nuevo() {
+    if ($('#cmbChain').val() != '') {
       this.showEditView();
-    }else{
+    } else {
       this.openAlert('Scope Alert!', 'Debe escojer una cadena de Supermercado');
     }
   }
@@ -143,39 +159,37 @@ export class SuperStorePageComponent implements OnInit, OnDestroy {
     });
   }
   showEditView() {
-    if(!this.editState){
+    if (!this.editState) {
       this.actionName = 'Nuevo';
-    }else{
+    } else {
       this.actionName = 'Editar';
     }
     $('#pnlEdit').removeClass('d-none');
     $('#pnlList').addClass('d-none');
-    var n2 = new Option('', '', true, true);
-    $('#cmbCity').append(n2).trigger('change');
+    $('#cmbCity').append(new Option('', '', true, true)).trigger('change');
     $('#cmbCity').select2({
-      placeholder: "Ciudad",
+      placeholder: 'Ciudad',
       language: {
-          "noResults": function () {
-              return "";
+          'noResults': function () {
+              return '';
           }
       }
     });
-    var n3 = new Option('', '', true, true);
-    $('#cmbZone').append(n3).trigger('change');
+    $('#cmbZone').append(new Option('', '', true, true)).trigger('change');
     $('#cmbZone').select2({
-      placeholder: "Zona",
+      placeholder: 'Zona',
       language: {
-          "noResults": function () {
-              return "";
+          'noResults': function () {
+              return '';
           }
       }
     });
   }
-  selectCityByStore(store: ISuperStore){
-    $("#cmbCity").val($("#cmbCity option:contains('"+store.ciudad+"')").val()).trigger('change');
+  selectCityByStore(store: ISuperStore) {
+    $('#cmbCity').val($("#cmbCity option:contains('"+store.ciudad+"')").val()).trigger('change');
   }
   selectZoneByStore(store: ISuperStore){
-    $("#cmbZone").val($("#cmbZone option:contains('"+store.zona+"')").val()).trigger('change');
+    $('#cmbZone').val($("#cmbZone option:contains('"+store.zona+"')").val()).trigger('change');
   }
   closeEditView() {
     $('#pnlEdit').addClass('d-none');
@@ -184,11 +198,11 @@ export class SuperStorePageComponent implements OnInit, OnDestroy {
   clearObject() {
     this.editState = false;
     this.store = {
-      cadena: '', 
+      cadena: '',
       ciudad: '',
       direccion: '',
       estado: 'A',
-      nombre: '',    
+      nombre: '',
       telefono: '',
       tipo: '',
       zona: ''
@@ -196,12 +210,11 @@ export class SuperStorePageComponent implements OnInit, OnDestroy {
   }
   openAlert(tit: string, msg: string): void {
     const dialogRef = this.dialog.open(AlertDialogComponent, {
-      width: '250px',
+      width: '25%',
       data: { title: tit , msg: msg }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
     });
   }
 }

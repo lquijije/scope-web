@@ -35,8 +35,8 @@
                   <tbody>
                     <tr *ngFor="let user of userList">
                       <td>{{user.nombre}}</td>
-                      <td class='text-center'> <a href="javascript:void(0);" (click)="edit(user)"> <i class="fa fa-edit"></i></a></td>
-                      <td class='text-center'> <a href="javascript:void(0);" (click)="delete(user)"> <i class="fa fa-trash"></i></a></td>
+                      <td class='text-center'> <a href="javascript:void(0);" class="text-primary" (click)="edit(user)"> <i class="fa fa-edit"></i></a></td>
+                      <td class='text-center'> <a href="javascript:void(0);" class="text-danger" (click)="delete(user)"> <i class="fa fa-trash"></i></a></td>
                       <td>{{user.email}}</td>
                       <td class='text-center'>{{user.cedula}}</td>
                       <td class='text-center'>{{user.estado}}</td>
@@ -53,14 +53,16 @@
         <div class="col-12 col-xl-8 offset-xl-2 bg-light">
           <div class="card-body">
               <h4 class="text-center"><i class="fa fa-user"></i> {{actionName}} Usuario</h4>
-              <form (submit)="onSubmitRegisterAddUser()">
+              <form (submit)="onSubmitRegisterAddUser(formNew)" #formNew="ngForm">
                 <div class="row">
                   <div class="col">
                       <mat-form-field class="w-100">
-                          <input matInput placeholder="Cedula" #cedula="ngModel"  [(ngModel)]="user.cedula" id="cedula" name="cedula"  value="" required>
+                          <input matInput placeholder="Cedula" #cedula="ngModel"  [(ngModel)]="user.cedula" 
+                          id="cedula" name="cedula"  value="" minlength="10" maxlength="15" (keypress)="onlyNumber($event)" required>
                       </mat-form-field>
                       <mat-form-field class="w-100">
-                          <input matInput placeholder="Nombres" #nombre="ngModel"  [(ngModel)]="user.nombre" id="nombre" name="nombre"  value="" required>
+                          <input matInput placeholder="Nombres" #nombre="ngModel"  [(ngModel)]="user.nombre" 
+                          id="nombre" name="nombre"  value="" minlength="5" maxlength="25" style="text-transform: capitalize" required>
                       </mat-form-field>
                   </div>
                   <div class="col">
@@ -101,16 +103,38 @@
                 <div class="row">
                   <div class="col">
                       <mat-form-field class="w-100">
-                          <input type="email" matInput placeholder="Email" #email="ngModel"  [(ngModel)]="user.email" id="email" name="email"  value="" required>
+                          <input type="email" matInput placeholder="Email" email #email="ngModel"  [(ngModel)]="user.email" 
+                          id="email" name="email"  value="" required>
                       </mat-form-field>
                   </div>
                   <div class="col" id="colPwd">
                       <mat-form-field class="w-100">
-                          <input type="password" matInput placeholder="Password"  [(ngModel)]="user.password" id="password" name="password"  value="" required>
+                          <input type="password" matInput placeholder="Password" #password="ngModel" 
+                          [(ngModel)]="user.password" id="password" name="password"  value="" 
+                          minlength="6" style="font-size: 1.2em" required>
                       </mat-form-field>
                   </div>
                 </div>
-                <div class="row d-flex justify-content-end">
+                <div class="bg-warning rounded p-1 text-white" *ngIf="cedula.touched && !cedula.valid">
+                  <div *ngIf="cedula.errors.required"><small> * Número Cédula es requerido</small></div>
+                  <div *ngIf="cedula.errors.minlength"><small> * Número de Cédula debe contener mínimo
+                      {{cedula.errors.minlength.requiredLength}} caracteres</small></div>
+                </div>
+                <div class="bg-warning rounded p-1 text-white" *ngIf="nombre.touched && !nombre.valid">
+                  <div *ngIf="nombre.errors.required"><small> * Nombre de usuario es requerido</small></div>
+                  <div *ngIf="nombre.errors.minlength"><small> * Nombre debe contener mínimo
+                      {{nombre.errors.minlength.requiredLength}} caracteres</small></div>
+                </div>
+                <div class="bg-warning rounded p-1 text-white" *ngIf="email.touched && !email.valid">
+                  <div *ngIf="email.errors.required"><small> * Email es requerido</small></div>
+                  <div *ngIf="email.invalid"><small> * Email es inválido</small></div>
+                </div>
+                <div class="bg-warning rounded p-1 text-white" *ngIf="password.touched && !password.valid">
+                  <div *ngIf="password.errors.required"><small> * Password es requerido</small></div>
+                  <div *ngIf="password.errors.minlength"><small> * Password debe contener mínimo
+                      {{password.errors.minlength.requiredLength}} caracteres</small></div>
+                </div>
+                <div class="row pt-2 d-flex justify-content-end">
                   <div class="col col-sm-4 col-xl-3">
                     <input type="button" value="Salir" class="btn btn-default rounded btn-sm btn-block btn-lg" (click)='salir()'>
                   </div>

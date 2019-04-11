@@ -4,6 +4,7 @@ import { SupermaketsService } from '../../../services/supermakets.service';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
+import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
 import { Subscription } from 'rxjs';
 
 // import * as $ from 'jquery';
@@ -48,15 +49,27 @@ export class SuperChainPageComponent implements OnInit, OnDestroy {
     this.closeEditView();
   }
   onSubmit(myForm: NgForm) {
-    if (!this.editState) {
-      this.chain.estado = 'A';
-      this.sc.addSuperChain(this.chain);
+    if (myForm.valid) {
+      if (this.chain.nombre.trim() === '') {
+        this.openAlert('Scope Error', 'Campo Nombre de cadena no puede estar vacío');
+        return;
+      }
+      if (this.chain.alias.trim() === '') {
+        this.openAlert('Scope Error', 'Alias de la cadena no puede estar vacío');
+        return;
+      }
+      if (!this.editState) {
+        this.chain.estado = 'A';
+        this.sc.addSuperChain(this.chain);
+      } else {
+        this.sc.updSuperChain(this.chain);
+        this.editState = false;
+      }
+      this.clearObject();
+      this.salir();
     } else {
-      this.sc.updSuperChain(this.chain);
-      this.editState = false;
+      this.openAlert('Scope Error', 'Aún faltan campos requeridos');
     }
-    this.clearObject();
-    this.salir();
   }
   edit(chain: ISuperChain) {
     this.editState = true;
@@ -96,5 +109,14 @@ export class SuperChainPageComponent implements OnInit, OnDestroy {
       alias: '',
       estado: 'A'
     };
+  }
+  openAlert(tit: string, msg: string): void {
+    const dialogRef = this.dialog.open(AlertDialogComponent, {
+      width: '25%',
+      data: { title: tit, msg: msg }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+    });
   }
 }

@@ -51,112 +51,33 @@
     </div>
 </nav>
 
-<mat-sidenav-container class="example-container1">
-    <mat-sidenav class="border-0" #drawer mode="side"  role="navigation" >
+<mat-sidenav-container class="example-container1" >
+    <mat-sidenav class="border-0 app-sidenav" #drawer mode="over"  role="navigation" >
       <div class="mnu-list bg-primary text-center py-2 px-5 mb-0" *ngIf="isLogin">
         <h1 class="text-white"><i class="fa fa-user-circle"></i></h1>
         <h5 class="text-white"><i class="fa fa-th-large"></i> MENU PRINCIPAL</h5>
       </div>
       <mat-nav-list class="mnu-list pt-0" *ngIf="isLogin">
-        <div class="card bg-light">
-          <div class="card-header btn btn-link w-100 py-0 pr-5 pt-2" id="headingFour" data-toggle="collapse" data-target="#collapseFour"
-            aria-expanded="true" aria-controls="collapseFour">
+        <div class="card bg-light" *ngFor="let mnu of menu">
+          <div class="card-header btn btn-link w-100 py-0 pr-5 pt-2"  id="{{mnu.ide}}" data-toggle="collapse"
+            [attr.data-target]="mnu.target" aria-expanded="true" [attr.aria-controls]="mnu.control">
             <h4 class="mb-0 d-flex justify-content-start">
               <h4 class="text-primary" mat-list-item>
-                <i class="fa fa-list-alt mr-2"></i> &Oacute;rdenes de trabajo
+                <i class="{{mnu.icon}} mr-2"></i> {{mnu.name}}
               </h4>
             </h4>
           </div>
-          <div id="collapseFour" class="collapse show" aria-labelledby="headingFour" data-parent="#accordion">
-            <div class="card-body p-0 pl-4" style="background:rgb(228, 227, 227); ">
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1"  routerLink='/ordermant'>
-                <i class="fa fa-list-alt text-primary mr-2"></i>Creaci&oacute;n de &oacute;rdenes
-              </a>
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1"  routerLink='/orderinquiry'>
-                <i class="fa fa-search text-primary mr-2"></i>Consulta de &oacute;rdenes
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="card bg-light">
-          <div class="card-header btn btn-link w-100 py-0 pr-5 pt-2" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo"
-            aria-expanded="true" aria-controls="collapseTwo">
-            <h4 class="mb-0 d-flex justify-content-start">
-              <h4 class="text-primary" mat-list-item>
-                <i class="fa fa-users mr-2"></i> Clientes
-              </h4>
-            </h4>
-          </div>
-          <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
-            <div class="card-body p-0 pl-4" style="background:rgb(228, 227, 227); ">
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/customermant'>
-                <i class="fa fa-user-plus text-primary mr-2"></i>Mantenimiento de clientes
-              </a>
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/brandmant'>
-                <i class="fa fa-delicious text-primary mr-2"></i>Mantenimiento de marcas
-              </a>
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/assocbrand'>
-                <i class="fa fa-retweet text-primary mr-2"></i>Asociaci&oacute;n de marcas
-              </a>
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/skumant'>
-                <i class="fa fa-barcode text-primary mr-2"></i>Sku's
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="card bg-light">
-          <div class="card-header btn btn-link w-100 py-0 pr-5 pt-2" id="headingThree" data-toggle="collapse" data-target="#collapseThree"
-            aria-expanded="true" aria-controls="collapseThree">
-            <h4 class="mb-0 d-flex justify-content-start">
-              <h4 class="text-primary" mat-list-item>
-                <i class="fa fa-shopping-cart mr-2"></i> Cadenas supermercado
-              </h4>
-            </h4>
-          </div>
-          <div id="collapseThree" class="collapse show" aria-labelledby="headingThree" data-parent="#accordion">
-            <div class="card-body p-0 pl-4" style="background:rgb(228, 227, 227); ">
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/chainmant'>
-                <i class="fa fa-cart-plus text-primary mr-2"></i>Mantenimiento de cadenas
-              </a>
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/storemant'>
-                <i class="fa fa-shopping-bag text-primary mr-2"></i>Mantenimiento de locales
-              </a>
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/zonemant'>
-                <i class="fa fa-shopping-bag text-primary mr-2"></i>Mantenimiento de zonas
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="card bg-light">
-          <div class="card-header btn btn-link w-100 py-0 pr-5 pt-2" id="headingOne" data-toggle="collapse" data-target="#collapseOne"
-            aria-expanded="true" aria-controls="collapseOne">
-            <h4 class="mb-0 d-flex justify-content-start">
-              <h4 class="text-primary">
-                <i class="fa fa-user mr-2"></i> Usuarios
-              </h4>
-            </h4>
-          </div>
-          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-            <div class="card-body p-0 pl-4" style="background:rgb(228, 227, 227); ">
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/usrmant' pageTransition="slide">
-                <i class="fa fa-user-plus text-primary mr-2"></i>Mantenimiento de usuarios
-              </a>
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" routerLink='/usrchngpass' pageTransition="slide">
-                <i class="fa fa-lock text-primary mr-2"></i>Cambio de Clave
-              </a>
-              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" (click)='logout()' href="javascript:void(0)">
-                <i class="fa fa-times text-primary mr-2"></i>Salir
+          <div id="{{mnu.control}}" class="collapse show" [attr.aria-labelledby]="mnu.labelledby"   data-parent="#accordion">
+            <div class="card-body p-0 pl-4" style="background:{{mnu.background}};">
+              <a class="menu text-dark list-group-item list-group-item-action border-0 py-1" *ngFor="let sub of mnu.submenu"
+                routerLink='{{sub.routerLink}}' (click)="drawer.toggle();evaluate(sub);">
+                <i class="{{sub.icon}} text-primary mr-2"></i>{{sub.name}}
               </a>
             </div>
           </div>
         </div>
       </mat-nav-list>
-      
-    </mat-sidenav>    
-  
+    </mat-sidenav>
   <mat-sidenav-content>
     <router-outlet></router-outlet>
   </mat-sidenav-content>

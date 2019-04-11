@@ -4,6 +4,7 @@ import { SupermaketsService } from '../../../services/supermakets.service';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
+import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
 // import * as $ from 'jquery';
 import { Subscription } from 'rxjs';
 declare var $: any;
@@ -44,15 +45,24 @@ export class ZonePageComponent implements OnInit, OnDestroy {
       this.closeEditView();
     }
     onSubmit(myForm: NgForm) {
-      if (!this.editState) {
-        this.sc.addZone(this.zone);
+      if (myForm.valid) {
+        if (this.zone.nombre.trim() === '') {
+          this.openAlert('Scope Error', 'Campo Nombre de zona no puede estar vacío');
+          return;
+        }
+        if (!this.editState) {
+          this.sc.addZone(this.zone);
+        } else {
+          this.sc.updZone(this.zone);
+          this.editState = false;
+        }
+        this.clearObject();
+        this.salir();
       } else {
-        this.sc.updZone(this.zone);
-        this.editState = false;
+        this.openAlert('Scope Error', 'Aún faltan campos requeridos');
       }
-      this.clearObject();
-      this.salir();
     }
+
     edit(chain: IZone) {
       this.editState = true;
       this.showEditView();
@@ -89,4 +99,14 @@ export class ZonePageComponent implements OnInit, OnDestroy {
         nombre: '',
       };
     }
+  openAlert(tit: string, msg: string): void {
+    const dialogRef = this.dialog.open(AlertDialogComponent, {
+      width: '20%',
+      data: { title: tit, msg: msg }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(result);
+    });
+  }
 }

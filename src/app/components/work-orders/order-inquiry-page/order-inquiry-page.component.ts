@@ -377,7 +377,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
   }
   openAlert(tit: string, msg: string): void {
     const dialogRef = this.dialog.open(AlertDialogComponent, {
-      width: '400px',
+      width: '30%',
       data: { title: tit, msg: msg }
     });
 

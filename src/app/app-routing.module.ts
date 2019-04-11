@@ -28,51 +28,63 @@ const routes: Routes = [
   },
   {
     path: 'register',
-    component: RegisterPageComponent
+    component: RegisterPageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'usrmant',
-    component: UserManPageComponent
+    component: UserManPageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'usrchngpass',
-    component: UserChangePassPageComponent
+    component: UserChangePassPageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'customermant',
-    component: CustomerMantPageComponent
+    component: CustomerMantPageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'brandmant',
-    component: BrandMantPageComponent
+    component: BrandMantPageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'assocbrand',
-    component: AssocBrandsPageComponent
+    component: AssocBrandsPageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'skumant',
-    component: SkuMantPageComponent
+    component: SkuMantPageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'chainmant',
-    component: SuperChainPageComponent
+    component: SuperChainPageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'storemant',
-    component: SuperStorePageComponent
+    component: SuperStorePageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'ordermant',
-    component: OrderMantPageComponent
+    component: OrderMantPageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'orderinquiry',
-    component: OrderInquiryPageComponent
+    component: OrderInquiryPageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'zonemant',
-    component: ZonePageComponent
+    component: ZonePageComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: '**',
@@ -81,7 +93,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
+  imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload', useHash: true})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
