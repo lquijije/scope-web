@@ -6,6 +6,7 @@ import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert
 import { UsersService } from '../../../services/users.service';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase/app';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 
 // import * as $ from 'jquery';
 declare var $: any;
@@ -32,7 +33,8 @@ export class UserChangePassPageComponent implements OnInit {
     public dialog: MatDialog,
     private us: UsersService,
     public authServ: AuthService,
-    public router: Router
+    public router: Router,
+    private spinnerService: Ng4LoadingSpinnerService
   ) { }
 
   ngOnInit() {
@@ -97,21 +99,25 @@ export class UserChangePassPageComponent implements OnInit {
 
     const credentials = firebase.auth.EmailAuthProvider.credential(
       this.user.email, this.curpass);
-
+    this.spinnerService.show();
     this.authServ.getAuth().subscribe((data: {}) => {
       this.authServ.getCurrentUser().reauthenticateWithCredential(credentials).then(
         success => {
             this.authServ.getCurrentUser().updatePassword(this.newpas1).then((res) => {
+              this.spinnerService.hide();
               this.user.password = this.newpas1;
               this.us.updUser(this.user).then(() => {})
               .catch((err) => {
+                this.spinnerService.hide();
                 this.openAlert('Error', err.message);
               });
               this.logout();
             }).catch((err) => {
+              this.spinnerService.hide();
               this.openAlert('Error', err.message);
             });
         }).catch((err) => {
+          this.spinnerService.hide();
           this.openAlert('Error', err.message);
           }
         );
@@ -127,9 +133,12 @@ export class UserChangePassPageComponent implements OnInit {
     });
   }
   logout(): void {
+    this.spinnerService.show();
     this.authServ.logout().then((res) => {
+      this.spinnerService.hide();
       this.router.navigate(['/login']);
     }).catch((err) => {
+      this.spinnerService.hide();
       this.openAlert('Error de Logout', err.message);
     });
   }

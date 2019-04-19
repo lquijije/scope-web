@@ -15,7 +15,7 @@ import { IWorkOrder } from 'src/app/models/work-orders/work-order';
 import { of } from 'rxjs';
 import { groupBy, mergeMap, reduce, map } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
-// import * as $ from 'jquery';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { ICustomer } from 'src/app/models/customers/customers';
 import { IUser } from 'src/app/models/users/user';
 
@@ -73,12 +73,14 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
   merchantSubscription: Subscription;
   prioritySubscription: Subscription;
   workOrderSubscription: Subscription;
+  secuentialSubscription: Subscription;
   constructor(public dialog: MatDialog,
     private cs: CustomerService,
     private sc: SupermaketsService,
     private us: UsersService,
     private ow: WorkOrdersService,
-    private gs: GeneralService) { }
+    private gs: GeneralService,
+    private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
     const self = this;
@@ -257,8 +259,10 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
                   id: idBrand,
                   nombre: nameBrand
                 };
+                self.spinnerService.show();
                 self.sc.getSkusFromChainStoreCustomerBrandAssociate(self.chainObj, self.storeObj, self.customerObj, self.brandObj)
                 .subscribe(associated => {
+                  self.spinnerService.hide();
                   if (associated) {
                     (associated as IAssociatedBrands[]).forEach(i => i.sku.forEach(s => {
                       s['ds_cliente'] = i.cliente.razonsocial;
@@ -300,7 +304,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
           return a.nombre > b.nombre ? -1 : 1;
         });
     });
-    this.ow.getWorkOrders().subscribe(d => {
+    this.secuentialSubscription = this.ow.getWorkOrders().subscribe(d => {
       if (d.length > 0) {
         // this.sequential = d.length + 1;
         this.sequential = parseInt(d.reduce(function(a, b) {
@@ -314,6 +318,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
     this.merchantSubscription.unsubscribe();
     this.prioritySubscription.unsubscribe();
     this.workOrderSubscription.unsubscribe();
+    this.secuentialSubscription.unsubscribe();
   }
   removeDuplicates(arr) {
     const obj = {};
@@ -372,13 +377,16 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
       });
       this.sequential++;
     });
+    this.spinnerService.show();
     this.ow.addWorkOrders(this.workOrderList).then(msg => {
       const strOrders = this.workOrderList.map(x => {
         return x.numero;
       });
+      this.spinnerService.hide();
       this.openAlert('Scope Web', `Se generaron las siguientes órdenes:  ${strOrders.join()}`);
       this.limpiar();
     }).catch(err => {
+      this.spinnerService.hide();
       this.openAlert('Scope Error', `No se generaron algunas órdenes, ${err.message}`);
     });
   }
@@ -418,5 +426,8 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
   }
   generateUID() {
     return Math.floor(1e5 + (Math.random() * 5e5));
+  }
+  loading() {
+    this.spinnerService.show();
   }
 }

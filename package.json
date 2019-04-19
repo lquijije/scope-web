@@ -36,6 +36,7 @@
     "jquery-datetimepicker": "^2.5.20",
     "jquery-ui-dist": "^1.12.1",
     "jquery-ui-multidatespicker": "^1.6.6",
+    "ng4-loading-spinner": "^1.2.3",
     "popper.js": "^1.14.6",
     "rxjs": "~6.2.0",
     "select2": "^4.0.6-rc.1",
@@ -43,7 +44,7 @@
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.13.0",
+    "@angular-devkit/build-angular": "^0.13.8",
     "@angular/cli": "~6.2.3",
     "@angular/compiler-cli": "^6.1.0",
     "@angular/language-service": "^6.1.0",

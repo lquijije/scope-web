@@ -11,6 +11,7 @@ import { FirebaseRestService } from '../../../services/firebase-rest.service';
 import { ICreateSession } from '../../../models/users/rest-firebase';
 import { IAccountInfo } from '../../../models/users/rest-firebase';
 import { Subscription } from 'rxjs';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 
 // import * as $ from 'jquery';
 import { IProfile } from 'src/app/models/users/profile';
@@ -43,7 +44,8 @@ export class UserManPageComponent implements OnInit, OnDestroy {
     private us: UsersService,
     private router: Router,
     public authServ: AuthService,
-    private rest: FirebaseRestService) {
+    private rest: FirebaseRestService,
+    private spinnerService: Ng4LoadingSpinnerService) {
    }
 
   ngOnInit() {
@@ -119,7 +121,9 @@ export class UserManPageComponent implements OnInit, OnDestroy {
       this.user.nombre = this.toTitleCase(this.user.nombre);
       if (!this.editState) {
         this.user.estado = 'A';
+        this.spinnerService.show();
         this.authServ.registerUser(this.user.email, this.user.password, this.user.nombre).then((res) => {
+          this.spinnerService.hide();
           this.us.addUser(this.user);
           this.clearObject();
           this.salir();
@@ -128,10 +132,14 @@ export class UserManPageComponent implements OnInit, OnDestroy {
         });
       } else {
         let response: ICreateSession;
+        this.spinnerService.show();
         this.rest.createSession(this.user.email, this.user.password).subscribe((data: {}) => {
+          this.spinnerService.hide();
           response = data;
           if (response) {
+            this.spinnerService.show();
             this.rest.updateProfile (response.idToken, this.user.nombre ).subscribe((res: {}) => {
+              this.spinnerService.hide();
               if (res) {
                 this.us.updUser(this.user);
                 this.editState = false;
@@ -189,10 +197,14 @@ export class UserManPageComponent implements OnInit, OnDestroy {
         user.estado = 'I';
         // this.us.delUser(user); // Cambia estado a I
         let response: ICreateSession;
+        this.spinnerService.show();
         this.rest.createSession(user.email, user.password).subscribe((data: {}) => {
+          this.spinnerService.hide();
           response = data;
           if (response) {
+            this.spinnerService.show();
             this.rest.deleteAccount(response.idToken).subscribe((res: {}) => {
+              this.spinnerService.hide();
               if (res) {
                 this.us.delUser(user); // Elimina permanentemente de la base
               }

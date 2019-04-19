@@ -39,6 +39,7 @@ import { OrderMantPageComponent } from './components/work-orders/order-mant-page
 import { OrderInquiryPageComponent } from './components/work-orders/order-inquiry-page/order-inquiry-page.component';
 import { ConfirmDialogComponent } from './components/dialog-components/confirm-dialog/confirm-dialog.component';
 import { ZonePageComponent } from './components/supermarkets/zone-page/zone-page.component';
+import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
 
 
 @NgModule({
@@ -72,7 +73,8 @@ import { ZonePageComponent } from './components/supermarkets/zone-page/zone-page
     AppRoutingModule,
     FormsModule,
     AngularFireAuthModule,
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    Ng4LoadingSpinnerModule.forRoot()
   ],
   entryComponents: [
     AlertDialogComponent,

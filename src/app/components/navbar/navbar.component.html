@@ -31,7 +31,10 @@
         </li>
         <li class="nav-item active" *ngIf="isLogin">
           <!-- <a class="nav-link" href="#" (click)='logout()'>{{userName}}</a> -->
-          <a [matMenuTriggerFor]="menu" class="nav-link" href="javascript:void(0)">
+          <a  #menuTrigger 
+              
+              [matMenuTriggerFor]="menu" class="nav-link" 
+          href="javascript:void(0)">
             <i class="fa fa-user"></i>
             <span class="px-2"> {{userName}} </span>
             <i class="fa fa-angle-down"></i>

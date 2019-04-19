@@ -5,6 +5,7 @@ import { MenuService } from '../../services/menu.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { AlertDialogComponent } from '../dialog-components/alert-dialog/alert-dialog.component';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 
 @Component({
   selector: 'app-navbar',
@@ -22,14 +23,14 @@ export class NavbarComponent implements OnInit {
     public authService: AuthService,
     public us: UsersService,
     public router: Router,
-    public ms: MenuService
+    public ms: MenuService,
+    private spinnerService: Ng4LoadingSpinnerService
   ) { }
 
   ngOnInit() {
     this.authService.getAuth().subscribe((auth) => {
       if (auth) {
         this.isLogin = true;
-        console.log(this.isLogin);
         this.userName = auth.displayName;
         this.userEmail = auth.email;
         this.us.getUserByEmail(this.userEmail).subscribe( usr => {
@@ -64,9 +65,12 @@ export class NavbarComponent implements OnInit {
   }
 
   logout(): void {
+    this.spinnerService.show();
     this.authService.logout().then((res) => {
+      this.spinnerService.hide();
       this.router.navigate(['/login']);
     }).catch((err) => {
+      this.spinnerService.hide();
       this.openDialog('Scope Authorization', err.message);
     });
   }

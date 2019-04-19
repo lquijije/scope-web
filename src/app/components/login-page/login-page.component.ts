@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { AlertDialogComponent } from '../dialog-components/alert-dialog/alert-dialog.component';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import * as $ from 'jquery';
 
 @Component({
@@ -16,7 +16,8 @@ export class LoginPageComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     public authService: AuthService,
-    public router: Router
+    public router: Router,
+    private spinnerService: Ng4LoadingSpinnerService
   ) { }
 
   username: string;
@@ -44,10 +45,13 @@ export class LoginPageComponent implements OnInit {
       this.openAlert('Scope Alert!', 'Password es requerido');
       return;
     }
+    this.spinnerService.show();
     this.authService.loginUser(this.username, this.password)
     .then((res) => {
+      this.spinnerService.hide();
       this.router.navigate(['/']);
     }).catch((err) => {
+      this.spinnerService.hide();
       this.router.navigate(['/login']);
       this.openAlert('Authentication Error!', err.message );
       return;

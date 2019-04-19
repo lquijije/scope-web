@@ -1,21 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { WorkOrdersService } from '../../../services/work-orders.service';
 import { MatDialog } from '@angular/material';
-import { Subscription, Timestamp } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { IUser } from 'src/app/models/users/user';
 import { SupermaketsService } from '../../../services/supermakets.service';
 import { CustomerService } from '../../../services/customer.service';
 import { UsersService } from '../../../services/users.service';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
-// import * as $ from 'jquery';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { ISuperStore } from 'src/app/models/supermarkets/super-store';
 import { ExcelService } from '../../../services/excel.service';
-import { IWorkOrder } from 'src/app/models/work-orders/work-order';
-import { ISuperChain } from 'src/app/models/supermarkets/super-chain';
-import { ISkuOrder } from 'src/app/models/customers/skus';
-import { IOrderStatus } from 'src/app/models/work-orders/order-status';
-import * as firebase from 'firebase';
+
 
 declare var $: any;
 export interface IChainObj {
@@ -70,13 +66,16 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     private sc: SupermaketsService,
     private cu: CustomerService,
     private us: UsersService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private spinnerService: Ng4LoadingSpinnerService
     ) {
       console.log(this.orderCurrent);
     }
 
   ngOnInit() {
+    this.spinnerService.show();
     this.orderSubscription = this.ow.getWorkOrdersList().subscribe(orders => {
+      this.spinnerService.hide();
       this.sourceList = orders;
       this.orderList = this.sourceList.sort( (a, b) => {
         return a.creacion > b.creacion ? 1 : -1;
