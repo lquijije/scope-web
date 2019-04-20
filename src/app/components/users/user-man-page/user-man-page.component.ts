@@ -49,7 +49,9 @@ export class UserManPageComponent implements OnInit, OnDestroy {
    }
 
   ngOnInit() {
+    this.spinnerService.show();
     this.userSubscription = this.us.getUsers().subscribe(users => {
+      this.spinnerService.hide();
       this.userList = users;
     });
     this.profileSubscription = this.us.getProfiles().subscribe(profiles => {

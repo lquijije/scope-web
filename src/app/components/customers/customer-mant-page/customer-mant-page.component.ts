@@ -5,7 +5,7 @@ import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
-// import * as $ from 'jquery';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { Subscription } from 'rxjs';
 
 declare var $: any;
@@ -27,7 +27,8 @@ export class CustomerMantPageComponent implements OnInit, OnDestroy {
   actionName: string = '';
   customerSubsription: Subscription;
   constructor(public dialog: MatDialog,
-    private sc: CustomerService) { }
+    private sc: CustomerService,
+    private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
     this.customerSubsription = this.sc.getCustomer().subscribe(customers => {
@@ -53,13 +54,31 @@ export class CustomerMantPageComponent implements OnInit, OnDestroy {
     if (myForm.valid) {
       if (!this.editState) {
         this.customer.estado = 'A';
-        this.sc.addCustomer(this.customer);
+        this.spinnerService.show();
+        this.sc.addCustomer(this.customer).then(() => {
+          this.spinnerService.hide();
+          this.clearObject();
+          this.salir();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+          this.clearObject();
+          this.salir();
+        });
       } else {
-        this.sc.updCustomer(this.customer);
+        this.spinnerService.show();
+        this.sc.updCustomer(this.customer).then(() => {
+          this.spinnerService.hide();
+          this.clearObject();
+          this.salir();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+          this.clearObject();
+          this.salir();
+        });
         this.editState = false;
       }
-      this.clearObject();
-      this.salir();
     } else {
       this.openAlert('Scope Error', 'Algunos atributos son requeridos.');
     }
@@ -78,7 +97,13 @@ export class CustomerMantPageComponent implements OnInit, OnDestroy {
       if (result) {
         customer.estado = 'I';
         // this.sc.updCustomer(v); // Cambia estado a I
-        this.sc.delCustomer(customer); // Elimina permanentemente de la base
+        this.spinnerService.show();
+        this.sc.delCustomer(customer).then(() => { // Elimina permanentemente de la base
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+        }); 
       }
     });
   }

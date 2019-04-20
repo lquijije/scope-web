@@ -187,7 +187,9 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
           nombre: nameChain
         };
         self.storeList = [];
+        self.spinnerService.show();
         self.sc.getSuperStoreFromChain(self.chainObj.id).subscribe(stores => {
+          self.spinnerService.hide();
           if (stores) {
             self.storeList = stores as ISuperStore;
           }
@@ -215,7 +217,9 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
         };
         self.brandList = [];
         self.arrBrands = [];
+        self.spinnerService.show();
         self.cu.getBrandFromCustomer(idCustomer).subscribe(brands => {
+          self.spinnerService.hide();
           if (brands) {
             self.brandList = brands;
           }
@@ -242,7 +246,9 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
         return b !== idStatus;
       });
     });
+    self.spinnerService.show();
     this.chainSubscription = this.sc.getSuperChain().subscribe(chains => {
+      self.spinnerService.hide();
       this.chainList = chains
         .filter(ch => ch.estado === 'A')
         .sort((a, b) => {
@@ -250,17 +256,20 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
         });
     });
     this.customerSubscription = this.cu.getCustomer().subscribe(customers => {
+      self.spinnerService.hide();
       if (customers) {
         this.customerList = customers;
       }
     });
     this.merchantSubscription = this.us.getMerchants().subscribe(merchants => {
+      self.spinnerService.hide();
       this.merchantList = merchants
         .sort((a, b) => {
           return a.nombre < b.nombre ? -1 : 1;
         });
     });
     this.statusSubscription = this.ow.getOrderStatus().subscribe(status => {
+      self.spinnerService.hide();
       if (status) {
         this.statusList = status;
       }
@@ -370,7 +379,13 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.ow.delOrder(order); // Elimina permanentemente de la base
+        this.spinnerService.show();
+        this.ow.delOrder(order).then(() => {
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.openAlert('Scope Error', er.message);
+          this.spinnerService.hide();
+        }); // Elimina permanentemente de la base
       }
     });
   }

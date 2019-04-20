@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
-// import * as $ from 'jquery';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { IAssociatedBrands } from 'src/app/models/customers/associated-brands';
 import { Subscription } from 'rxjs';
 declare var $: any;
@@ -64,17 +64,21 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
   assocSubscription: Subscription;
   constructor(public dialog: MatDialog,
     private cs: CustomerService,
-    private sc: SupermaketsService) { }
+    private sc: SupermaketsService,
+    private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
     var self = this;
     $('#cmbChain').on('select2:select',function(e){
+      console.log('chain');
       var idChain = e.params.data.id;
       var nameChain = e.params.data.text;
       if (idChain!=''){
         self.tempIdChain = idChain;
         self.tempNameChain = nameChain;
-        self.sc.getSuperStoreFromChain(idChain).subscribe(stores => {      
+        self.spinnerService.show();
+        self.sc.getSuperStoreFromChain(idChain).subscribe(stores => {
+          self.spinnerService.hide();  
           self.storeList = stores;
         });
       }
@@ -93,7 +97,9 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
       if (idCustomer!=''){
         self.tempIdCustomer = idCustomer;
         self.tempNameCustomer = nameCustomer;
-        self.cs.getBrandFromCustomer(idCustomer).subscribe(brands => {      
+        self.spinnerService.show();
+        self.cs.getBrandFromCustomer(idCustomer).subscribe(brands => {
+          self.spinnerService.hide();     
           self.brandList = brands;
         });
       }
@@ -105,7 +111,9 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
         if (idBrand!=''){
           self.tempIdBrand = idBrand;
           self.tempNameBrand = nameBrand;
+          self.spinnerService.show();
           self.cs.getSkuFromCustomerAndBrand(self.tempIdCustomer, idBrand).subscribe(skus => {
+            self.spinnerService.hide();
             self.skuList = skus;
           });
         }
@@ -113,7 +121,9 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
         this.openAlert('Scope Alert','Escoja un cliente');
       }
     });
+    this.spinnerService.show();
     this.customerSubscription = this.cs.getCustomer().subscribe(customers => {
+      this.spinnerService.hide();
       this.customerList = customers
       .filter(ch => ch.estado === 'A')
         .sort((a, b) => {
@@ -121,6 +131,7 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
         });
     });
     this.superChainSubscription = this.sc.getSuperChain().subscribe(chains => {
+      this.spinnerService.hide();
       this.chainList = chains
       .filter(ch => ch.estado === 'A')
         .sort((a, b) => {
@@ -128,6 +139,7 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
         });
     });
     this.assocSubscription = this.cs.getAssociatedBrands().subscribe(assocBrands => {
+      this.spinnerService.hide();
       this.assocBrandList = assocBrands;
     });
   }
@@ -159,7 +171,13 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
                 nombre: this.tempNameStore
               };
               this.associatedBrand.sku = this.skuList;
-              this.cs.addAssocBrand(this.associatedBrand);
+              this.spinnerService.show();
+              this.cs.addAssocBrand(this.associatedBrand).then(() => {
+                this.spinnerService.hide();
+              }).catch(er => {
+                this.spinnerService.hide();
+                this.openAlert('Scope Error', er.message);
+              });
             } else {
               //this.cs.updSku(this.associatedBrand);
               this.editState = false;
@@ -197,16 +215,22 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
     });
   }
   delete(assoc: IAssociatedBrands) {
-   /* const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '300px',
       data: { title: 'Confirmación', msg: 'Desea eliminar la Asociaci&oacute;n selecionada?' }
     });
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {*/
+      if (result) {
         // this.cs.updBrand(brand); // Cambia estado a I
-        this.cs.delAssocBrand(assoc); // Elimina permanentemente de la base
-     /*}
-    });*/
+        this.spinnerService.show();
+        this.cs.delAssocBrand(assoc).then(() => { // Elimina permanentemente de la base
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+        });
+     }
+    });
   }
   details(assoc: IAssociatedBrands){
     this.assocBrandDetail = assoc;
@@ -308,6 +332,39 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+    });
+  }
+  edit(assoc: IAssociatedBrands){
+    this.editState = true;
+    this.showEditView();
+    this.selectCustomerByAssoc(assoc);
+    this.selectChainByAssoc(assoc);
+    this.skuList = assoc.sku;
+    this.associatedBrand = Object.assign({}, assoc);
+  }
+  selectChainByAssoc(assoc: IAssociatedBrands) {
+    $('#cmbChain').val($("#cmbChain option:contains('"+assoc.cadena.nombre+"')").val()).trigger('change');
+    this.spinnerService.show();
+    this.sc.getSuperStoreFromChain(assoc.cadena.id).subscribe(stores => {
+      this.spinnerService.hide();  
+      this.storeList = stores;
+      const inter = setInterval(() => {
+        $('#cmbStore').val(assoc.local.id).trigger('change');
+        clearInterval(inter);
+      }, 500);
+      
+    });
+  }
+  selectCustomerByAssoc(assoc: IAssociatedBrands) {
+    $('#cmbCustomer').val($("#cmbCustomer option:contains('"+assoc.cliente.razonsocial+"')").val()).trigger('change');
+    this.spinnerService.show();
+    this.cs.getBrandFromCustomer(assoc.cliente.id).subscribe(brands => {
+      this.spinnerService.hide();     
+      this.brandList = brands;
+      const inter = setInterval(() => {
+        $('#cmbBrand').val(assoc.marca.id).trigger('change');
+        clearInterval(inter);
+      }, 500);
     });
   }
 }

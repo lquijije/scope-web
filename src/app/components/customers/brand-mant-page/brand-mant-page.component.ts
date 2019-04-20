@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
-// import * as $ from 'jquery';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { Subscription } from 'rxjs';
 
 declare var $: any;
@@ -30,7 +30,8 @@ export class BrandMantPageComponent implements OnInit, OnDestroy {
   actionName: string = '';
   customerSubscription: Subscription;
   constructor(public dialog: MatDialog,
-    private cs: CustomerService) { }
+    private cs: CustomerService,
+    private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
     const self = this;
@@ -50,13 +51,17 @@ export class BrandMantPageComponent implements OnInit, OnDestroy {
       if (idCustomer != '') {
         self.tempIdCustomer = idCustomer;
         self.tempNameCustomer = nameCustomer;
+        self.spinnerService.show();
         self.cs.getBrandFromCustomer(idCustomer).subscribe(brands => {
+          self.spinnerService.hide();
           self.brandList = brands;
           console.log(self.brandList);
         });
       }
     });
+    this.spinnerService.show();
     this.customerSubscription = this.cs.getCustomer().subscribe(customers => {
+      this.spinnerService.hide();
       this.customerList = customers
       .filter(ch => ch.estado === 'A')
         .sort((a, b) => {
@@ -76,9 +81,21 @@ export class BrandMantPageComponent implements OnInit, OnDestroy {
       if (!this.editState) {
         this.brand.estado = 'A';
         this.brand.cliente = this.tempIdCustomer;
-        this.cs.addBrand(this.brand);
+        this.spinnerService.show();
+        this.cs.addBrand(this.brand).then(() => {
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+        });
       } else {
-        this.cs.updBrand(this.brand);
+        this.spinnerService.show();
+        this.cs.updBrand(this.brand).then(() => {
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+        });;
         this.editState = false;
       }
       this.clearObject();
@@ -112,7 +129,13 @@ export class BrandMantPageComponent implements OnInit, OnDestroy {
       if (result) {
         brand.estado = 'I';
         //this.cs.updBrand(brand); // Cambia estado a I
-        this.cs.delBrand(brand); // Elimina permanentemente de la base
+        this.spinnerService.show();
+        this.cs.delBrand(brand).then(() => { // Elimina permanentemente de la base
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+        }); 
       }
     });
   }
@@ -142,9 +165,7 @@ export class BrandMantPageComponent implements OnInit, OnDestroy {
       width: '25%',
       data: { title: tit , msg: msg }
     });
-
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
     });
   }
 }

@@ -81,6 +81,6 @@ export class WorkOrdersService {
   }
   delOrder(order: IWorkOrder) {
     this.wOrderDoc = this.afs.doc(`work-orders/${order.id}`);
-    this.wOrderDoc.delete();
+    return this.wOrderDoc.delete();
   }
 }

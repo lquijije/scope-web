@@ -190,7 +190,9 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
         self.customerList = [];
         self.brandList = [];
         self.skuList = [];
+        self.spinnerService.show();
         self.sc.getSuperStoreFromChainAssociate(self.chainObj).subscribe(associated => {
+          self.spinnerService.hide();
           if (associated) {
             (associated as IAssociatedBrands[]).forEach(i => self.storeList.push(i.local));
             self.storeList = self.removeDuplicates(self.storeList);
@@ -212,7 +214,9 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
           self.customerList = [];
           self.brandList = [];
           self.skuList = [];
+          self.spinnerService.show();
           self.sc.getCustomersFromChainStoreAssociate(self.chainObj, self.storeObj).subscribe(associated => {
+            self.spinnerService.hide();
             if (associated) {
               (associated as IAssociatedBrands[]).forEach(i => self.customerList.push(i.cliente));
               self.customerList = self.removeDuplicates(self.customerList);
@@ -234,8 +238,9 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
               razonsocial: nameCustomer
             };
             self.brandList = [];
-            // self.skuList = [];
+            self.spinnerService.show();
             self.sc.getBrandsFromChainStoreCustomerAssociate(self.chainObj, self.storeObj, self.customerObj ).subscribe(associated => {
+              self.spinnerService.hide();
               if (associated) {
                 (associated as IAssociatedBrands[]).forEach(i => self.brandList.push(i.marca));
                 self.brandList = self.removeDuplicates(self.brandList);
@@ -292,19 +297,23 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
           return a.nombre < b.nombre ? -1 : 1;
         });
     });
+    this.spinnerService.show();
     this.merchantSubscription = this.us.getMerchants().subscribe(merchants => {
+      this.spinnerService.hide();
       this.merchantList = merchants
         .sort((a, b) => {
           return a.nombre < b.nombre ? -1 : 1;
         });
     });
     this.workOrderSubscription = this.prioritySubscription = this.gs.getPriority().subscribe(priorities => {
+      this.spinnerService.hide();
       this.priorityList = priorities
         .sort((a, b) => {
           return a.nombre > b.nombre ? -1 : 1;
         });
     });
     this.secuentialSubscription = this.ow.getWorkOrders().subscribe(d => {
+      this.spinnerService.hide();
       if (d.length > 0) {
         // this.sequential = d.length + 1;
         this.sequential = parseInt(d.reduce(function(a, b) {
@@ -379,10 +388,10 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
     });
     this.spinnerService.show();
     this.ow.addWorkOrders(this.workOrderList).then(msg => {
+      this.spinnerService.hide();
       const strOrders = this.workOrderList.map(x => {
         return x.numero;
-      });
-      this.spinnerService.hide();
+      });      
       this.openAlert('Scope Web', `Se generaron las siguientes órdenes:  ${strOrders.join()}`);
       this.limpiar();
     }).catch(err => {

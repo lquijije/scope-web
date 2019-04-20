@@ -5,7 +5,7 @@ import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
-// import * as $ from 'jquery';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { Subscription } from 'rxjs';
 declare var $: any;
 
@@ -23,11 +23,14 @@ export class ZonePageComponent implements OnInit, OnDestroy {
   actionName: string = '';
   private paramsSubscription: Subscription;
   constructor(public dialog: MatDialog,
-    private sc: SupermaketsService) {
+    private sc: SupermaketsService,
+    private spinnerService: Ng4LoadingSpinnerService) {
     }
     ngOnInit() {
       // console.log(this.sc.getZone().subscribe());
+      this.spinnerService.show();
       this.paramsSubscription = this.sc.getZone().subscribe(zones => {
+        this.spinnerService.hide();
         this.zoneList = zones
           .sort((a, b) => {
             return a.nombre < b.nombre ? -1 : 1;
@@ -51,13 +54,30 @@ export class ZonePageComponent implements OnInit, OnDestroy {
           return;
         }
         if (!this.editState) {
-          this.sc.addZone(this.zone);
+          this.spinnerService.show();
+          this.sc.addZone(this.zone).then(() => {
+            this.spinnerService.hide();
+            this.clearObject();
+            this.salir();
+          }).catch(er => {
+            this.spinnerService.hide();
+            this.openAlert('Scope Error', er.message);
+            this.clearObject();
+            this.salir();
+          });
         } else {
-          this.sc.updZone(this.zone);
+          this.sc.updZone(this.zone).then(() => {
+            this.spinnerService.hide();
+            this.clearObject();
+            this.salir();
+          }).catch(er => {
+            this.spinnerService.hide();
+            this.openAlert('Scope Error', er.message);
+            this.clearObject();
+            this.salir();
+          });
           this.editState = false;
         }
-        this.clearObject();
-        this.salir();
       } else {
         this.openAlert('Scope Error', 'Aún faltan campos requeridos');
       }
@@ -76,7 +96,12 @@ export class ZonePageComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
           // this.sc.updZone(zone); // Cambia estado a I
-          this.sc.delZone(zone); // Elimina permanentemente de la base
+          this.sc.delZone(zone).then(() => { // Elimina permanentemente de la base
+            this.spinnerService.hide();
+          }).catch(er => {
+            this.spinnerService.hide();
+            this.openAlert('Scope Error', er.message);
+          });
         }
       });
     }

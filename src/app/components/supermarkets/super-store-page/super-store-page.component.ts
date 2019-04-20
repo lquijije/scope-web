@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
-// import * as $ from 'jquery';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { Subscription } from 'rxjs';
 import { ISuperStore } from 'src/app/models/supermarkets/super-store';
 declare var $: any;
@@ -45,7 +45,8 @@ export class SuperStorePageComponent implements OnInit, OnDestroy {
   zoneSubscription: Subscription;
   constructor(public dialog: MatDialog,
     private sc: SupermaketsService,
-    private ge: GeneralService) { }
+    private ge: GeneralService,
+    private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
     const self = this;
@@ -65,14 +66,18 @@ export class SuperStorePageComponent implements OnInit, OnDestroy {
       if (idChain != '') {
         self.tempIdChain = idChain;
         self.tempNameChain = nameChain;
+        self.spinnerService.show();
         self.sc.getSuperStoreFromChain(idChain).subscribe(stores => {
+          self.spinnerService.hide();
           self.storeList = stores.sort((a, b) => {
             return a.nombre < b.nombre ? -1 : 1;
           });
         });
       }
     });
+    this.spinnerService.show();
     this.chainSubscription = this.sc.getSuperChain().subscribe(chains => {
+      this.spinnerService.hide();
       this.chainList = chains
       .filter(ch => ch.estado === 'A')
         .sort((a, b) => {
@@ -80,12 +85,14 @@ export class SuperStorePageComponent implements OnInit, OnDestroy {
         });
     });
     this.citySubscription = this.ge.getCity().subscribe(cities => {
+      this.spinnerService.hide();
       this.cityList = cities
         .sort((a, b) => {
           return a.nombre < b.nombre ? -1 : 1;
         });
     });
     this.zoneSubscription = this.ge.getZone().subscribe(zones => {
+      this.spinnerService.hide();
       this.zoneList = zones
         .sort((a, b) => {
           return a.nombre < b.nombre ? -1 : 1;
@@ -116,9 +123,21 @@ export class SuperStorePageComponent implements OnInit, OnDestroy {
       if (!this.editState) {
         this.store.estado = 'A';
         this.store.cadena = this.tempIdChain;
-        this.sc.addSuperStore(this.store);
+        this.spinnerService.show();
+        this.sc.addSuperStore(this.store).then(() => {
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+        });
       } else {
-        this.sc.updSuperStore(this.store);
+        this.spinnerService.show();
+        this.sc.updSuperStore(this.store).then(() => {
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+        });
         this.editState = false;
       }
       this.clearObject();
@@ -154,7 +173,13 @@ export class SuperStorePageComponent implements OnInit, OnDestroy {
       if (result) {
         store.estado = 'I';
         // this.sc.updSuperStore(store); // Cambia estado a I
-        this.sc.delSuperStore(store); // Elimina permanentemente de la base
+        this.spinnerService.show();
+        this.sc.delSuperStore(store).then(() => { // Elimina permanentemente de la base
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+        }); 
       }
     });
   }

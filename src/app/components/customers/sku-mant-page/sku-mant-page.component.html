@@ -75,7 +75,7 @@
                       </div>
                     </div>
                       <mat-form-field class="w-100">
-                          <input matInput placeholder="Sku" #sku="ngModel" [(ngModel)]="sku.sku" id="sku" name="sku"  value="" required>
+                          <input matInput placeholder="Sku" #skuname="ngModel" [(ngModel)]="sku.sku" id="sku" name="sku"  value="" required>
                       </mat-form-field>
                       <mat-form-field class="w-100">
                           <input matInput placeholder="Descripci&oacute;n" #descripcion="ngModel" [(ngModel)]="sku.descripcion" 
@@ -89,7 +89,7 @@
                           <input matInput placeholder="Sabor" [(ngModel)]="sku.sabor" id="sabor" name="sabor"  value="">
                       </mat-form-field>
 
-                      <div class="bg-warning rounded p-1 text-white" *ngIf="sku.touched && !sku.valid">
+                      <div class="bg-warning rounded p-1 text-white" *ngIf="skuname.touched && !skuname.valid">
                         <small> * Sku es requerido</small>                      
                       </div>
                       <div class="bg-warning rounded p-1 text-white" *ngIf="descripcion.touched && !descripcion.valid">

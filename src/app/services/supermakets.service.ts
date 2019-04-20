@@ -55,17 +55,17 @@ export class SupermaketsService {
   }
 
   addSuperChain(superChain: ISuperChain) {
-    this.superChainCollection.add(superChain);
+    return this.superChainCollection.add(superChain);
   }
 
   delSuperChain(chain: ISuperChain) {
     this.superChainDoc = this.afs.doc(`super-chain/${chain.id}`);
-    this.superChainDoc.delete();
+    return this.superChainDoc.delete();
   }
 
   updSuperChain(chain: ISuperChain) {
     this.superChainDoc = this.afs.doc(`super-chain/${chain.id}`);
-    this.superChainDoc.update(chain);
+    return this.superChainDoc.update(chain);
   }
 
   getSuperStoreFromChain(id: string) {
@@ -132,35 +132,34 @@ export class SupermaketsService {
   }
 
   addSuperStore(superStore: ISuperStore) {
-    this.superStoreCollection.add(superStore);
+    return this.superStoreCollection.add(superStore);
   }
 
   delSuperStore(store: ISuperStore) {
     this.superStoreDoc = this.afs.doc(`super-store/${store.id}`);
-    this.superStoreDoc.delete();
+    return this.superStoreDoc.delete();
   }
 
   updSuperStore(store: ISuperStore) {
     this.superStoreDoc = this.afs.doc(`super-store/${store.id}`);
-    this.superStoreDoc.update(store);
+    return this.superStoreDoc.update(store);
   }
-
 
   getZone() {
     return this.zoneObs;
   }
 
   addZone(zone: IZone) {
-    this.zoneCollection.add(zone);
+    return this.zoneCollection.add(zone);
   }
 
   delZone(zone: IZone) {
     this.zoneDoc = this.afs.doc(`zone/${zone.id}`);
-    this.zoneDoc.delete();
+    return this.zoneDoc.delete();
   }
 
   updZone(zone: IZone) {
     this.zoneDoc = this.afs.doc(`zone/${zone.id}`);
-    this.zoneDoc.update(zone);
+    return this.zoneDoc.update(zone);
   }
 }

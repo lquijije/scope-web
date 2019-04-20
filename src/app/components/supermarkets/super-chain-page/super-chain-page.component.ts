@@ -6,8 +6,7 @@ import { MatDialog } from '@angular/material';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
 import { Subscription } from 'rxjs';
-
-// import * as $ from 'jquery';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 declare var $: any;
 
 @Component({
@@ -26,10 +25,13 @@ export class SuperChainPageComponent implements OnInit, OnDestroy {
   actionName: string ='';
   private paramsSubscription: Subscription;
   constructor(public dialog: MatDialog,
-    private sc: SupermaketsService) { }
+    private sc: SupermaketsService,
+    private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
+    this.spinnerService.show();
     this.paramsSubscription = this.sc.getSuperChain().subscribe(chains => {
+      this.spinnerService.hide();
       this.chainList = chains
       .filter(ch => ch.estado === 'A')
         .sort((a, b) => {
@@ -60,9 +62,20 @@ export class SuperChainPageComponent implements OnInit, OnDestroy {
       }
       if (!this.editState) {
         this.chain.estado = 'A';
-        this.sc.addSuperChain(this.chain);
+        this.spinnerService.show();
+        this.sc.addSuperChain(this.chain).then(() => {
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+        });
       } else {
-        this.sc.updSuperChain(this.chain);
+        this.sc.updSuperChain(this.chain).then(() => {
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+        });
         this.editState = false;
       }
       this.clearObject();
@@ -85,7 +98,12 @@ export class SuperChainPageComponent implements OnInit, OnDestroy {
       if (result) {
         chain.estado = 'I';
         // this.sc.updSuperChain(chain); // Cambia estado a I
-        this.sc.delSuperChain(chain); // Elimina permanentemente de la base
+        this.sc.delSuperChain(chain).then(() => { // Elimina permanentemente de la base
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+        });
       }
     });
   }

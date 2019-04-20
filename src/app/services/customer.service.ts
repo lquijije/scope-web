@@ -72,18 +72,18 @@ export class CustomerService {
   }
 
   addCustomer(customer: ICustomer) {
-    this.customerCollection.add(customer);
+    return this.customerCollection.add(customer);
   }
   
 
   delCustomer(customer: ICustomer) {
     this.customerDoc = this.afs.doc(`customer/${customer.id}`);
-    this.customerDoc.delete();
+    return this.customerDoc.delete();
   }
 
   updCustomer(customer: ICustomer) {
     this.customerDoc = this.afs.doc(`customer/${customer.id}`);
-    this.customerDoc.update(customer);
+    return this.customerDoc.update(customer);
   }
 
   getBrands() {
@@ -103,17 +103,17 @@ export class CustomerService {
   }
 
   addBrand(brand: IBrand) {
-    this.brandCollection.add(brand);
+    return this.brandCollection.add(brand);
   }
 
   delBrand(brand: IBrand) {
     this.brandDoc = this.afs.doc(`brand/${brand.id}`);
-    this.brandDoc.delete();
+    return this.brandDoc.delete();
   }
 
   updBrand(brand: IBrand) {
     this.brandDoc = this.afs.doc(`brand/${brand.id}`);
-    this.brandDoc.update(brand);
+    return this.brandDoc.update(brand);
   }
 
   getSkus(){
@@ -133,17 +133,17 @@ export class CustomerService {
     );
   }
   addSku(sku: ISku) {
-    this.skuCollection.add(sku);
+    return this.skuCollection.add(sku);
   }
 
   delSku(sku: ISku) {
     this.skuDoc = this.afs.doc(`sku/${sku.id}`);
-    this.skuDoc.delete();
+    return this.skuDoc.delete();
   }
 
   updSku(sku: ISku) {
     this.skuDoc = this.afs.doc(`sku/${sku.id}`);
-    this.skuDoc.update(sku);
+    return this.skuDoc.update(sku);
   }
 
   getAssociatedBrands(){
@@ -155,10 +155,10 @@ export class CustomerService {
   }
 
   addAssocBrand(assoc: IAssociatedBrands){
-    this.asocBrandsCollection.add(assoc);
+    return this.asocBrandsCollection.add(assoc);
   }
   delAssocBrand(assoc: IAssociatedBrands) {
     this.asocBrandsDoc = this.afs.doc(`associated-brands/${assoc.id}`);
-    this.asocBrandsDoc.delete();
+    return this.asocBrandsDoc.delete();
   }
 }

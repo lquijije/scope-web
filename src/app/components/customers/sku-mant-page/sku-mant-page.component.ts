@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
-// import * as $ from 'jquery';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { Subscription } from 'rxjs';
 declare var $: any;
 
@@ -35,7 +35,8 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
   actionName:string ='';
   customerSubscription: Subscription;
   constructor(public dialog: MatDialog,
-    private cs: CustomerService) { }
+    private cs: CustomerService,
+    private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
     const self = this;
@@ -66,7 +67,9 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
         self.tempIdCustomer = idCustomer;
         self.tempNameCustomer = nameCustomer;
         self.skuList = [];
+        self.spinnerService.show();
         self.cs.getBrandFromCustomer(idCustomer).subscribe(brands => {
+          self.spinnerService.hide();
           self.brandList = brands;
           const n3 = new Option('', '', true, true);
           $('#cmbBrand').append(n3).trigger('change');
@@ -80,16 +83,19 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
         if (idBrand != '') {
           self.tempIdBrand = idBrand;
           self.tempNameBrand = nameBrand;
+          self.spinnerService.show();
           self.cs.getSkuFromCustomerAndBrand(self.tempIdCustomer, idBrand).subscribe(skus => {
+            self.spinnerService.hide();
             self.skuList = skus;
-            console.log(skus);
           });
         }
       } else {
         this.openAlert('Scope Alert', 'Escoja un cliente');
       }
     });
+    self.spinnerService.show();
     this.customerSubscription = this.cs.getCustomer().subscribe(customers => {
+      self.spinnerService.hide();
       this.customerList = customers
       .filter(ch => ch.estado === 'A')
         .sort((a, b) => {
@@ -113,6 +119,7 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
   }
   onSubmit(myForm: NgForm) {
     if (myForm.valid) {
+      console.log(this.sku);
       if (this.sku.sku.trim() === '') {
         this.openAlert('Scope Error', 'SKU no puede estar vacío');
         return;
@@ -122,20 +129,38 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
         return;
       }
       if (this.sku.presentacion.trim() === '') {
-        this.openAlert('Scope Error', 'Presentación no puede estar vacía');
+        this.openAlert('Scope Esrror', 'Presentación no puede estar vacía');
         return;
       }
       if (!this.editState) {
         this.sku.estado = 'A';
         this.sku.cliente = this.tempIdCustomer;
         this.sku.marca = this.tempIdBrand;
-        this.cs.addSku(this.sku);
+        this.spinnerService.show();
+        this.cs.addSku(this.sku).then((e)=>{
+          this.spinnerService.hide();
+          this.clearObject();
+          this.salir();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message );
+          this.clearObject();
+          this.salir();
+        });
       } else {
-        this.cs.updSku(this.sku);
+        this.spinnerService.show();
+        this.cs.updSku(this.sku).then((e)=>{
+          this.spinnerService.hide();
+          this.clearObject();
+          this.salir();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+          this.clearObject();
+          this.salir();
+        });
         this.editState = false;
       }
-      this.clearObject();
-      this.salir();
     } else {
       this.openAlert('Scope Error', 'Aún faltan campos requeridos.');
     }
@@ -147,6 +172,7 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
     this.editState = true;
     this.showEditView();
     this.sku = Object.assign({}, sku);
+    console.log(this.sku);
   }
   delete(sku: ISku) {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -157,7 +183,13 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
       if (result) {
         sku.estado = 'I';
         // this.cs.updSku(sku); // Cambia estado a I
-        this.cs.delSku(sku); // Elimina permanentemente de la base
+        this.spinnerService.show();
+        this.cs.delSku(sku).then((e) => { // Elimina permanentemente de la base
+          this.spinnerService.hide();
+        }).catch(er => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Error', er.message);
+        });
       }
     });
   }
@@ -194,7 +226,6 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
     });
   }
 }
