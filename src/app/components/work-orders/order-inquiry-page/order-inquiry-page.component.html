@@ -118,6 +118,7 @@
                         <th>Estado</th>
                         <th></th>
                         <th></th>
+                        <th></th>
                         <th>Cadena</th>
                         <th>Local</th>
                         <th>Mercaderista</th>
@@ -139,6 +140,11 @@
                                 class="fa fa-search"></i></a></td>
                           <td class='text-center'><a class="text-danger" href="javascript:void(0);" (click)="delete(order)"><i
                                 class="fa fa-trash"></i></a></td>
+                          <td class='text-center'>
+                            <a *ngIf="order.fotos" class="text-primary" href="javascript:void(0);" (click)="images(order)">
+                              <i class="fa fa-image"></i>
+                            </a>
+                          </td>
                           <td>{{order.cadena.nombre}}</td>
                           <td>{{order.local.nombre}}</td>
                           <td>{{order.mercaderista.nombre}}</td>
@@ -205,6 +211,14 @@
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <div class="col">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary">Novedad:</span>
+                    <label for="" id="lbNov"></label>
+                  </div>
+                </div>
+              </div>
               <div class="row mt-1">
                 <div class="col">
                   <table id="table_details" class="table table-bordered table-sm">
@@ -222,7 +236,9 @@
                       <th>Observacion</th>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let sku of skuList">
+                      <tr *ngFor="let sku of skuList" [ngClass]="{
+                        'bg-secondary text-white':sku.bloqueado
+                      }">
                         <td>{{sku.sku}}</td>
                         <td>{{sku.descripcion}}</td>
                         <td>{{sku.presentacion}}</td>
@@ -247,7 +263,39 @@
                 </div>
               </div>
             </div>
+            <div class="card-body bg-light border rounded d-none" id="pnlImages">
+              <div class="gallery-block cards-gallery">
+                <div class="container">
+                  <div class="heading">
+                      <h2 id="hTitImg"></h2>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-6 col-lg-4" *ngFor="let img of orderCurrent.fotos">
+                        <div class="card boder-0 transform-on-hover">
+                          <a href="{{img.url}}" class="lightbox">
+                            <img src="{{img.url}}" alt="" class="card-img-top">
+                          </a>
+                          <div class="card-body">
+                            <h6>{{img.nombre}}</h6>
+                            <p class="text-muted card-text">
+                              Fecha: {{img.fecha}}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row d-flex justify-content-end">
+                  <div class="col col-sm-3 col-xl-1">
+                    <input type="button" value="Salir" class="btn btn-secondary rounded btn-sm btn-block btn-lg" (click)='salir()'>
+                  </div>
+                </div>
+            </div>
           </div>
         </div>
     </div>
 </div>
+<script>
+  baguetteBox.run('.cards-gallery',{animation: 'slideIn'});
+</script>

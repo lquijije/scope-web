@@ -57,6 +57,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
   merchantList: any;
   merchantObj: IUser;
   priorityList: any;
+  priorityObj: any;
   oStatusList: any;
   tempIdChain: string;
   tempNameChain: string;
@@ -84,6 +85,10 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const self = this;
+    this.priorityObj = {
+      id: 'UwJiKYkri6euQnKzEzy1',
+      nombre: 'NORMAL'
+    };
     $('#calendar').multiDatesPicker({
       onSelect: function(e) {
         const dates = $('#calendar').multiDatesPicker('getDates');
@@ -164,6 +169,16 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
         'noResults': function () {
           return '';
         }
+      }
+    });
+    $('#cmbPriority').on('select2:select', function (e) {
+      const idPriority = e.params.data.id;
+      const namePriority = e.params.data.text;
+      if (idPriority !== '') {
+        self.priorityObj = {
+          id: idPriority,
+          nombre: namePriority
+        };
       }
     });
     $('#cmbMerchant').on('select2:select', function (e) {
@@ -305,7 +320,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
           return a.nombre < b.nombre ? -1 : 1;
         });
     });
-    this.workOrderSubscription = this.prioritySubscription = this.gs.getPriority().subscribe(priorities => {
+    this.prioritySubscription = this.gs.getPriority().subscribe(priorities => {
       this.spinnerService.hide();
       this.priorityList = priorities
         .sort((a, b) => {
@@ -326,7 +341,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
     this.superChainSubscription.unsubscribe();
     this.merchantSubscription.unsubscribe();
     this.prioritySubscription.unsubscribe();
-    this.workOrderSubscription.unsubscribe();
+    // this.workOrderSubscription.unsubscribe();
     this.secuentialSubscription.unsubscribe();
   }
   removeDuplicates(arr) {
@@ -376,6 +391,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
       this.workOrderList.push({
         // numero: this.chainObj.nombre.trim().replace(' ', '').substr(0, 3) + '-' + this.generateUID(),
         numero: ('00000' + this.sequential).slice(-5),
+        prioridad: this.priorityObj.nombre,
         cadena: this.chainObj,
         local: this.storeObj,
         mercaderista: this.merchantObj,
@@ -417,6 +433,10 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
     this.workOrderList = [];
     $('#calendar').multiDatesPicker('resetDates');
     $('#times').html('');
+    this.priorityObj = {
+      id: 'UwJiKYkri6euQnKzEzy1',
+      nombre: 'NORMAL'
+    };
   }
   exclude(sku: any) {
     const index: number = this.skuList.indexOf(sku);

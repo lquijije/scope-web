@@ -30,7 +30,7 @@
               "node_modules/select2/dist/css/select2.min.css",
               "node_modules/jquery-ui-dist/jquery-ui.css",
               "node_modules/jquery-ui-multidatespicker/jquery-ui.multidatespicker.css",
-              "node_modules/jquery-datetimepicker/build/jquery.datetimepicker.min.css",
+              "node_modules/jquery-datetimepicker/build/jquery.datetimepicker.min.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",

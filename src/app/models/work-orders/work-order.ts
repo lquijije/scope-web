@@ -9,6 +9,7 @@ import { IOrderStatus } from './order-status';
 export interface IWorkOrder {
     id?: string;
     numero?: string;
+    prioridad?: string;
     cadena?: ISuperChain;
     local?: ISuperStore;
     mercaderista?: IUser;

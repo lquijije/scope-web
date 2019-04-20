@@ -77,6 +77,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     this.orderSubscription = this.ow.getWorkOrdersList().subscribe(orders => {
       this.spinnerService.hide();
       this.sourceList = orders;
+      this.orderCurrent = orders[0];
       this.orderList = this.sourceList.sort( (a, b) => {
         return a.creacion > b.creacion ? 1 : -1;
       });
@@ -408,9 +409,15 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     $('#lbLoc').text(order.local.nombre);
     $('#lbMer').text(order.mercaderista.nombre);
     $('#lbVis').text(order.visita);
+    $('#lbNov').text(order.novedades);
     $('#lbCrea').text(order.creacion.toDate().toLocaleString());
     this.skuList = order.sku;
     this.showEditView();
+  }
+  images(order: any) {
+    this.orderCurrent = order;
+    $('#hTitImg').html('Fotos de orden #' + order.numero);
+    this.showImageView();
   }
   salir() {
     this.closeEditView();
@@ -421,7 +428,12 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
   }
   closeEditView() {
     $('#pnlDetail').addClass('d-none');
+    $('#pnlImages').addClass('d-none');
     $('#pnlList').removeClass('d-none');
+  }
+  showImageView() {
+    $('#pnlImages').removeClass('d-none');
+    $('#pnlList').addClass('d-none');
   }
   exportAsXLSX(): void {
     let exportJson = [];
