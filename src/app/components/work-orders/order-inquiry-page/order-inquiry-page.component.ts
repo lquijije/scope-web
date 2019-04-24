@@ -11,7 +11,12 @@ import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { ISuperStore } from 'src/app/models/supermarkets/super-store';
 import { ExcelService } from '../../../services/excel.service';
-
+import { AngularFireStorage } from 'angularfire2/storage';
+import * as firebase from 'firebase/app';
+import 'firebase/storage';
+import * as JSZip from 'jszip';
+import * as JSZipUtils from 'jszip-utils';
+import { saveAs } from 'file-saver';
 
 declare var $: any;
 export interface IChainObj {
@@ -67,7 +72,8 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     private cu: CustomerService,
     private us: UsersService,
     private excelService: ExcelService,
-    private spinnerService: Ng4LoadingSpinnerService
+    private spinnerService: Ng4LoadingSpinnerService,
+    private afStorage: AngularFireStorage
     ) {
       console.log(this.orderCurrent);
     }
@@ -458,5 +464,65 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
       });
     });
     this.excelService.exportAsExcelFile(exportJson, 'ordenes');
+  }
+  download(img: any) {
+    if (img.url !== '') {
+      const xhr = new XMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.onload = function (e) {
+        const blob = xhr.response;
+        const localUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.href = localUrl;
+        a.download = img.nombre + '.JPG';
+        a.click();
+        window.URL.revokeObjectURL(localUrl);
+      };
+      xhr.open('GET', img.url);
+      xhr.send();
+    }
+  }
+  downloadAll() {
+    if (this.orderCurrent.fotos.length > 0) {
+      const urlFiles = [];
+      this.orderCurrent.fotos.forEach(img => {
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        const order = this.orderCurrent;
+        xhr.onload = function (e) {
+          const blob = xhr.response;
+          const localUrl = window.URL.createObjectURL(blob);
+          urlFiles.push({
+            name: img.nombre,
+            url: localUrl
+          });
+          if (order.fotos.length === urlFiles.length) {
+            const zip = new JSZip();
+            let zipElem = 0;
+            urlFiles.forEach(file => {
+              const ord = order;
+              JSZipUtils.getBinaryContent(file.url, function (err, data) {
+                if (err) {
+                  throw err;
+                }
+                zipElem++;
+                zip.file(ord.local.nombre + '/' + file.name + '.JPG', data, { binary: true });
+                if (zipElem === urlFiles.length) {
+                  zip.generateAsync({ type: 'blob' }).then(function (content) {
+                    saveAs(content, ord.cadena.nombre + '_' + ord.numero + '.zip');
+                  });
+                }
+              });
+              window.URL.revokeObjectURL(file.url);
+            });
+          }
+        };
+        xhr.open('GET', img.url);
+        xhr.send();
+      });
+    } else {
+      this.openAlert('Scope Alert', ' No existen imágenes ');
+    }
   }
 }

@@ -39,6 +39,8 @@
               "node_modules/popper.js/dist/umd/popper.js",
               "node_modules/bootstrap/dist/js/bootstrap.js",
               "node_modules/select2/dist/js/select2.min.js",
+              "node_modules/jszip/dist/jszip.js",
+              "node_modules/jszip-utils/dist/jszip-utils.js",
               "node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.js"
             ]
           },

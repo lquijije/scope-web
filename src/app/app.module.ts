@@ -40,7 +40,7 @@ import { OrderInquiryPageComponent } from './components/work-orders/order-inquir
 import { ConfirmDialogComponent } from './components/dialog-components/confirm-dialog/confirm-dialog.component';
 import { ZonePageComponent } from './components/supermarkets/zone-page/zone-page.component';
 import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
-
+import { AngularFireStorageModule } from 'angularfire2/storage';
 
 @NgModule({
   declarations: [
@@ -74,6 +74,7 @@ import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
     FormsModule,
     AngularFireAuthModule,
     AngularFirestoreModule,
+    AngularFireStorageModule,
     Ng4LoadingSpinnerModule.forRoot()
   ],
   entryComponents: [

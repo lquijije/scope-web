@@ -267,14 +267,33 @@
               <div class="gallery-block cards-gallery">
                 <div class="container">
                   <div class="heading">
-                      <h2 id="hTitImg"></h2>
+                      <div class="row d-flex">
+                        <div class="col col-sm-5 col-xl-9 justify-content-start">
+                            <h2 id="hTitImg"></h2>
+                        </div>
+                        <div class="col col-sm-4 col-xl-3 justify-content-end">
+                          <!-- <input type="button" value="Download" class="btn btn-primary rounded btn-sm btn-block btn-lg" (click)='downloadAll()'> -->
+                          <button class="btn btn-primary rounded btn-sm" (click)="downloadAll(img)">
+                            <i class="fa fa-download">
+                            </i> Download
+                          </button>
+                          <button class="btn btn-secondary rounded btn-sm ml-1" (click)="salir()">
+                            <i class="fa fa-download">
+                            </i> Salir
+                          </button>
+                        </div>
+                      </div>
                   </div>
                   <div class="row">
                       <div class="col-md-6 col-lg-4" *ngFor="let img of orderCurrent.fotos">
-                        <div class="card boder-0 transform-on-hover">
-                          <a href="{{img.url}}" class="lightbox">
-                            <img src="{{img.url}}" alt="" class="card-img-top">
-                          </a>
+                        <div class="card boder-0 transform-on-hover position-relative">
+                          <div class="position-absolute">
+                            <button class="btn btn-icon btn-primary"  (click)="download(img)" style="top:0px; right:0px;">
+                              <i class="fa fa-download">
+                              </i>
+                            </button>
+                          </div>
+                          <img src="{{img.url}}"  alt="" class="card-img-top">
                           <div class="card-body">
                             <h6>{{img.nombre}}</h6>
                             <p class="text-muted card-text">
@@ -284,14 +303,9 @@
                         </div>
                       </div>
                   </div>
+                  <!-- <a href="assets/cajonera_nova.jpg" >Descargar</a> -->
                 </div>
               </div>
-              <div class="row d-flex justify-content-end">
-                  <div class="col col-sm-3 col-xl-1">
-                    <input type="button" value="Salir" class="btn btn-secondary rounded btn-sm btn-block btn-lg" (click)='salir()'>
-                  </div>
-                </div>
-            </div>
           </div>
         </div>
     </div>

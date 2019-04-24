@@ -253,6 +253,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
               razonsocial: nameCustomer
             };
             self.brandList = [];
+            self.skuList = []; // Comentar para orden multi cliente
             self.spinnerService.show();
             self.sc.getBrandsFromChainStoreCustomerAssociate(self.chainObj, self.storeObj, self.customerObj ).subscribe(associated => {
               self.spinnerService.hide();
