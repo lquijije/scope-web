@@ -51,7 +51,13 @@ export class SupermaketsService {
   }
 
   getSuperChain() {
-    return this.superChainObs;
+    return this.superChainCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as ISuperChain;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
   }
 
   addSuperChain(superChain: ISuperChain) {
@@ -146,7 +152,13 @@ export class SupermaketsService {
   }
 
   getZone() {
-    return this.zoneObs;
+    return this.zoneCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IZone;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
   }
 
   addZone(zone: IZone) {

@@ -40,7 +40,14 @@ export class UsersService {
   }
 
   getUsers() {
-    return this.userObs;
+  this.userCollection = this.afs.collection<IUser>('users');
+    return this.userCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IUser;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
   }
 
   getUserByEmail(email: string) {

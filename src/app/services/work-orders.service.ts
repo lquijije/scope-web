@@ -63,6 +63,15 @@ export class WorkOrdersService {
       );
     });
   }
+  updWorkOrder(wOrder: IWorkOrder) {
+    return new Promise((resolve, reject) => {
+      this.wOrderDoc = this.afs.doc(`work-orders/${wOrder.id}`);
+      this.wOrderDoc.update(wOrder).then(
+        (voidRes) => { },
+        err => reject(err)
+      );
+    });
+  }
   addWorkOrders(wOrders: IWorkOrder[]) {
     return new Promise((resolve, reject) => {
       wOrders.forEach(w => {

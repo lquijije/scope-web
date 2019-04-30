@@ -12,6 +12,7 @@ import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { ISuperStore } from 'src/app/models/supermarkets/super-store';
 import { ExcelService } from '../../../services/excel.service';
 import { AngularFireStorage } from 'angularfire2/storage';
+import { GeneralService } from '../../../services/general.service';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
 import * as JSZip from 'jszip';
@@ -48,6 +49,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
   customerSubscription: Subscription;
   merchantSubscription: Subscription;
   statusSubscription: Subscription;
+  prioritySubscription: Subscription;
   chainList: any;
   storeList: any = [];
   customerList: any = [];
@@ -56,6 +58,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
   orderCurrent: any;
   merchantObj: IUser;
   merchantList: any;
+  priorityList: any;
   statusList: any;
   chainObj: IChainObj;
   customerObj: ICustomerObj;
@@ -73,7 +76,8 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     private us: UsersService,
     private excelService: ExcelService,
     private spinnerService: Ng4LoadingSpinnerService,
-    private afStorage: AngularFireStorage
+    private afStorage: AngularFireStorage,
+    private gs: GeneralService
     ) {
       console.log(this.orderCurrent);
     }
@@ -83,7 +87,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     this.orderSubscription = this.ow.getWorkOrdersList().subscribe(orders => {
       this.spinnerService.hide();
       this.sourceList = orders;
-      this.orderCurrent = orders[0];
+      this.orderCurrent = Object.assign({}, orders[0]);
       this.orderList = this.sourceList.sort( (a, b) => {
         return a.creacion > b.creacion ? 1 : -1;
       });
@@ -105,12 +109,29 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
       timepicker: false,
       closeOnDateSelect: true
     });
+    
     // $('#table_orders').DataTable();
     const self = this;
     const n0 = new Option('', '', true, true);
     $('#cmbMerchant').append(n0).trigger('change');
     $('#cmbMerchant').select2({
       placeholder: 'Seleccione Mercaderista',
+      language: {
+        'noResults': function () {
+          return '';
+        }
+      }
+    });
+    $('#cmbMerchantOrder').select2({
+      placeholder: 'Seleccione Mercaderista',
+      language: {
+        'noResults': function () {
+          return '';
+        }
+      }
+    });
+    $('#cmbPriority').select2({
+      placeholder: 'Seleccione Prioridad',
       language: {
         'noResults': function () {
           return '';
@@ -281,6 +302,13 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
         this.statusList = status;
       }
     });
+    this.prioritySubscription = this.gs.getPriority().subscribe(priorities => {
+      this.spinnerService.hide();
+      this.priorityList = priorities
+        .sort((a, b) => {
+          return a.nombre > b.nombre ? -1 : 1;
+        });
+    });
   }
   ngOnDestroy() {
     this.orderSubscription.unsubscribe();
@@ -288,6 +316,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     this.customerSubscription.unsubscribe();
     this.merchantSubscription.unsubscribe();
     this.statusSubscription.unsubscribe();
+    this.prioritySubscription.unsubscribe();
   }
   limpiar() {
     this.storeList = [];
@@ -376,8 +405,9 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     }
   }
   delete(order: any) {
-    if (order.estado.nombre !== 'CREADA') {
-      this.openAlert('Scope Alert', 'Sólo se pueden eliminar ordenes CREADAS, la orden seleccionada está en estado ' + order.estado.nombre);
+    if (order.estado.nombre !== 'CREADA' && order.estado.nombre !== 'INICIADA') {
+      this.openAlert('Scope Alert', 'Sólo se pueden eliminar ordenes CREADAS o INICIADAS, la orden seleccionada está en estado '
+      + order.estado.nombre);
       return false;
     }
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -407,7 +437,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     });
   }
   search(order: any) {
-    this.orderCurrent = order;
+    this.orderCurrent = Object.assign({}, order);
     this.estado = order.estado.nombre;
     $('#hTit').html('Orden #' + order.numero);
     $('#lbEst').text(order.estado.nombre);
@@ -418,23 +448,28 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     $('#lbNov').text(order.novedades);
     $('#lbCrea').text(order.creacion.toDate().toLocaleString());
     this.skuList = order.sku;
-    this.showEditView();
+    this.showDetailView();
   }
   images(order: any) {
-    this.orderCurrent = order;
+    this.orderCurrent = Object.assign({}, order);
     $('#hTitImg').html('Fotos de orden #' + order.numero);
     this.showImageView();
   }
   salir() {
     this.closeEditView();
   }
-  showEditView() {
+  showDetailView() {
     $('#pnlDetail').removeClass('d-none');
+    $('#pnlList').addClass('d-none');
+  }
+  showEditView() {
+    $('#pnlEdit').removeClass('d-none');
     $('#pnlList').addClass('d-none');
   }
   closeEditView() {
     $('#pnlDetail').addClass('d-none');
     $('#pnlImages').addClass('d-none');
+    $('#pnlEdit').addClass('d-none');
     $('#pnlList').removeClass('d-none');
   }
   showImageView() {
@@ -486,10 +521,12 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
   downloadAll() {
     if (this.orderCurrent.fotos.length > 0) {
       const urlFiles = [];
+      this.spinnerService.show();
       this.orderCurrent.fotos.forEach(img => {
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'blob';
         const order = this.orderCurrent;
+        const spinner = this.spinnerService;
         xhr.onload = function (e) {
           const blob = xhr.response;
           const localUrl = window.URL.createObjectURL(blob);
@@ -502,6 +539,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
             let zipElem = 0;
             urlFiles.forEach(file => {
               const ord = order;
+              const spin = spinner;
               JSZipUtils.getBinaryContent(file.url, function (err, data) {
                 if (err) {
                   throw err;
@@ -510,6 +548,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
                 zip.file(ord.local.nombre + '/' + file.name + '.JPG', data, { binary: true });
                 if (zipElem === urlFiles.length) {
                   zip.generateAsync({ type: 'blob' }).then(function (content) {
+                    spin.hide();
                     saveAs(content, ord.cadena.nombre + '_' + ord.numero + '.zip');
                   });
                 }
@@ -524,5 +563,35 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     } else {
       this.openAlert('Scope Alert', ' No existen imágenes ');
     }
+  }
+  editOrder(order: any) {
+    $('#fevisita').datetimepicker({
+      format: 'Y-m-d H:i',
+      lang: 'es',
+      timepicker: true,
+      closeOnDateSelect: true
+    });
+    this.orderCurrent = Object.assign({}, order);
+    $('#fevisita').val(this.orderCurrent.visita);
+    $('#hTitEdit').html('Editar Orden #' + this.orderCurrent.numero);
+    $('#cmbMerchantOrder').val(this.orderCurrent.mercaderista.id).trigger('change');
+    $('#cmbPriority').val($('#cmbPriority option:contains(' + this.orderCurrent.prioridad + ')').val()).trigger('change');
+    // $('#cmbMerchantOrder').text(this.orderCurrent.mercaderista.nombre);
+    this.showEditView();
+  }
+  exclude(sku: any) {
+    const index: number = this.orderCurrent.sku.indexOf(sku);
+    if (index !== -1) {
+      this.orderCurrent.sku.splice(index, 1);
+    }
+  }
+  onSubmit(formNew: any) {
+    console.log('modifi');
+    this.ow.updWorkOrder(this.orderCurrent).then(() => {
+      this.openAlert('Scope Web', 'Orden fué modificada correctamente.');
+      this.salir();
+    }).catch(err => {
+      this.openAlert('Scope Error', err.message);
+    });
   }
 }

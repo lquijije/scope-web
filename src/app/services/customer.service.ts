@@ -29,7 +29,7 @@ export class CustomerService {
 
   afs: AngularFirestore;
   constructor(public objafs: AngularFirestore) {
-    this.afs=objafs;
+    this.afs = objafs;
     this.customerCollection = this.afs.collection<ICustomer>('customer');
     this.brandCollection = this.afs.collection<IBrand>('brand');
     this.skuCollection = this.afs.collection<ISku>('sku');
@@ -146,16 +146,26 @@ export class CustomerService {
     return this.skuDoc.update(sku);
   }
 
-  getAssociatedBrands(){
-    return this.asocBrandsObs;
+  getAssociatedBrands() {
+    return this.asocBrandsCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IAssociatedBrands;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
   }
 
-  getAssociatedBrandsGroup(){
+  getAssociatedBrandsGroup() {
     this.asocBrandsCollection = this.afs.collection<IAssociatedBrands>('associated-brands');
   }
 
-  addAssocBrand(assoc: IAssociatedBrands){
+  addAssocBrand(assoc: IAssociatedBrands) {
     return this.asocBrandsCollection.add(assoc);
+  }
+  updAssocBrand(assoc: IAssociatedBrands) {
+    this.asocBrandsDoc = this.afs.doc(`associated-brands/${assoc.id}`);
+    return this.asocBrandsDoc.update(assoc);
   }
   delAssocBrand(assoc: IAssociatedBrands) {
     this.asocBrandsDoc = this.afs.doc(`associated-brands/${assoc.id}`);

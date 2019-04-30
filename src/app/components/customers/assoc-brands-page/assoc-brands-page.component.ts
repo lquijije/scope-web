@@ -140,6 +140,7 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
     });
     this.assocSubscription = this.cs.getAssociatedBrands().subscribe(assocBrands => {
       this.spinnerService.hide();
+      console.log(assocBrands);
       this.assocBrandList = assocBrands;
     });
   }
@@ -179,11 +180,11 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
                 this.openAlert('Scope Error', er.message);
               });
             } else {
-              //this.cs.updSku(this.associatedBrand);
+              this.cs.updAssocBrand(this.associatedBrand);
               this.editState = false;
             }
             this.clearObject();
-            this.salir();            
+            this.salir();
           }else{
             this.openAlert('Scope Alert!', 'Debe escojer una Marca');
           }
