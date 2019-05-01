@@ -97,18 +97,27 @@
                   </div>
                 </div>
                 
-                <div class="row pt-4 d-flex align-items-center justify-content-end">
-                  <div class="col-12 col-md-4 d-flex align-items-center justify-content-end mt-2 mb-3">
-                    <button type="button" class="btn btn-link rounded btn-sm  px-4 pt-2 pb-2 btExp" (click)="exportAsXLSX()">
+                <div class="row pt-4">
+                  <div class="col-12 col-sm-3 col-lg-2 offset-lg-4 mt-2 mb-3">
+                    <button type="button" class="btn btn-block btn-outline-secondary rounded btn-sm  px-4 pt-2 pb-2 btExp" (click)="exportAsXLSX()">
                       <i class="fa fa-file-excel-o"></i> Exportar
                     </button>
-                    <button type="button" class="btn btn-outline-secondary rounded btn-sm ml-1 px-4 pt-2 pb-2 btLimp" (click)='limpiar()'>
+                  </div>
+                  <div class="col-12 col-sm-3 col-lg-2 mt-2 mb-3">
+                    <button type="button" class="btn btn-block btn-outline-secondary rounded btn-sm ml-1 px-4 pt-2 pb-2 btLimp" (click)='downloadImages()'>
+                      <i class="fa fa-download"></i> Images
+                    </button>
+                  </div>
+                  <div class="col-12 col-sm-3 col-lg-2 mt-2 mb-3">
+                    <button type="button" class="btn btn-block btn-outline-secondary rounded btn-sm ml-1 px-4 pt-2 pb-2 btLimp" (click)='limpiar()'>
                       <i class="fa fa-eraser"></i> Limpiar Filtros
                     </button>
-                    <button type="button" class="btn btn-primary rounded btn-sm px-4 pt-2 ml-1 pb-2 btProc" (click)="consultar()">
+                  </div>
+                  <div class="col-12 col-sm-3 col-lg-2 mt-2 mb-3">
+                    <button type="button" class="btn btn-block btn-primary rounded btn-sm px-4 pt-2 ml-1 pb-2 btProc" (click)="consultar()">
                       <i class="fa fa-search"></i> Consultar
                     </button>
-                  </div>                  
+                  </div>
                 </div>
                 <div class="row mt-1">
                   <div class="col">
@@ -375,7 +384,7 @@
                             <div class="col-12 col-md-6">
                               <div class="d-flex flex-column">
                                 <span for="" class="text-primary"> Marca:</span>
-                                <label for="">{{orderCurrent.sku.length}}</label>
+                                <label *ngFor='let sku of orderCurrent.sku | unique'>{{sku.ds_marca}}</label>
                               </div>
                             </div>
                           </div>
@@ -389,7 +398,7 @@
                                   <div class="col d-flex flex-row align-items-center">
                                     <!-- <input id="visita" value="{{orderCurrent.visita}}"> -->
                                     <mat-form-field class="w-100">
-                                      <input matInput placeholder="Fecha Visita: " type="text" name="" id="fevisita" value="{{orderCurrent.visita}}" [ngModelOptions]="{standalone: true}" [(ngModel)]="orderCurrent.visita">
+                                      <input matInput placeholder="Fecha Visita: " type="text" name="" id="fevisita" value="{{orderCurrent.visita}}">
                                     </mat-form-field>
                                   </div>
                                 </div>

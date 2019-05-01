@@ -41,6 +41,7 @@ import { ConfirmDialogComponent } from './components/dialog-components/confirm-d
 import { ZonePageComponent } from './components/supermarkets/zone-page/zone-page.component';
 import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
 import { AngularFireStorageModule } from 'angularfire2/storage';
+import { UniquePipe } from './pipes/unique.pipe';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { AngularFireStorageModule } from 'angularfire2/storage';
     OrderMantPageComponent,
     OrderInquiryPageComponent,
     ConfirmDialogComponent,
-    ZonePageComponent
+    ZonePageComponent,
+    UniquePipe
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),

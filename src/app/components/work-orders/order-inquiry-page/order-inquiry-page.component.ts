@@ -44,6 +44,7 @@ export interface IBrandObj {
 export class OrderInquiryPageComponent implements OnInit, OnDestroy {
   sourceList: any;
   orderList: any;
+  imagesOrderList: any;
   orderSubscription: Subscription;
   chainSubscription: Subscription;
   customerSubscription: Subscription;
@@ -586,12 +587,142 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     }
   }
   onSubmit(formNew: any) {
-    console.log('modifi');
-    this.ow.updWorkOrder(this.orderCurrent).then(() => {
-      this.openAlert('Scope Web', 'Orden fué modificada correctamente.');
-      this.salir();
-    }).catch(err => {
-      this.openAlert('Scope Error', err.message);
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '300px',
+      data: { title: 'Confirmación', msg: 'Desea modificar LA ORDEN ' + this.orderCurrent.numero + '?' }
     });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.orderCurrent.visita = $('#fevisita').val();
+        this.orderCurrent.mercaderista = {
+          id: $('#cmbMerchantOrder').val(),
+          nombre: $('#cmbMerchantOrder').select2('data')[0].text
+        };
+        this.orderCurrent.prioridad = $('#cmbPriority').select2('data')[0].text;
+        this.spinnerService.show();
+        this.ow.updWorkOrder(this.orderCurrent).then(() => {
+          this.spinnerService.hide();
+          this.openAlert('Scope Web', 'Orden fué modificada correctamente.');
+          this.salir();
+        }).catch(err => {
+          this.openAlert('Scope Error', err.message);
+        });
+      }
+    });
+  }
+  downloadImages() {
+    if (!$('#fedesde').val() && !$('#fehasta').val()) {
+      this.openAlert('Scope Alert', 'Debe escoger una fecha de filtro');
+      return false;
+    }
+    this.imagesOrderList = this.sourceList;
+    if ($('#rd-crea').is(':checked')) {
+      if ($('#fedesde').val() && $('#fehasta').val()) {
+        this.imagesOrderList = this.imagesOrderList.filter(e => {
+          return e.creacion.toDate().getTime() > new Date($('#fedesde').val() + ' 00:00:000').getTime()
+            && e.creacion.toDate().getTime() < new Date($('#fehasta').val() + ' 23:59:59').getTime();
+        });
+      }
+      if ($('#fedesde').val() && !$('#fehasta').val()) {
+        this.imagesOrderList = this.imagesOrderList.filter(e => {
+          return e.creacion.toDate().getTime() > new Date($('#fedesde').val() + ' 00:00:000').getTime();
+        });
+      }
+      if (!$('#fedesde').val() && $('#fehasta').val()) {
+        this.imagesOrderList = this.imagesOrderList.filter(e => {
+          return e.creacion.toDate().getTime() < new Date($('#fehasta').val() + ' 23:59:59').getTime();
+        });
+      }
+    }
+    if ($('#rd-vis').is(':checked')) {
+      if ($('#fedesde').val() && $('#fehasta').val()) {
+        this.imagesOrderList = this.imagesOrderList.filter(e => {
+          return new Date(e.visita).getTime() > new Date($('#fedesde').val() + ' 00:00:000').getTime()
+            && new Date(e.visita).getTime() < new Date($('#fehasta').val() + ' 23:59:59').getTime();
+        });
+      }
+      if ($('#fedesde').val() && !$('#fehasta').val()) {
+        this.imagesOrderList = this.imagesOrderList.filter(e => {
+          return new Date(e.visita).getTime() > new Date($('#fedesde').val() + ' 00:00:000').getTime();
+        });
+      }
+      if (!$('#fedesde').val() && $('#fehasta').val()) {
+        this.imagesOrderList = this.imagesOrderList.filter(e => {
+          return new Date(e.visita).getTime() < new Date($('#fehasta').val() + ' 23:59:59').getTime();
+        });
+      }
+    }
+    if(this.imagesOrderList.length > 0) {
+      this.imagesOrderList = this.imagesOrderList.filter(e => {
+        return e.fotos;
+      });
+    }
+    if(this.imagesOrderList.length > 0) {
+      const imagesArray = [];
+      this.imagesOrderList.forEach(orderItem => {
+        orderItem.fotos.forEach(img => {
+          imagesArray.push({
+            numero: orderItem.numero,
+            cadena: orderItem.cadena.nombre,
+            local: orderItem.local.nombre,
+            namePhoto: img.nombre,
+            urlPhoto: img.url
+          });
+        });
+      });
+      let urlFiles = [];
+      const imgAr = imagesArray;
+      this.spinnerService.show();
+      imagesArray.forEach(item => {
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        const spinner = this.spinnerService;
+        xhr.onload = function (e) {
+          const blob = xhr.response;
+          let localUrl = '';
+          if (blob) {
+            if (blob.type.includes('image')) { 
+              localUrl = window.URL.createObjectURL(blob);
+            } else {
+              localUrl = 'assets/images/noimage.jpg';
+            }
+          } else {
+            localUrl = 'assets/images/noimage.jpg';
+          }
+          urlFiles.push({
+            numero: item.numero,
+            cadena: item.cadena,
+            local: item.local,
+            name: item.namePhoto,
+            url: localUrl
+          });
+          if (imgAr.length === urlFiles.length) {
+            const zip = new JSZip();
+            let zipElem = 0;
+            urlFiles.forEach(file => {
+              const spin = spinner;
+              JSZipUtils.getBinaryContent(file.url, function (err, data) {
+                if (err) {
+                  console.log(err);
+                }
+                zipElem++;
+                zip.file(file.cadena + '/' + file.local + '/' + file.name + '.JPG', data, { binary: true });
+                if (zipElem === urlFiles.length) {
+                  zip.generateAsync({ type: 'blob' }).then(function (content) {
+                    spin.hide();
+                    saveAs(content, 'scope_fotos' + '.zip');
+                  });
+                }
+              }); 
+              window.URL.revokeObjectURL(file.url);
+            });
+          }
+        };
+        xhr.open('GET', item.urlPhoto);
+        xhr.send();
+      });
+    } else {
+      this.openAlert('Scope Alert', 'No encontramos ordenes con fotos en esa fecha');
+    }
   }
 }
