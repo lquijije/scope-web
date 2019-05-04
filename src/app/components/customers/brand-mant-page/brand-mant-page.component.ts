@@ -55,7 +55,6 @@ export class BrandMantPageComponent implements OnInit, OnDestroy {
         self.cs.getBrandFromCustomer(idCustomer).subscribe(brands => {
           self.spinnerService.hide();
           self.brandList = brands;
-          console.log(self.brandList);
         });
       }
     });

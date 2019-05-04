@@ -88,7 +88,30 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     this.orderSubscription = this.ow.getWorkOrdersList().subscribe(orders => {
       this.spinnerService.hide();
       this.sourceList = orders;
-      this.orderCurrent = Object.assign({}, orders[0]);
+      
+        this.orderCurrent = {
+          cadena: {id: "Bs1mZF3XIvOb9TCwBha7", nombre: "MI COMISARIATO"},
+          creacion: "",
+          estado: {id: "eNyPUyFqo8SrwkKvDAgD", nombre: "CREADA"},
+          id: "lfBAc8aZ9rh17SRcTwLu",
+          local: {id: "nwdBVaEJ3CtySCcVTsgx", nombre: "CALIFORNIA"},
+          mercaderista: {id: "gMoj90f5n0DUhcasU1fY", nombre: "Luis Quijije P."},
+          numero: "00001",
+          prioridad: "NORMAL",
+          sku: [{
+            cliente: "d1IUeEnOmfEgwsLVALLa",
+            descripcion: "ARROZ HOME DELIVERERS",
+            ds_cliente: "BANAPOV",
+            ds_marca: "ARROZ HOME DELIVERERS",
+            estado: "A",
+            id: "9vrUVbdpoeHLB8A4LvBj",
+            marca: "CfS1fkkDEAZu6wAOqh8y",
+            presentacion: "5 KG",
+            sabor: "",
+            sku: "40010211",
+          }],
+          visita: "2019-05-27 09:00"
+        }      
       this.orderList = this.sourceList.sort( (a, b) => {
         return a.creacion > b.creacion ? 1 : -1;
       });
@@ -479,27 +502,29 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
   }
   exportAsXLSX(): void {
     let exportJson = [];
-    this.orderList.forEach(o => {
-      o.sku.forEach(d => {
-        exportJson.push({
-          'Orden#': o.numero,
-          'Fecha': o.visita,
-          'Supermercado': o.cadena.nombre,
-          'Local': o.local.nombre,
-          'Producto': d.descripcion,
-          'Presentación': d.presentacion,
-          'Sabor': d.sabor,
-          'Cant.Inicial': (isNaN(parseInt(d.inicial, 10))) ? '' : parseInt(d.inicial, 10),
-          'Cant.Final': (isNaN(parseInt(d.final, 10))) ? '' : parseInt(d.final, 10),
-          'Caras': (isNaN(parseInt(d.caras, 10))) ? '' : parseInt(d.caras, 10),
-          'Observaciones': d.observacion,
-          'Mercaderista': o.mercaderista.nombre,
-          'Competencia': '',
-          'Actividad': '',
+    if (this.orderList.length > 0) {
+      this.orderList.forEach(o => {
+        o.sku.forEach(d => {
+          exportJson.push({
+            'Orden#': o.numero,
+            'Fecha': o.visita,
+            'Supermercado': o.cadena.nombre,
+            'Local': o.local.nombre,
+            'Producto': d.descripcion,
+            'Presentación': d.presentacion,
+            'Sabor': d.sabor,
+            'Cant.Inicial': (isNaN(parseInt(d.inicial, 10))) ? '' : parseInt(d.inicial, 10),
+            'Cant.Final': (isNaN(parseInt(d.final, 10))) ? '' : parseInt(d.final, 10),
+            'Caras': (isNaN(parseInt(d.caras, 10))) ? '' : parseInt(d.caras, 10),
+            'Observaciones': d.observacion,
+            'Mercaderista': o.mercaderista.nombre,
+            'Competencia': '',
+            'Actividad': '',
+          });
         });
       });
-    });
-    this.excelService.exportAsExcelFile(exportJson, 'ordenes');
+      this.excelService.exportAsExcelFile(exportJson, 'ordenes');
+    }    
   }
   download(img: any) {
     if (img.url !== '') {

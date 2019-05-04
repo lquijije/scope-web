@@ -359,6 +359,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
     return arr;
   }
   onSubmit(myForm: NgForm) {
+    
     const dates = $('#calendar').multiDatesPicker('getDates');
     if (dates.length === 0) {
       this.openAlert('Scope Alert!', 'No ha seleccionado una fecha de visita');
@@ -388,6 +389,8 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
       this.openAlert('Scope Alert!', 'No ha ingresado productos (sku)');
       return false;
     }
+    
+    
     dates.forEach(i => {
       this.workOrderList.push({
         // numero: this.chainObj.nombre.trim().replace(' ', '').substr(0, 3) + '-' + this.generateUID(),
@@ -403,18 +406,40 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
       });
       this.sequential++;
     });
+    
+    let count = 0;
     this.spinnerService.show();
-    this.ow.addWorkOrders(this.workOrderList).then(msg => {
-      this.spinnerService.hide();
-      const strOrders = this.workOrderList.map(x => {
-        return x.numero;
-      });      
-      this.openAlert('Scope Web', `Se generaron las siguientes órdenes:  ${strOrders.join()}`);
-      this.limpiar();
-    }).catch(err => {
-      this.spinnerService.hide();
-      this.openAlert('Scope Error', `No se generaron algunas órdenes, ${err.message}`);
-    });
+    const inter = setInterval(() => {
+      this.workOrderList.forEach(w => {
+        this.ow.addWorkOrder(w).then(() => {
+          count++;
+          if (count === this.workOrderList.length) {
+            this.spinnerService.hide();
+            const strOrders = this.workOrderList.map(x => {
+              return x.numero;
+            });      
+            this.openAlert('Scope Web', `Se generaron las siguientes órdenes:  ${strOrders.join()}`);
+            this.limpiar();
+          }
+        });
+        clearInterval(inter);
+      });
+    }, 500);
+    //const inter = setInterval(() => {
+      /* this.ow.addWorkOrders(this.workOrderList).then(msg => {
+        // this.spinnerService.hide();
+        const strOrders = this.workOrderList.map(x => {
+          return x.numero;
+        });      
+        this.openAlert('Scope Web', `Se generaron las siguientes órdenes:  ${strOrders.join()}`);
+        this.limpiar();
+      }).catch(err => {
+        // this.spinnerService.hide();
+        this.openAlert('Scope Error', `No se generaron algunas órdenes, ${err.message}`);
+      }); */
+    //   clearInterval(inter);
+    // }, 3000);
+    
   }
   calendarizar() {
 

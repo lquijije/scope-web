@@ -56,32 +56,22 @@ export class WorkOrdersService {
     return this.oStatusObs;
   }
   addWorkOrder(wOrder: IWorkOrder) {
-    return new Promise((resolve, reject) => {
-      this.wOrderCollection.add(wOrder).then(
-        data => resolve('OK'),
-        err => reject(err)
-      );
-    });
+    return this.wOrderCollection.add(wOrder);
+  }
+  addWorkOrder2(wOrder: IWorkOrder) {
+    return this.wOrderCollection.add(wOrder);
   }
   updWorkOrder(wOrder: IWorkOrder) {
       this.wOrderDoc = this.afs.doc(`work-orders/${wOrder.id}`);
       return this.wOrderDoc.update(wOrder);
   }
   addWorkOrders(wOrders: IWorkOrder[]) {
-    return new Promise((resolve, reject) => {
+      var reads = [];
       wOrders.forEach(w => {
-        this.wOrderCollection.add(w).then(
-          data => {
-            w['generada'] = true;
-            resolve('OK');
-          },
-          err => {
-            w['generada'] = false;
-            reject(err);
-          }
-        );
+        var promise =  this.wOrderCollection.add(w);
+        reads.push(promise);
       });
-    });
+      return Promise.all(reads);
   }
   delOrder(order: IWorkOrder) {
     this.wOrderDoc = this.afs.doc(`work-orders/${order.id}`);
