@@ -1,7 +1,7 @@
 <div class="pt-2 px-xs-0 px-sm-3 px-md-5 w-100" style="height: 90vh;">
     <div class="col p-0">
         <div class="row">
-          <div class="col-12 col-xl-8 offset-xl-2">
+          <div class="col-12 col-xl-10 offset-xl-1">
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb" style="border-radius: 5px;">
                 <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
@@ -13,7 +13,7 @@
           </div>
         </div>
         <div class="row" id='pnlEdit'>
-            <div class="col-12 col-xl-8 offset-xl-2">
+            <div class="col-12 col-xl-10 offset-xl-1">
               <div class="card-body bg-light border border-primary rounded pl-lg-5">
                   <h4 class="text-center"><strong> Orden de Trabajo </strong></h4>
                   <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
@@ -74,6 +74,15 @@
                             </div>
                         </div>
                         <div class="row pt-4 d-flex justify-content-end">
+                          <div class="col-12 col-sm-4 col-xl-6">
+                            <!-- <input type="button" value="Limpiar" class="btn btn-outline-secondary rounded btn-sm btn-lg" (click)='up()'> -->
+                            <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg" (click)='up()'>
+                                <i class="fa fa-arrow-up"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg ml-1" (click)='down()'>
+                                <i class="fa fa-arrow-down"></i>
+                            </button>
+                          </div>
                           <div class="col-12 col-sm-4 col-xl-3">
                             <input type="button" value="Limpiar" class="btn btn-outline-secondary rounded btn-sm btn-block btn-lg" (click)='limpiar()'>
                           </div>

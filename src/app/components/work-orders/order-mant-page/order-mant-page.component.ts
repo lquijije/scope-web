@@ -70,6 +70,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
   editState: any = false;
   actionName: string = '';
   sequential = 1;
+  rowSkuList: any;
   superChainSubscription: Subscription;
   merchantSubscription: Subscription;
   prioritySubscription: Subscription;
@@ -84,6 +85,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
     private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
+
     const self = this;
     this.priorityObj = {
       id: 'UwJiKYkri6euQnKzEzy1',
@@ -291,6 +293,17 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
                       self.skuList.push(s);
                     }));
                     self.skuList = self.removeDuplicates(self.skuList);
+                    const inter = setInterval(() => {
+                      $('#table_skus tbody tr').click(function (e) {
+                        // console.log($(this)[0].sectionRowIndex);
+                        // self.rowSkuList = $(this);
+                        self.rowSkuList = $(this)[0].sectionRowIndex;
+                        $('#table_skus tbody tr').removeClass("highlight");
+                        $(this).addClass("highlight");
+                        // row.insertBefore(row.prev());
+                      });
+                      clearInterval(inter);
+                    }, 500);
                   }
                 });
               }
@@ -337,6 +350,7 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
         }).numero) + 1;
       }
     });
+    
   }
   ngOnDestroy() {
     this.superChainSubscription.unsubscribe();
@@ -385,12 +399,14 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
       this.openAlert('Scope Alert!', 'No ha ingresado productos (sku)');
       return false;
     }
-    if (this.skuList.lengh === 0) {
+    if (this.skuList.length === 0) {
       this.openAlert('Scope Alert!', 'No ha ingresado productos (sku)');
       return false;
     }
     
-    
+    this.skuList.forEach(sku => {
+      sku['orden'] = this.skuList.indexOf(sku) + 1;
+    });
     dates.forEach(i => {
       this.workOrderList.push({
         // numero: this.chainObj.nombre.trim().replace(' ', '').substr(0, 3) + '-' + this.generateUID(),
@@ -444,6 +460,41 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
   calendarizar() {
 
   }
+  move(array, element, delta) {
+    var index = array.indexOf(element);
+    var newIndex = index + delta;
+    if (newIndex < 0  || newIndex == array.length) return; //Already at the top or bottom.
+    this.rowSkuList = newIndex;
+    this.array_move(array, index, newIndex);
+  };
+  up() {
+    if (this.rowSkuList !== undefined) {
+      this.move(this.skuList, this.skuList[this.rowSkuList], -1);
+    }
+  }
+  down() {
+    if (this.rowSkuList !== undefined) {
+      this.move(this.skuList, this.skuList[this.rowSkuList], 1);
+    }
+  }
+  
+  array_move(arr, old_index, new_index) {
+    while (old_index < 0) {
+        old_index += arr.length;
+    }
+    while (new_index < 0) {
+        new_index += arr.length;
+    }
+    if (new_index >= arr.length) {
+        var k = new_index - arr.length + 1;
+        while (k--) {
+            arr.push(undefined);
+        }
+    }
+    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+    // return arr; // for testing purposes
+};
+
   limpiar() {
     this.chainObj = this.undefined;
     this.storeObj = this.undefined;

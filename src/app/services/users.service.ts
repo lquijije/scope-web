@@ -69,6 +69,10 @@ export class UsersService {
 
   addUser(user: IUser) {
     this.userCollection.add(user);
+    this.getUserByEmail(user.email).subscribe(users => {
+      const newUser = users[0];
+      this.updUser(newUser);
+    });
   }
 
   updUser(user: IUser) {
