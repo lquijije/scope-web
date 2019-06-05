@@ -132,7 +132,8 @@
                         <th>Cadena</th>
                         <th>Local</th>
                         <th>Mercaderista</th>
-                        <th>Creaci&oacute;n</th>
+                        <th>Cliente</th>
+                        <!-- <th>Creaci&oacute;n</th> -->
                         <th>Visita</th>
                         <th>Inicio</th>
                         <th>Fin</th>
@@ -169,7 +170,8 @@
                           <td>{{order.cadena.nombre}}</td>
                           <td>{{order.local.nombre}}</td>
                           <td>{{order.mercaderista.nombre}}</td>
-                          <td>{{order.creacion.toDate() | date: 'y-MM-dd HH:mm:ss'}}</td>
+                          <td>{{order.sku[0].ds_cliente}}</td>
+                          <!-- <td>{{order.creacion.toDate() | date: 'y-MM-dd HH:mm:ss'}}</td> -->
                           <td>{{order.visita | date: 'y-MM-dd HH:mm:ss'}}</td>
                           <td>{{order.iniciada}}</td>
                           <td>{{order.finalizada}}</td>

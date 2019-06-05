@@ -113,7 +113,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
           visita: "2019-05-27 09:00"
         }      
       this.orderList = this.sourceList.sort( (a, b) => {
-        return a.creacion > b.creacion ? 1 : -1;
+        return a.creacion < b.creacion ? 1 : -1;
       });
     });
     $('#table_details tr').click(function (e) {
@@ -516,6 +516,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
             'Cant.Inicial': (isNaN(parseInt(d.inicial, 10))) ? '' : parseInt(d.inicial, 10),
             'Cant.Final': (isNaN(parseInt(d.final, 10))) ? '' : parseInt(d.final, 10),
             'Caras': (isNaN(parseInt(d.caras, 10))) ? '' : parseInt(d.caras, 10),
+            'Sugerido': (isNaN(parseInt(d.sugerido, 10))) ? '' : parseInt(d.sugerido, 10),
             'Observaciones': d.observacion,
             'Mercaderista': o.mercaderista.nombre,
             'Competencia': '',

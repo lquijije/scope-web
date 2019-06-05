@@ -7,6 +7,7 @@ import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
+import { ExcelService } from '../../../services/excel.service';
 import { IAssociatedBrands } from 'src/app/models/customers/associated-brands';
 import { Subscription } from 'rxjs';
 declare var $: any;
@@ -65,7 +66,8 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
   constructor(public dialog: MatDialog,
     private cs: CustomerService,
     private sc: SupermaketsService,
-    private spinnerService: Ng4LoadingSpinnerService) { }
+    private spinnerService: Ng4LoadingSpinnerService,
+    private excelService: ExcelService) { }
 
   ngOnInit() {
     var self = this;
@@ -367,5 +369,24 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
         clearInterval(inter);
       }, 500);
     });
+  }
+  exportar() {
+    let exportJson = [];
+    if (this.assocBrandList.length > 0) {
+      this.assocBrandList.forEach(assocBrand => {
+        assocBrand.sku.forEach(skuItem => {
+          exportJson.push({
+            'Cadena': assocBrand.cadena.nombre,
+            'Local': assocBrand.local.nombre,
+            'Cliente': assocBrand.cliente.razonsocial,
+            'Marca': assocBrand.marca.nombre,
+            'Producto': skuItem.descripcion,
+            'Presentación': skuItem.presentacion,
+            'Sabor': skuItem.sabor,
+          });
+        });
+      });
+      this.excelService.exportAsExcelFile(exportJson, 'asociaciones');
+    } 
   }
 }
