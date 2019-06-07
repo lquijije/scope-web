@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ICustomer } from '../../../models/customers/customers';
 import { IBrand } from '../../../models/customers/brands';
 import { CustomerService } from '../../../services/customer.service';
+import { SupermaketsService } from '../../../services/supermakets.service';
 import { MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
@@ -23,14 +24,21 @@ export class BrandMantPageComponent implements OnInit, OnDestroy {
     cliente: '',
     estado: 'A'
   };
+  brandOld: IBrand = {
+    nombre: '', 
+    cliente: '',
+    estado: 'A'
+  };
   brandList: any;
   editState: any = false;
   tempIdCustomer: string = '';
   tempNameCustomer: string = '';
   actionName: string = '';
   customerSubscription: Subscription;
+  assocSubscription: Subscription;
   constructor(public dialog: MatDialog,
     private cs: CustomerService,
+    private sc: SupermaketsService,
     private spinnerService: Ng4LoadingSpinnerService) { }
 
   ngOnInit() {
@@ -88,9 +96,21 @@ export class BrandMantPageComponent implements OnInit, OnDestroy {
           this.openAlert('Scope Error', er.message);
         });
       } else {
+        const newBrandName = this.brand.nombre;
         this.spinnerService.show();
         this.cs.updBrand(this.brand).then(() => {
           this.spinnerService.hide();
+          // Actualizar marcas en asociaciones
+          // console.log(this.brandOld);
+          // this.assocSubscription = this.sc.getAssocBrandsFromExclusiveBrand({
+          //   id: this.brandOld.id,
+          //   nombre: this.brandOld.nombre
+          // }).subscribe(assocs => {
+          //   assocs.forEach(item => {
+          //     item.marca.nombre = newBrandName;
+          //     this.cs.updAssocBrand(item);
+          //   });
+          // });
         }).catch(er => {
           this.spinnerService.hide();
           this.openAlert('Scope Error', er.message);
@@ -118,6 +138,7 @@ export class BrandMantPageComponent implements OnInit, OnDestroy {
     this.editState = true;
     this.showEditView();
     this.brand = Object.assign({}, brand);
+    this.brandOld = Object.assign({}, brand);
   }
   delete(brand: IBrand){
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {

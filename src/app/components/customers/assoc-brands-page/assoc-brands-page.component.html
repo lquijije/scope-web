@@ -1,7 +1,7 @@
 <div class="pt-2 px-xs-0 px-sm-3 px-md-5 w-100" style="height: 90vh;">
     <div class="col p-0">
         <div class="row">
-          <div class="col-12 col-xl-8 offset-xl-2">
+          <div class="col-12 col-xl-10 offset-xl-1">
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb" style="border-radius: 5px;">
                 <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
@@ -13,7 +13,7 @@
           </div>
         </div>
         <div class="row" id='pnlList'>
-            <div class="col-12 col-xl-8 offset-xl-2">
+            <div class="col-12 col-xl-10 offset-xl-1">
                 <div class="row">
                     <div class="col-12 col-md-6 d-flex justify-content-start">
                       <button (click)='nuevo()' type="button" class="btn rounded btn-outline-success ml-1">
@@ -36,6 +36,7 @@
                           <th>Local</th>
                           <th>Cliente</th>
                           <th>Marca</th>
+                          <th># Sku's</th>
                           <th>Ver Sku's</th>
                         </thead>
                         <tbody>
@@ -46,6 +47,7 @@
                             <td>{{assocBrand.local.nombre}}</td>
                             <td>{{assocBrand.cliente.razonsocial}}</td>
                             <td>{{assocBrand.marca.nombre}}</td>
+                            <td class='text-right'>{{assocBrand.sku.length}}</td>
                             <td class='text-center'><a class="text-primary" href="javascript:void(0);" (click)="details(assocBrand)"><i class="fa fa-search"></i></a></td>
                           </tr>
                         </tbody>
@@ -57,12 +59,12 @@
             </div>
         </div>
         <div class="row d-none" id='pnlEdit'>
-            <div class="col-12 col-xl-8 offset-xl-2">
+            <div class="col-12 col-xl-10 offset-xl-1">
               <div class="card-body">
                   <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} Asociaci&oacute;n de Marca</h4>
                   <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
                     <div class="row">
-                        <div class="col">
+                        <div class="col-12 col-md-6">
                             <div class="d-flex flex-column">
                                 <span for="" class="text-primary">Cadena:</span>
                                 <select class="form-control" id="cmbChain">
@@ -70,7 +72,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-md-6">
                             <div class="d-flex flex-column">
                                 <span for="" class="text-primary">Local:</span>
                                 <select class="form-control w-100" id="cmbStore">
@@ -79,8 +81,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row pt-3">
-                        <div class="col">
+                    <div class="row pt-2">
+                        <div class="col-12 col-md-6">
                             <div class="d-flex flex-column">
                                 <span for="" class="text-primary">Cliente:</span>
                                 <select class="form-control w-100" id="cmbCustomer">
@@ -88,7 +90,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-md-6">
                             <div class="d-flex flex-column">
                                 <span for="" class="text-primary">Marca:</span>
                                 <select class="form-control w-100" id="cmbBrand">
@@ -97,7 +99,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row mt-1">
+                    <div class="row pt-2">
+                        <div class="col-12 d-flex justify-content-md-end">
+                            <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg" (click)='up()'>
+                                <i class="fa fa-arrow-up"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg ml-1" (click)='down()'>
+                                <i class="fa fa-arrow-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
                         <div class="col">
                           <table id="table_skus" class="table table-bordered table-sm">
                             <thead class="text-center bg-primary text-white">
@@ -134,7 +146,7 @@
             </div>
         </div>
         <div class="row d-none" id='pnlDetail'>
-            <div class="col-12 col-xl-8 offset-xl-2">
+            <div class="col-12 col-xl-10 offset-xl-1">
                 <div class="card-body">
                     <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} de Asociaci&oacute;n de Marca</h4>
                     <div class="row">
@@ -157,14 +169,16 @@
                         <div class="col">
                           <table id="table_detail_brands" class="table table-bordered table-sm">
                             <thead class="text-center bg-primary text-white">
+                              <th>#</th>
                               <th>Sku</th>
                               <th>Descripci&oacute;n</th>
                               <th>Presentaci&oacute;n</th>
                               <th>Sabor</th>
                             </thead>
                             <tbody>
-                              <tr *ngFor="let detail of assocBrandDetail.sku">
-                                <td>{{detail.sku}}</td>
+                              <tr *ngFor="let detail of assocBrandDetail.sku; let i = index">
+                                <td class='text-right'>{{i + 1}}</td>
+                                <td class='text-center'>{{detail.sku}}</td>
                                 <td>{{detail.descripcion}}</td>
                                 <td>{{detail.presentacion}}</td>
                                 <td>{{detail.sabor}}</td>
