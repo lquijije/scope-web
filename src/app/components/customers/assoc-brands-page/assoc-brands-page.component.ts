@@ -34,6 +34,7 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
   tempNameBrand: string;
   editState: any = false;
   actionName: string = '';
+  rowSku: any;
   associatedBrand: IAssociatedBrands = {
       cadena: {
         id: '',
@@ -72,7 +73,7 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
   ngOnInit() {
     var self = this;
     $('#cmbChain').on('select2:select',function(e){
-      console.log('chain');
+      
       var idChain = e.params.data.id;
       var nameChain = e.params.data.text;
       if (idChain!=''){
@@ -117,6 +118,14 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
           self.cs.getSkuFromCustomerAndBrand(self.tempIdCustomer, idBrand).subscribe(skus => {
             self.spinnerService.hide();
             self.skuList = skus;
+            const inter = setInterval(() => {
+              $('#table_skus tbody tr').click(function (e) {
+                self.rowSku = $(this)[0].sectionRowIndex;
+                $('#table_skus tbody tr').removeClass("highlight");
+                $(this).addClass("highlight");
+              });
+              clearInterval(inter);
+            }, 500);
           });
         }
       }else{
@@ -142,7 +151,6 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
     });
     this.assocSubscription = this.cs.getAssociatedBrands().subscribe(assocBrands => {
       this.spinnerService.hide();
-      console.log(assocBrands);
       this.assocBrandList = assocBrands;
     });
   }
@@ -238,7 +246,6 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
   details(assoc: IAssociatedBrands){
     this.assocBrandDetail = assoc;
     this.showDetailView();
-    console.log(this.assocBrandDetail);
   }
   salir(){
     this.closeEditView();
@@ -338,11 +345,20 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
     });
   }
   edit(assoc: IAssociatedBrands){
+    const self = this;
     this.editState = true;
     this.showEditView();
     this.selectCustomerByAssoc(assoc);
     this.selectChainByAssoc(assoc);
     this.skuList = assoc.sku;
+    const inter = setInterval(() => {
+      $('#table_skus tbody tr').click(function (e) {
+        self.rowSku = $(this)[0].sectionRowIndex;
+        $('#table_skus tbody tr').removeClass("highlight");
+        $(this).addClass("highlight");
+      });
+      clearInterval(inter);
+    }, 500);
     this.associatedBrand = Object.assign({}, assoc);
   }
   selectChainByAssoc(assoc: IAssociatedBrands) {
@@ -388,5 +404,39 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
       });
       this.excelService.exportAsExcelFile(exportJson, 'asociaciones');
     } 
+  }
+  move(array, element, delta) {
+    var index = array.indexOf(element);
+    var newIndex = index + delta;
+    if (newIndex < 0  || newIndex == array.length) return; //Already at the top or bottom.
+    this.rowSku = newIndex;
+    this.array_move(array, index, newIndex);
+  };
+  up() {
+    if (this.rowSku !== undefined) {
+      this.move(this.skuList, this.skuList[this.rowSku], -1);
+    }
+  }
+  down() {
+    if (this.rowSku !== undefined) {
+      this.move(this.skuList, this.skuList[this.rowSku], 1);
+    }
+  }
+  
+  array_move(arr, old_index, new_index) {
+    while (old_index < 0) {
+        old_index += arr.length;
+    }
+    while (new_index < 0) {
+        new_index += arr.length;
+    }
+    if (new_index >= arr.length) {
+        var k = new_index - arr.length + 1;
+        while (k--) {
+            arr.push(undefined);
+        }
+    }
+    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+    // return arr; // for testing purposes
   }
 }

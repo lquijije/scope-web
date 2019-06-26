@@ -122,6 +122,17 @@ export class SupermaketsService {
       }))
     );
   }
+  getAssocBrandsFromExclusiveBrand(brandObj: any) {
+    this.associateCollection = this.afs.collection<IAssociatedBrands>('associated-brands',
+      ref => ref.where('marca', '==', brandObj));
+    return this.associateCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IAssociatedBrands;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
   getSkusFromChainStoreCustomerBrandAssociate(chainObj: any, storeObj: any, customerObj: any, brandObj: any) {
     this.associateCollection = this.afs.collection<IAssociatedBrands>('associated-brands',
       ref => ref.where('cadena', '==', chainObj)
