@@ -38,7 +38,6 @@ export class NavbarComponent implements OnInit {
         
         this.us.getUserByEmail(this.userEmail).subscribe( usr => {
           if (usr) {
-            console.log(usr);
             this.user = usr[0];
             if (this.user.perfil) {
               const perfil = this.user.perfil.filter( e => {

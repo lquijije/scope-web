@@ -28,7 +28,8 @@
                 </div>
                 <div class="row mt-1">
                     <div class="col">
-                      <table id="table_brands" class="table table-bordered table-sm">
+                      <input class="form-control" id="txSearch" type="text" placeholder="Search..">
+                      <table id="table_brands" class="table table-bordered table-sm mt-2">
                         <thead class="text-center bg-primary text-white">
                           <th></th>
                           <th></th>
@@ -101,7 +102,11 @@
                     </div>
                     <div class="row pt-2">
                         <div class="col-12 d-flex justify-content-md-end">
-                            <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg" (click)='up()'>
+                            <button *ngIf="this.editState" type="button" class="btn btn-success rounded btn-sm btn-lg" (click)='addSku()'>
+                                <i class="fa fa-plus"></i>
+                                Agregar Sku
+                            </button>
+                            <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg ml-1" (click)='up()'>
                                 <i class="fa fa-arrow-up"></i>
                             </button>
                             <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg ml-1" (click)='down()'>
