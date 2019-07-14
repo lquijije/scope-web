@@ -72,6 +72,7 @@ export class CustomerService {
   }
 
   addCustomer(customer: ICustomer) {
+    this.customerCollection = this.afs.collection<ICustomer>('customer');
     return this.customerCollection.add(customer);
   }
   
@@ -103,6 +104,7 @@ export class CustomerService {
   }
 
   addBrand(brand: IBrand) {
+    this.brandCollection = this.afs.collection<IBrand>('brand');
     return this.brandCollection.add(brand);
   }
 
@@ -133,6 +135,7 @@ export class CustomerService {
     );
   }
   addSku(sku: ISku) {
+    this.skuCollection = this.afs.collection<ISku>('sku');
     return this.skuCollection.add(sku);
   }
 
@@ -161,6 +164,7 @@ export class CustomerService {
   }
 
   addAssocBrand(assoc: IAssociatedBrands) {
+    this.asocBrandsCollection = this.afs.collection<IAssociatedBrands>('associated-brands');
     return this.asocBrandsCollection.add(assoc);
   }
   updAssocBrand(assoc: IAssociatedBrands) {

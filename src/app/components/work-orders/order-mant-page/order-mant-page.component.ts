@@ -295,12 +295,9 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
                     self.skuList = self.removeDuplicates(self.skuList);
                     const inter = setInterval(() => {
                       $('#table_skus tbody tr').click(function (e) {
-                        // console.log($(this)[0].sectionRowIndex);
-                        // self.rowSkuList = $(this);
                         self.rowSkuList = $(this)[0].sectionRowIndex;
                         $('#table_skus tbody tr').removeClass("highlight");
                         $(this).addClass("highlight");
-                        // row.insertBefore(row.prev());
                       });
                       clearInterval(inter);
                     }, 500);
@@ -317,7 +314,9 @@ export class OrderMantPageComponent implements OnInit, OnDestroy {
     $('#cmbBrand').on('select2:unselect', function (e) {
       const idBrand = e.params.data.id;
       const nameBrand = e.params.data.text;
-      // TODO: Quitar los skus de la marca removida
+      self.skuList = self.skuList.filter(item => {
+        return item.marca != idBrand;
+      });
     });
     this.superChainSubscription = this.sc.getSuperChain().subscribe(chains => {
       this.chainList = chains

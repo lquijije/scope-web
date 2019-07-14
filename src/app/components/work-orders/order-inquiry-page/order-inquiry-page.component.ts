@@ -70,6 +70,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
   desde: string = '';
   hasta: string = '';
   estado: string = '';
+  hasOrdered: boolean = false;
   constructor(public dialog: MatDialog,
     private ow: WorkOrdersService,
     private sc: SupermaketsService,
@@ -88,7 +89,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     this.orderSubscription = this.ow.getWorkOrdersList().subscribe(orders => {
       this.spinnerService.hide();
       this.sourceList = orders;
-      
+      if (!this.orderCurrent) {
         this.orderCurrent = {
           cadena: {id: "Bs1mZF3XIvOb9TCwBha7", nombre: "MI COMISARIATO"},
           creacion: "",
@@ -111,10 +112,21 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
             sku: "40010211",
           }],
           visita: "2019-05-27 09:00"
-        }      
-      this.orderList = this.sourceList.sort( (a, b) => {
-        return a.creacion < b.creacion ? 1 : -1;
-      });
+        } 
+      } else {
+        const curOrNum = this.orderCurrent.numero;
+        this.orderCurrent = this.sourceList.filter(o => {
+          return o.numero == curOrNum;
+        })[0];
+        this.skuList = this.orderCurrent.sku;
+        this.estado = this.orderCurrent.estado.nombre;
+      }
+      //if (!this.hasOrdered) {  
+        this.orderList = this.sourceList.sort( (a, b) => {
+          this.hasOrdered = true;
+          return a.creacion < b.creacion ? 1 : -1;
+        });
+      //}
     });
     $('#table_details tr').click(function (e) {
       $('#table_details tbody tr').removeClass('highlight');
@@ -357,6 +369,11 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
   }
   consultar() {
     this.orderList = this.sourceList;
+    this.orderList = this.sourceList.sort((a, b) => {
+      this.hasOrdered = true;
+      return a.creacion < b.creacion ? 1 : -1;
+    });
+    
     if ($('#rd-crea').is(':checked')) {
       if ($('#fedesde').val() && $('#fehasta').val()) {
         this.orderList = this.orderList.filter(e => {
@@ -469,7 +486,11 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     $('#lbLoc').text(order.local.nombre);
     $('#lbMer').text(order.mercaderista.nombre);
     $('#lbVis').text(order.visita);
-    $('#lbNov').text(order.novedades);
+    if (order.novedades) {
+      $('#lbNov').text(order.novedades);
+    } else {
+      $('#lbNov').text('');
+    }
     $('#lbCrea').text(order.creacion.toDate().toLocaleString());
     this.skuList = order.sku;
     this.showDetailView();
