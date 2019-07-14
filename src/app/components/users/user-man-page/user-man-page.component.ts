@@ -121,6 +121,7 @@ export class UserManPageComponent implements OnInit, OnDestroy {
         return;
       }
       this.user.nombre = this.toTitleCase(this.user.nombre);
+      this.user.email = this.user.email.toLowerCase();
       if (!this.editState) {
         this.user.estado = 'A';
         this.spinnerService.show();

@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material';
 import { NgForm } from '@angular/forms/src/directives/ng_form';
 import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
+import { NewSkuAssocComponent } from '../../dialog-components/new-sku-assoc/new-sku-assoc.component';
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { ExcelService } from '../../../services/excel.service';
 import { IAssociatedBrands } from 'src/app/models/customers/associated-brands';
@@ -72,6 +73,12 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     var self = this;
+    $("#txSearch").on("keyup", function() {
+      var value = $(this).val().toLowerCase();
+      $("#table_brands tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
     $('#cmbChain').on('select2:select',function(e){
       
       var idChain = e.params.data.id;
@@ -438,5 +445,28 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
     }
     arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
     // return arr; // for testing purposes
+  }
+
+  addSku() {
+    const idCustomer =  this.associatedBrand.cliente.id;
+    const idBrand = this.associatedBrand.marca.id;
+    this.spinnerService.show();
+    this.cs.getSkuFromCustomerAndBrand(idCustomer, idBrand).subscribe(skusNative => {
+      this.spinnerService.hide();
+      if (skusNative) {
+
+        const dialogRef = this.dialog.open(NewSkuAssocComponent, {
+          width: '60%',
+          data: { listNative: skusNative, listCurrent: this.skuList }
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            result.forEach(rs => {
+              this.skuList.push(rs);
+            });
+          }
+        });
+      }
+    });
   }
 }

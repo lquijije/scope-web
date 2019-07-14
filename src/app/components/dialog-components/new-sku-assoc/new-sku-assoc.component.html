@@ -1,0 +1,37 @@
+<h2 mat-dialog-title class="text-center">
+  <strong>Agregar Nuevo Sku.</strong>
+</h2>
+
+<mat-dialog-content class="pb-3">
+    <div class="row mt-2">
+        <div class="col">
+          <table id="table_skus_new" class="table table-bordered table-sm">
+            <thead class="text-center bg-primary text-white">
+              <th>Nombre</th>
+              <th></th>
+              <th>Descripci&oacute;n</th>
+              <th>Presentaci&oacute;n</th>
+              <th>Sabor</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sku of skuListNew">
+                <td>{{sku.sku}}</td>
+                <td class='text-center'>
+                    <input type="checkbox" value="{{sku.id}}">
+                </td>
+                <td>{{sku.descripcion}}</td>
+                <td>{{sku.presentacion}}</td>
+                <td>{{sku.sabor}}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+            </tfoot>
+          </table>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="float-right">
+  <button mat-button class="bg-light" (click)='no()'>Cancelar</button>
+  <button mat-button class="bg-primary text-white" (click)='yes()'>Aceptar</button>
+</mat-dialog-actions>

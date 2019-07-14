@@ -102,15 +102,15 @@ export class BrandMantPageComponent implements OnInit, OnDestroy {
           this.spinnerService.hide();
           // Actualizar marcas en asociaciones
           // console.log(this.brandOld);
-          // this.assocSubscription = this.sc.getAssocBrandsFromExclusiveBrand({
-          //   id: this.brandOld.id,
-          //   nombre: this.brandOld.nombre
-          // }).subscribe(assocs => {
-          //   assocs.forEach(item => {
-          //     item.marca.nombre = newBrandName;
-          //     this.cs.updAssocBrand(item);
-          //   });
-          // });
+          this.assocSubscription = this.sc.getAssocBrandsFromExclusiveBrand({
+            id: this.brandOld.id,
+            nombre: this.brandOld.nombre
+          }).subscribe(assocs => {
+            assocs.forEach(item => {
+              item.marca.nombre = newBrandName;
+              this.cs.updAssocBrand(item);
+            });
+          });
         }).catch(er => {
           this.spinnerService.hide();
           this.openAlert('Scope Error', er.message);

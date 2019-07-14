@@ -29,10 +29,13 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.authService.getAuth().subscribe((auth) => {
+
       if (auth) {
+        
         this.isLogin = true;
         this.userName = auth.displayName;
         this.userEmail = auth.email;
+        
         this.us.getUserByEmail(this.userEmail).subscribe( usr => {
           if (usr) {
             this.user = usr[0];

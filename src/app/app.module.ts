@@ -42,6 +42,7 @@ import { ZonePageComponent } from './components/supermarkets/zone-page/zone-page
 import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
 import { AngularFireStorageModule } from 'angularfire2/storage';
 import { UniquePipe } from './pipes/unique.pipe';
+import { NewSkuAssocComponent } from './components/dialog-components/new-sku-assoc/new-sku-assoc.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import { UniquePipe } from './pipes/unique.pipe';
     OrderInquiryPageComponent,
     ConfirmDialogComponent,
     ZonePageComponent,
-    UniquePipe
+    UniquePipe,
+    NewSkuAssocComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),
@@ -81,7 +83,8 @@ import { UniquePipe } from './pipes/unique.pipe';
   ],
   entryComponents: [
     AlertDialogComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    NewSkuAssocComponent
   ],
   providers: [AuthService,
               UsersService,

@@ -163,8 +163,8 @@
                             </a>
                           </td>
                           <td class='text-center'>
-                            <a *ngIf="order.fotos" class="text-primary" href="javascript:void(0);" (click)="images(order)">
-                              <i class="fa fa-image"></i>
+                            <a *ngIf="order.fotos && order.fotos.length" class="text-primary" href="javascript:void(0);" (click)="images(order)">
+                              <i class="fa fa-image"></i> ({{order.fotos.length}})
                             </a>
                           </td>
                           <td>{{order.cadena.nombre}}</td>
