@@ -1,206 +1,215 @@
 <div class="pt-2 px-xs-0 px-sm-3 px-md-5 w-100" style="height: 90vh;">
-    <div class="col p-0">
+  <div class="col p-0">
+    <div class="row">
+      <div class="col-12 col-xl-10 offset-xl-1">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb" style="border-radius: 5px;">
+            <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
+            <li class="breadcrumb-item d-block d-sm-none"><a href="javascript:void(0)">...</a></li>
+            <li class="breadcrumb-item d-none d-sm-block"><a href="javascript:void(0)">Clientes</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><strong>Asociacion de Marcas</strong></li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+    <div class="row" id='pnlList'>
+      <div class="col-12 col-xl-10 offset-xl-1">
         <div class="row">
-          <div class="col-12 col-xl-10 offset-xl-1">
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb" style="border-radius: 5px;">
-                <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
-                <li class="breadcrumb-item d-block d-sm-none"><a href="javascript:void(0)">...</a></li>
-                <li class="breadcrumb-item d-none d-sm-block"><a href="javascript:void(0)">Clientes</a></li>
-                <li class="breadcrumb-item active" aria-current="page"><strong>Asociacion de Marcas</strong></li>
-              </ol>
-            </nav>
+          <div class="col-12 col-md-6 d-flex justify-content-start">
+            <button (click)='nuevo()' type="button" class="btn rounded btn-outline-success ml-1">
+              <i class="fa fa-plus"></i> Nueva Asociaci&oacute;n de Marca
+            </button>
+          </div>
+          <div class="col-12 col-md-6 d-flex justify-content-end">
+            <button (click)='exportar()' type="button" class="btn rounded btn-outline-success ml-1">
+              <i class="fa fa-file-excel-o"></i> Exportar Excel
+            </button>
           </div>
         </div>
-        <div class="row" id='pnlList'>
-            <div class="col-12 col-xl-10 offset-xl-1">
-                <div class="row">
-                    <div class="col-12 col-md-6 d-flex justify-content-start">
-                      <button (click)='nuevo()' type="button" class="btn rounded btn-outline-success ml-1">
-                        <i class="fa fa-plus"></i>  Nueva Asociaci&oacute;n de Marca
-                      </button>
-                    </div>
-                    <div class="col-12 col-md-6 d-flex justify-content-end">
-                      <button (click)='exportar()' type="button" class="btn rounded btn-outline-success ml-1">
-                        <i class="fa fa-file-excel-o"></i>  Exportar Excel
-                      </button>
-                    </div>
-                </div>
-                <div class="row mt-1">
-                    <div class="col">
-                      <input class="form-control" id="txSearch" type="text" placeholder="Search..">
-                      <table id="table_brands" class="table table-bordered table-sm mt-2">
-                        <thead class="text-center bg-primary text-white">
-                          <th></th>
-                          <th></th>
-                          <th>Cadena</th>
-                          <th>Local</th>
-                          <th>Cliente</th>
-                          <th>Marca</th>
-                          <th># Sku's</th>
-                          <th>Ver Sku's</th>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let assocBrand of assocBrandList">
-                            <td class='text-center'><a class="text-danger" href="javascript:void(0);" (click)="delete(assocBrand)"><i class="fa fa-trash"></i></a></td>
-                            <td class='text-center'><a class="text-info" href="javascript:void(0);" (click)="edit(assocBrand)"><i class="fa fa-edit"></i></a></td>
-                            <td>{{assocBrand.cadena.nombre}}</td>
-                            <td>{{assocBrand.local.nombre}}</td>
-                            <td>{{assocBrand.cliente.razonsocial}}</td>
-                            <td>{{assocBrand.marca.nombre}}</td>
-                            <td class='text-right'>{{assocBrand.sku.length}}</td>
-                            <td class='text-center'><a class="text-primary" href="javascript:void(0);" (click)="details(assocBrand)"><i class="fa fa-search"></i></a></td>
-                          </tr>
-                        </tbody>
-                        <tfoot>
-                        </tfoot>
-                      </table>
-                    </div>
-                </div>
-            </div>
+        <div class="row mt-1">
+          <div class="col">
+            <input class="form-control" id="txSearch" type="text" placeholder="Search..">
+            <table id="table_brands" class="table table-bordered table-sm mt-2">
+              <thead class="text-center bg-primary text-white">
+                <th></th>
+                <th></th>
+                <th>Cadena</th>
+                <th>Local</th>
+                <th>Cliente</th>
+                <th>Marca</th>
+                <th># Sku's</th>
+                <th>Ver Sku's</th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let assocBrand of assocBrandList">
+                  <td class='text-center'><a class="text-danger" href="javascript:void(0);"
+                      (click)="delete(assocBrand)"><i class="fa fa-trash"></i></a></td>
+                  <td class='text-center'><a class="text-info" href="javascript:void(0);" (click)="edit(assocBrand)"><i
+                        class="fa fa-edit"></i></a></td>
+                  <td>{{assocBrand.cadena.nombre}}</td>
+                  <td>{{assocBrand.local.nombre}}</td>
+                  <td>{{assocBrand.cliente.razonsocial}}</td>
+                  <td>{{assocBrand.marca.nombre}}</td>
+                  <td class='text-right'>{{assocBrand.sku.length}}</td>
+                  <td class='text-center'><a class="text-primary" href="javascript:void(0);"
+                      (click)="details(assocBrand)"><i class="fa fa-search"></i></a></td>
+                </tr>
+              </tbody>
+              <tfoot>
+              </tfoot>
+            </table>
+          </div>
         </div>
-        <div class="row d-none" id='pnlEdit'>
-            <div class="col-12 col-xl-10 offset-xl-1">
-              <div class="card-body">
-                  <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} Asociaci&oacute;n de Marca</h4>
-                  <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            <div class="d-flex flex-column">
-                                <span for="" class="text-primary">Cadena:</span>
-                                <select class="form-control" id="cmbChain">
-                                    <option *ngFor="let chain of chainList" value="{{chain.id}}">{{chain.nombre}}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="d-flex flex-column">
-                                <span for="" class="text-primary">Local:</span>
-                                <select class="form-control w-100" id="cmbStore">
-                                    <option *ngFor="let store of storeList" value="{{store.id}}">{{store.nombre}}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row pt-2">
-                        <div class="col-12 col-md-6">
-                            <div class="d-flex flex-column">
-                                <span for="" class="text-primary">Cliente:</span>
-                                <select class="form-control w-100" id="cmbCustomer">
-                                    <option *ngFor="let customer of customerList" value="{{customer.id}}">{{customer.razonsocial}}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="d-flex flex-column">
-                                <span for="" class="text-primary">Marca:</span>
-                                <select class="form-control w-100" id="cmbBrand">
-                                    <option *ngFor="let brand of brandList" value="{{brand.id}}">{{brand.nombre}}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row pt-2">
-                        <div class="col-12 d-flex justify-content-md-end">
-                            <button *ngIf="this.editState" type="button" class="btn btn-success rounded btn-sm btn-lg" (click)='addSku()'>
-                                <i class="fa fa-plus"></i>
-                                Agregar Sku
-                            </button>
-                            <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg ml-1" (click)='up()'>
-                                <i class="fa fa-arrow-up"></i>
-                            </button>
-                            <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg ml-1" (click)='down()'>
-                                <i class="fa fa-arrow-down"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col">
-                          <table id="table_skus" class="table table-bordered table-sm">
-                            <thead class="text-center bg-primary text-white">
-                              <th>Nombre</th>
-                              <th></th>
-                              <th>Descripci&oacute;n</th>
-                              <th>Presentaci&oacute;n</th>
-                              <th>Sabor</th>
-                            </thead>
-                            <tbody>
-                              <tr *ngFor="let sku of skuList">
-                                <td>{{sku.sku}}</td>
-                                <td class='text-center'><a class="text-danger" href="javascript:void(0);" (click)="deleteSku(sku)"><i class="fa fa-trash"></i></a></td>
-                                <td>{{sku.descripcion}}</td>
-                                <td>{{sku.presentacion}}</td>
-                                <td>{{sku.sabor}}</td>
-                              </tr>
-                            </tbody>
-                            <tfoot>
-                            </tfoot>
-                          </table>
-                        </div>
-                    </div>
-                    <div class="row d-flex justify-content-end">
-                      <div class="col col-sm-4 col-xl-3">
-                        <input type="button" value="Salir" class="btn btn-default rounded btn-sm btn-block btn-lg" (click)='salir()'>
-                      </div>
-                      <div class="col col-sm-4 col-xl-3">
-                        <input type="submit" value="Asociar" class="btn btn-primary rounded btn-sm btn-block btn-lg">
-                      </div>
-                    </div>
-                  </form>
+      </div>
+    </div>
+    <div class="row d-none" id='pnlEdit'>
+      <div class="col-12 col-xl-10 offset-xl-1">
+        <div class="card-body">
+          <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} Asociaci&oacute;n de Marca</h4>
+          <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
+            <div class="row">
+              <div class="col-12 col-md-6">
+                <div class="d-flex flex-column">
+                  <span for="" class="text-primary">Cadena:</span>
+                  <select class="form-control" id="cmbChain">
+                    <option *ngFor="let chain of chainList" value="{{chain.id}}">{{chain.nombre}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="d-flex flex-column">
+                  <span for="" class="text-primary">Local:</span>
+                  <select class="form-control w-100" id="cmbStore">
+                    <option *ngFor="let store of storeList" value="{{store.id}}">{{store.nombre}}</option>
+                  </select>
+                </div>
               </div>
             </div>
-        </div>
-        <div class="row d-none" id='pnlDetail'>
-            <div class="col-12 col-xl-10 offset-xl-1">
-                <div class="card-body">
-                    <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} de Asociaci&oacute;n de Marca</h4>
-                    <div class="row">
-                      <div class="col">
-                          <strong>Cadena: </strong>{{assocBrandDetail.cadena.nombre}}
-                      </div>
-                      <div class="col">
-                          <strong>Local: </strong>{{assocBrandDetail.local.nombre}}
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col">
-                          <strong>Cliente: </strong>{{assocBrandDetail.cliente.razonsocial}}
-                      </div>
-                      <div class="col">
-                          <strong>Marca: </strong>{{assocBrandDetail.marca.nombre}}
-                      </div>
-                    </div>
-                    <div class="row mt-1">
-                        <div class="col">
-                          <table id="table_detail_brands" class="table table-bordered table-sm">
-                            <thead class="text-center bg-primary text-white">
-                              <th>#</th>
-                              <th>Sku</th>
-                              <th>Descripci&oacute;n</th>
-                              <th>Presentaci&oacute;n</th>
-                              <th>Sabor</th>
-                            </thead>
-                            <tbody>
-                              <tr *ngFor="let detail of assocBrandDetail.sku; let i = index">
-                                <td class='text-right'>{{i + 1}}</td>
-                                <td class='text-center'>{{detail.sku}}</td>
-                                <td>{{detail.descripcion}}</td>
-                                <td>{{detail.presentacion}}</td>
-                                <td>{{detail.sabor}}</td>
-                              </tr>
-                            </tbody>
-                            <tfoot>
-                            </tfoot>
-                          </table>
-                        </div>
-                    </div>
-                    <div class="row d-flex justify-content-end">
-                        <div class="col col-sm-4 col-xl-3">
-                          <input type="button" value="Salir" class="btn btn-default rounded btn-sm btn-block btn-lg" (click)='salir()'>
-                        </div>    
-                    </div>
+            <div class="row pt-2">
+              <div class="col-12 col-md-6">
+                <div class="d-flex flex-column">
+                  <span for="" class="text-primary">Cliente:</span>
+                  <select class="form-control w-100" id="cmbCustomer">
+                    <option *ngFor="let customer of customerList" value="{{customer.id}}">{{customer.razonsocial}}
+                    </option>
+                  </select>
                 </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <div class="d-flex flex-column">
+                  <span for="" class="text-primary">Marca:</span>
+                  <select class="form-control w-100" id="cmbBrand">
+                    <option *ngFor="let brand of brandList" value="{{brand.id}}">{{brand.nombre}}</option>
+                  </select>
+                </div>
+              </div>
             </div>
+            <div class="row pt-2">
+              <div class="col-12 d-flex justify-content-md-end">
+                <button *ngIf="this.editState" type="button" class="btn btn-success rounded btn-sm btn-lg"
+                  (click)='addSku()'>
+                  <i class="fa fa-plus"></i>
+                  Agregar Sku
+                </button>
+                <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg ml-1 d-none" (click)='up()'>
+                  <i class="fa fa-arrow-up"></i>
+                </button>
+                <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg ml-1 d-none"
+                  (click)='down()'>
+                  <i class="fa fa-arrow-down"></i>
+                </button>
+              </div>
+            </div>
+            <div class="row mt-2">
+              <div class="col">
+                <table id="table_skus" class="table table-bordered table-sm">
+                  <thead class="text-center bg-primary text-white">
+                    <th>Nombre</th>
+                    <th></th>
+                    <th>Descripci&oacute;n</th>
+                    <th>Presentaci&oacute;n</th>
+                    <th>Sabor</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let sku of skuList">
+                      <td>{{sku.sku}}</td>
+                      <td class='text-center'><a class="text-danger" href="javascript:void(0);"
+                          (click)="deleteSku(sku)"><i class="fa fa-trash"></i></a></td>
+                      <td>{{sku.descripcion}}</td>
+                      <td>{{sku.presentacion}}</td>
+                      <td>{{sku.sabor}}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            <div class="row d-flex justify-content-end">
+              <div class="col col-sm-4 col-xl-3">
+                <input type="button" value="Salir" class="btn btn-default rounded btn-sm btn-block btn-lg"
+                  (click)='salir()'>
+              </div>
+              <div class="col col-sm-4 col-xl-3">
+                <input type="submit" value="Asociar" class="btn btn-primary rounded btn-sm btn-block btn-lg">
+              </div>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
+    <div class="row d-none" id='pnlDetail'>
+      <div class="col-12 col-xl-10 offset-xl-1">
+        <div class="card-body">
+          <h4 class="text-center"><i class="fa fa-shopping"></i> {{actionName}} de Asociaci&oacute;n de Marca</h4>
+          <div class="row">
+            <div class="col">
+              <strong>Cadena: </strong>{{assocBrandDetail.cadena.nombre}}
+            </div>
+            <div class="col">
+              <strong>Local: </strong>{{assocBrandDetail.local.nombre}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <strong>Cliente: </strong>{{assocBrandDetail.cliente.razonsocial}}
+            </div>
+            <div class="col">
+              <strong>Marca: </strong>{{assocBrandDetail.marca.nombre}}
+            </div>
+          </div>
+          <div class="row mt-1">
+            <div class="col">
+              <table id="table_detail_brands" class="table table-bordered table-sm">
+                <thead class="text-center bg-primary text-white">
+                  <th>#</th>
+                  <th>Sku</th>
+                  <th>Descripci&oacute;n</th>
+                  <th>Presentaci&oacute;n</th>
+                  <th>Sabor</th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let detail of assocBrandDetail.sku; let i = index">
+                    <td class='text-right'>{{i + 1}}</td>
+                    <td class='text-center'>{{detail.sku}}</td>
+                    <td>{{detail.descripcion}}</td>
+                    <td>{{detail.presentacion}}</td>
+                    <td>{{detail.sabor}}</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+          <div class="row d-flex justify-content-end">
+            <div class="col col-sm-4 col-xl-3">
+              <input type="button" value="Salir" class="btn btn-default rounded btn-sm btn-block btn-lg"
+                (click)='salir()'>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
