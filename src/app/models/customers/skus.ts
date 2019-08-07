@@ -7,6 +7,7 @@ export interface ISku {
     presentacion?: string;
     sabor?: string;
     estado?: string;
+    orden?: string;
 }
 
 export interface ISkuOrder {

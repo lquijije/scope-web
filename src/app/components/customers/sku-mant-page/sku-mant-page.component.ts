@@ -18,6 +18,7 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
   customerList: any;
   brandList: any;
   skuList: any;
+  rowSku: any;
   sku: ISku = {
     cliente: '',
     marca: '',
@@ -87,6 +88,22 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
           self.cs.getSkuFromCustomerAndBrand(self.tempIdCustomer, idBrand).subscribe(skus => {
             self.spinnerService.hide();
             self.skuList = skus;
+            self.skuList = self.skuList.sort((a, b) => {
+              return ((a.orden < b.orden) ? -1 : 0);
+            });
+            console.log(self.skuList);
+            const inter = setInterval(() => {
+              $('#table_skus tbody tr').click(function (e) {
+                self.rowSku = $(this)[0].sectionRowIndex;
+                $('#table_skus tbody tr').removeClass("highlight");
+                $(this).addClass("highlight");
+              });
+              clearInterval(inter);
+            }, 500);
+            //self.skuList.forEach(el => {
+                //el['orden'] = self.skuList.indexOf(el) + 1;
+                //self.cs.updSku(el);
+            //});
           });
         }
       } else {
@@ -227,5 +244,48 @@ export class SkuMantPageComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
     });
+  }
+
+  move(array, element, delta) {
+    var index = array.indexOf(element);
+    var newIndex = index + delta;
+    if (newIndex < 0  || newIndex == array.length) return; //Already at the top or bottom.
+    this.rowSku = newIndex;
+    this.array_move(array, index, newIndex);
+  };
+  up() {
+    if (this.rowSku !== undefined) {
+      this.move(this.skuList, this.skuList[this.rowSku], -1);
+    }
+  }
+  down() {
+    if (this.rowSku !== undefined) {
+      this.move(this.skuList, this.skuList[this.rowSku], 1);
+    }
+  }
+  
+  array_move(arr, old_index, new_index) {
+    while (old_index < 0) {
+        old_index += arr.length;
+    }
+    while (new_index < 0) {
+        new_index += arr.length;
+    }
+    if (new_index >= arr.length) {
+        var k = new_index - arr.length + 1;
+        while (k--) {
+            arr.push(undefined);
+        }
+    }
+    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+    // return arr; // for testing purposes
+  }
+  grabarOrden() {
+    if(this.skuList.length) {
+      this.skuList.forEach(el =>{
+        el['orden'] = this.skuList.indexOf(el) + 1;
+        this.cs.updSku(el);
+      });
+    }
   }
 }

@@ -125,6 +125,9 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
           self.cs.getSkuFromCustomerAndBrand(self.tempIdCustomer, idBrand).subscribe(skus => {
             self.spinnerService.hide();
             self.skuList = skus;
+            self.skuList = self.skuList.sort((a, b) => {
+              return ((a.orden < b.orden) ? -1 : 0);
+            });
             const inter = setInterval(() => {
               $('#table_skus tbody tr').click(function (e) {
                 self.rowSku = $(this)[0].sectionRowIndex;
@@ -357,7 +360,11 @@ export class AssocBrandsPageComponent implements OnInit, OnDestroy {
     this.showEditView();
     this.selectCustomerByAssoc(assoc);
     this.selectChainByAssoc(assoc);
-    this.skuList = assoc.sku;
+    
+    this.skuList = assoc.sku.sort((a, b) => {
+      return ((a.orden < b.orden) ? -1 : 0);
+    });
+    console.log(this.skuList);
     const inter = setInterval(() => {
       $('#table_skus tbody tr').click(function (e) {
         self.rowSku = $(this)[0].sectionRowIndex;

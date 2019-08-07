@@ -1,7 +1,7 @@
 <div class="pt-2 px-xs-0 px-sm-3 px-md-5 w-100" style="height: 90vh;">
     <div class="col p-0">
         <div class="row">
-          <div class="col-12 col-xl-8 offset-xl-2">
+          <div class="col-12 col-xl-10 offset-xl-1">
             <nav aria-label="breadcrumb" style="border-radius: 5px;">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
@@ -13,21 +13,30 @@
           </div>
         </div>
         <div class="row" id='pnlList'>
-            <div class="col-12 col-xl-8 offset-xl-2">
+            <div class="col-12 col-xl-10 offset-xl-1">
                 <div class="row">
-                    <div class="col-12 col-md-5 col-xl-4">
+                    <div class="col-12 col-md-4">
                       <select class="form-control w-100" id="cmbCustomer">
                           <option *ngFor="let customer of customerList" value="{{customer.id}}">{{customer.razonsocial}}</option>
                       </select>
                     </div>
-                    <div class="col-12 col-md-5 col-xl-4">
+                    <div class="col-12 col-md-4">
                         <select class="form-control w-100" id="cmbBrand">
                             <option *ngFor="let brand of brandList" value="{{brand.id}}">{{brand.nombre}}</option>
                         </select>
                       </div>
-                    <div class="col-12 col-md-2 col-xl-4 d-flex justify-content-md-end">
-                      <button (click)='nuevo()' type="button" class="btn rounded btn-outline-success ml-1">
-                        <i class="fa fa-plus"></i>  Nuevo SKU
+                    <div class="col-12 col-md-4 d-flex justify-content-md-end">
+                      <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg ml-1" (click)='up()'>
+                          <i class="fa fa-arrow-up"></i>
+                      </button>
+                      <button type="button" class="btn btn-outline-primary rounded btn-sm btn-lg ml-1" (click)='down()'>
+                          <i class="fa fa-arrow-down"></i>
+                      </button>
+                      <button (click)='grabarOrden()' type="button" class="btn rounded btn-outline-primary ml-1">
+                        <i class="fa fa-save"></i>  Grabar
+                      </button>
+                      <button (click)='nuevo()' type="button" class="btn rounded btn-success ml-1">
+                        <i class="fa fa-plus"></i>  Nuevo
                       </button>
                     </div>
                 </div>
