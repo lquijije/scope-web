@@ -531,6 +531,8 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
             'Fecha': o.visita,
             'Supermercado': o.cadena.nombre,
             'Local': o.local.nombre,
+            'Cliente': d.ds_cliente,
+            'Marca': d.ds_marca,
             'Producto': d.descripcion,
             'Presentación': d.presentacion,
             'Sabor': d.sabor,
@@ -541,7 +543,6 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
             'Observaciones': d.observacion,
             'Mercaderista': o.mercaderista.nombre,
             'Competencia': '',
-            'Actividad': '',
           });
         });
       });

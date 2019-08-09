@@ -15,13 +15,57 @@
     <div class="row" id='pnlList'>
       <div class="col-12 col-xl-10 offset-xl-1">
         <div class="row">
-          <div class="col-12 col-md-6 d-flex justify-content-start">
-            <button (click)='nuevo()' type="button" class="btn rounded btn-outline-success ml-1">
+          <div class="col-12 col-md-6">
+            <div class="d-flex flex-column">
+              <span for="" class="text-primary">Cadena:</span>
+              <select class="form-control" id="cmbChainFilter">
+                <option *ngFor="let chain of chainListFilter" value="{{chain.id}}">{{chain.nombre}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="d-flex flex-column">
+              <span for="" class="text-primary">Tienda:</span>
+              <select class="form-control" id="cmbStoreFilter">
+                <option *ngFor="let store of storeListFilter" value="{{store.id}}">{{store.nombre}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-3">
+          <div class="col-12 col-md-6">
+            <div class="d-flex flex-column">
+              <span for="" class="text-primary">Cliente:</span>
+              <select class="form-control" id="cmbCustomerFilter">
+                <option *ngFor="let customer of customerListFilter" value="{{customer.id}}">{{customer.razonsocial}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="d-flex flex-column">
+              <span for="" class="text-primary"> Marca:</span>
+              <select class="form-control" id="cmbBrandFilter">
+                <option *ngFor="let brand of brandListFilter" value="{{brand.id}}">{{brand.nombre}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-3">
+          <div class="col-12 col-md-4 d-flex justify-content-start">
+            <button (click)='nuevo()' type="button" class="btn rounded btn-sm btn-outline-success ml-1">
               <i class="fa fa-plus"></i> Nueva Asociaci&oacute;n de Marca
             </button>
           </div>
-          <div class="col-12 col-md-6 d-flex justify-content-end">
-            <button (click)='exportar()' type="button" class="btn rounded btn-outline-success ml-1">
+          <div class="col-12 col-md-8 d-flex justify-content-end">
+            <button type="button" class="btn btn-outline-secondary rounded btn-sm ml-1 px-4 pt-2 pb-2"
+              (click)='limpiar()'>
+              <i class="fa fa-eraser"></i> Limpiar Filtros
+            </button>
+            <button type="button" class="btn btn-primary rounded btn-sm px-4 pt-2 ml-1 pb-2" (click)="consultar()">
+              <i class="fa fa-search"></i> Filtrar
+            </button>
+            <button (click)='exportar()' type="button" class="btn rounded btn-sm btn-outline-success ml-1">
               <i class="fa fa-file-excel-o"></i> Exportar Excel
             </button>
           </div>

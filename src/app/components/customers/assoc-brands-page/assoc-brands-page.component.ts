@@ -1,5 +1,6 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ISku} from '../../../models/customers/skus';
+import {ISuperStore} from 'src/app/models/supermarkets/super-store';
 import {CustomerService} from '../../../services/customer.service';
 import {SupermaketsService} from '../../../services/supermakets.service';
 import {MatDialog} from '@angular/material';
@@ -12,14 +13,38 @@ import {ExcelService} from '../../../services/excel.service';
 import {IAssociatedBrands} from 'src/app/models/customers/associated-brands';
 import {Subscription} from 'rxjs';
 declare var $: any;
-
+export interface IChainObj {
+    id?: string;
+    nombre?: string;
+}
+export interface IStoreObj {
+    id?: string;
+    nombre?: string;
+}
+export interface ICustomerObj {
+    id?: string;
+    razonsocial?: string;
+}
+export interface IBrandObj {
+    id?: string;
+    nombre?: string;
+}
 @Component({selector: 'app-assoc-brands-page', templateUrl: './assoc-brands-page.component.html', styleUrls: ['./assoc-brands-page.component.css']})
 export class AssocBrandsPageComponent implements OnInit,
 OnDestroy {
+    assocList : any;
     customerList : any;
     brandList : any;
     chainList : any;
     storeList : any;
+    customerListFilter : any;
+    brandListFilter : any;
+    chainListFilter : any;
+    storeListFilter : any;
+    chainObjFilter : IChainObj;
+    customerObjFilter : ICustomerObj;
+    storeObjFilter : IStoreObj;
+    brandObjFilter : IBrandObj;
     skuList : any;
     assocBrandList : any;
     tempIdChain : string;
@@ -135,10 +160,111 @@ OnDestroy {
                 this.openAlert('Scope Alert', 'Escoja un cliente');
             }
         });
+        const n1 = new Option('', '', true, true);
+        $('#cmbChainFilter').append(n1).trigger('change');
+        $('#cmbChainFilter').select2({
+            placeholder: 'Seleccione Cadena',
+            language: {
+                'noResults': function () {
+                    return '';
+                }
+            }
+        });
+        const n2 = new Option('', '', true, true);
+        $('#cmbCustomerFilter').append(n2).trigger('change');
+        $('#cmbCustomerFilter').select2({
+            placeholder: 'Seleccione Cliente',
+            language: {
+                'noResults': function () {
+                    return '';
+                }
+            }
+        });
+        const n3 = new Option('', '', true, true);
+        $('#cmbStoreFilter').append(n3).trigger('change');
+        $('#cmbStoreFilter').select2({
+            placeholder: 'Seleccione Local',
+            language: {
+                'noResults': function () {
+                    return '';
+                }
+            }
+        });
+        const n4 = new Option('', '', true, true);
+        $('#cmbBrandFilter').append(n4).trigger('change');
+        $('#cmbBrandFilter').select2({
+            placeholder: 'Seleccione Marca',
+            language: {
+                'noResults': function () {
+                    return '';
+                }
+            }
+        });
+        $('#cmbChainFilter').on('select2:select', function (e) {
+            const idChain = e.params.data.id;
+            const nameChain = e.params.data.text;
+            if (idChain !== '') {
+                self.chainObjFilter = {
+                    id: idChain,
+                    nombre: nameChain
+                };
+                self.storeListFilter = [];
+                self.spinnerService.show();
+                self.sc.getSuperStoreFromChain(self.chainObjFilter.id).subscribe(stores => {
+                    self.spinnerService.hide();
+                    if (stores) {
+                        self.storeListFilter = stores as ISuperStore;
+                    }
+                });
+            }
+        });
+        $('#cmbStoreFilter').on('select2:select', function (e) {
+            const idStore = e.params.data.id;
+            const nameStore = e.params.data.text;
+            if (idStore !== '') {
+                self.storeObjFilter = {
+                    id: idStore,
+                    nombre: nameStore
+                };
+            }
+        });
+        $('#cmbCustomerFilter').on('select2:select', function (e) {
+            const idCustomer = e.params.data.id;
+            const nameCustomer = e.params.data.text;
+            if (idCustomer !== '') {
+                self.customerObjFilter = {
+                    id: idCustomer,
+                    razonsocial: nameCustomer
+                };
+                self.brandListFilter = [];
+                self.spinnerService.show();
+                self.cs.getBrandFromCustomer(idCustomer).subscribe(brands => {
+                    self.spinnerService.hide();
+                    if (brands) {
+                        self.brandListFilter = brands;
+                    }
+                });
+            }
+        });
+
+        $('#cmbBrandFilter').on('select2:select', function (e) {
+            const idBrand = e.params.data.id;
+            const nameBrand = e.params.data.text;
+            if (idBrand !== '') {
+                self.brandObjFilter = {
+                    id: idBrand,
+                    nombre: nameBrand
+                };
+            }
+        });
+
         this.spinnerService.show();
         this.customerSubscription = this.cs.getCustomer().subscribe(customers => {
             this.spinnerService.hide();
             this.customerList = customers.filter(ch => ch.estado === 'A').sort((a, b) => {
+                return a.razonsocial < b.razonsocial ? -1 : 1;
+            });
+            this.customerListFilter = customers.filter(ch => ch.estado === 'A').sort((a, b) => {
                 return a.razonsocial < b.razonsocial ? -1 : 1;
             });
         });
@@ -147,10 +273,14 @@ OnDestroy {
             this.chainList = chains.filter(ch => ch.estado === 'A').sort((a, b) => {
                 return a.nombre < b.nombre ? -1 : 1;
             });
+            this.chainListFilter = chains.filter(ch => ch.estado === 'A').sort((a, b) => {
+                return a.nombre < b.nombre ? -1 : 1;
+            });
         });
         this.assocSubscription = this.cs.getAssociatedBrands().subscribe(assocBrands => {
             this.spinnerService.hide();
             this.assocBrandList = assocBrands;
+            this.assocList = assocBrands;
         });
     }
     ngOnDestroy() {
@@ -423,7 +553,10 @@ OnDestroy {
         var newIndex = index + delta;
         if (newIndex < 0 || newIndex == array.length) 
             return;
-         // Already at the top or bottom.
+        
+
+
+        // Already at the top or bottom.
         this.rowSku = newIndex;
         this.array_move(array, index, newIndex);
     };
@@ -479,5 +612,38 @@ OnDestroy {
                 });
             }
         });
+    }
+
+    limpiar() {
+        this.storeListFilter = [];
+        this.brandListFilter = [];
+        $('#cmbChainFilter').val('').trigger('change');
+        $('#cmbCustomerFilter').val('').trigger('change');
+        $('#cmbMerchantFilter').val('').trigger('change');
+        $('#cmbStatusFilter').val('').trigger('change');
+    }
+    consultar() {
+        this.assocBrandList = this.assocList;
+
+        if ($('#cmbChainFilter').val() !== '') {
+            this.assocBrandList = this.assocBrandList.filter(e => {
+                return e.cadena.id === this.chainObjFilter.id;
+            });
+        }
+        if ($('#cmbStoreFilter').val() !== '') {
+            this.assocBrandList = this.assocBrandList.filter(e => {
+                return e.local.id === this.storeObjFilter.id;
+            });
+        }
+        if ($('#cmbCustomerFilter').val() !== '') {
+            this.assocBrandList = this.assocBrandList.filter(e => {
+                return e.cliente.id === this.customerObjFilter.id;
+            });
+        }
+        if ($('#cmbBrandFilter').val() !== '') {
+            this.assocBrandList = this.assocBrandList.filter(e => {
+                return e.marca.id === this.brandObjFilter.id;
+            });
+        }
     }
 }
