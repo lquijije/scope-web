@@ -100,7 +100,7 @@ OnDestroy {
         $('#cmbChain').on('select2:select', function (e) {
 
             var idChain = e.params.data.id;
-            var nameChain = e.params.data.text;
+            var nameChain = e.params.data.text.trim();
             if (idChain != '') {
                 self.tempIdChain = idChain;
                 self.tempNameChain = nameChain;
@@ -113,7 +113,7 @@ OnDestroy {
         });
         $('#cmbStore').on('select2:select', function (e) {
             var idStore = e.params.data.id;
-            var nameStore = e.params.data.text;
+            var nameStore = e.params.data.text.trim();
             if (idStore != '') {
                 self.tempIdStore = idStore;
                 self.tempNameStore = nameStore;
@@ -121,7 +121,7 @@ OnDestroy {
         });
         $('#cmbCustomer').on('select2:select', function (e) {
             var idCustomer = e.params.data.id;
-            var nameCustomer = e.params.data.text;
+            var nameCustomer = e.params.data.text.trim();
             if (idCustomer != '') {
                 self.tempIdCustomer = idCustomer;
                 self.tempNameCustomer = nameCustomer;
@@ -135,7 +135,7 @@ OnDestroy {
         $('#cmbBrand').on('select2:select', function (e) {
             if (self.tempIdCustomer != '') {
                 var idBrand = e.params.data.id;
-                var nameBrand = e.params.data.text;
+                var nameBrand = e.params.data.text.trim();
                 if (idBrand != '') {
                     self.tempIdBrand = idBrand;
                     self.tempNameBrand = nameBrand;
@@ -202,7 +202,7 @@ OnDestroy {
         });
         $('#cmbChainFilter').on('select2:select', function (e) {
             const idChain = e.params.data.id;
-            const nameChain = e.params.data.text;
+            const nameChain = e.params.data.text.trim();
             if (idChain !== '') {
                 self.chainObjFilter = {
                     id: idChain,
@@ -220,7 +220,7 @@ OnDestroy {
         });
         $('#cmbStoreFilter').on('select2:select', function (e) {
             const idStore = e.params.data.id;
-            const nameStore = e.params.data.text;
+            const nameStore = e.params.data.text.trim();
             if (idStore !== '') {
                 self.storeObjFilter = {
                     id: idStore,
@@ -230,7 +230,7 @@ OnDestroy {
         });
         $('#cmbCustomerFilter').on('select2:select', function (e) {
             const idCustomer = e.params.data.id;
-            const nameCustomer = e.params.data.text;
+            const nameCustomer = e.params.data.text.trim();
             if (idCustomer !== '') {
                 self.customerObjFilter = {
                     id: idCustomer,
@@ -249,7 +249,7 @@ OnDestroy {
 
         $('#cmbBrandFilter').on('select2:select', function (e) {
             const idBrand = e.params.data.id;
-            const nameBrand = e.params.data.text;
+            const nameBrand = e.params.data.text.trim();
             if (idBrand !== '') {
                 self.brandObjFilter = {
                     id: idBrand,
