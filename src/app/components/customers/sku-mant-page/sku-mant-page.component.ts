@@ -147,17 +147,28 @@ OnDestroy {
                 this.sku.estado = 'A';
                 this.sku.cliente = this.tempIdCustomer;
                 this.sku.marca = this.tempIdBrand;
-                this.spinnerService.show();
-                this.cs.addSku(this.sku).then((e) => {
-                    this.spinnerService.hide();
-                    this.clearObject();
-                    this.salir();
-                }).catch(er => {
-                    this.spinnerService.hide();
-                    this.openAlert('Scope Error', er.message);
-                    this.clearObject();
-                    this.salir();
+                this.sku.sku = this.sku.sku.toLocaleUpperCase();
+                let subSku: Subscription;
+
+                subSku = this.cs.getSkuFromCustomerBrandAndSku(this.tempIdCustomer, this.tempIdBrand, this.sku.sku).subscribe(skus => {
+                    if(!skus.length) {
+                        this.spinnerService.show();
+                        this.cs.addSku(this.sku).then((e) => {
+                            this.spinnerService.hide();
+                            this.clearObject();
+                            this.salir();
+                        }).catch(er => {
+                            this.spinnerService.hide();
+                            this.openAlert('Scope Error', er.message);
+                            this.clearObject();
+                            this.salir();
+                        });
+                    } else {
+                        this.openAlert('Scope Web', 'Sku ya se encuentra ingresado');
+                    }
+                    subSku.unsubscribe();
                 });
+
             } else {
                 this.spinnerService.show();
                 this.cs.updSku(this.sku).then((e) => {

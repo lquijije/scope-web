@@ -134,6 +134,21 @@ export class CustomerService {
       }))
     );
   }
+
+  getSkuFromCustomerBrandAndSku(customer: string, brand: string, sku: string){
+    this.skuCollection = this.afs.collection<ISku>('sku',
+    ref => ref.where('cliente','==',customer)
+              .where('marca','==',brand)
+              .where('sku','==',sku));
+    return this.skuCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IBrand;
+        const id = a.payload.doc.id;
+        return {id, ...data};
+      }))
+    );
+  }
+
   addSku(sku: ISku) {
     this.skuCollection = this.afs.collection<ISku>('sku');
     return this.skuCollection.add(sku);
