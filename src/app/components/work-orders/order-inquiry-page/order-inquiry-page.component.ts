@@ -542,7 +542,7 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
             'Sugerido': (isNaN(parseInt(d.sugerido, 10))) ? '' : parseInt(d.sugerido, 10),
             'Observaciones': d.observacion,
             'Mercaderista': o.mercaderista.nombre,
-            'Competencia': '',
+            'Competencia': o.novedades,
           });
         });
       });
