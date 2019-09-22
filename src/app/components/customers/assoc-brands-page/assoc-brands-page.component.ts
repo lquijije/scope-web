@@ -294,36 +294,61 @@ OnDestroy {
                 if ($('#cmbCustomer').val() != '') {
                     if ($('#cmbBrand').val() != '') {
                         if (!this.editState) {
-                            this.associatedBrand.cliente = {
-                                id: this.tempIdCustomer,
-                                razonsocial: this.tempNameCustomer
-                            };
-                            this.associatedBrand.marca = {
-                                id: this.tempIdBrand,
-                                nombre: this.tempNameBrand
-                            };
-                            this.associatedBrand.cadena = {
+                            this.spinnerService.show();
+                            let tempSubscription: Subscription;
+                            tempSubscription = this.sc.getSkusFromChainStoreCustomerBrandAssociate({
                                 id: this.tempIdChain,
                                 nombre: this.tempNameChain
-                            };
-                            this.associatedBrand.local = {
+                            }, {
                                 id: this.tempIdStore,
                                 nombre: this.tempNameStore
-                            };
-                            this.associatedBrand.sku = this.skuList;
-                            this.spinnerService.show();
-                            this.cs.addAssocBrand(this.associatedBrand).then(() => {
+                            }, {
+                                id: this.tempIdCustomer,
+                                razonsocial: this.tempNameCustomer
+                            }, {
+                                id: this.tempIdBrand,
+                                nombre: this.tempNameBrand
+                            }).subscribe(associated => {
                                 this.spinnerService.hide();
-                            }).catch(er => {
-                                this.spinnerService.hide();
-                                this.openAlert('Scope Error', er.message);
+                                tempSubscription.unsubscribe();
+                                if (associated.length) {
+                                    this.openAlert('Scope Web', 'Ya existe la associación solicitada.');
+                                    return false;
+                                } else {
+                                    this.associatedBrand.cliente = {
+                                        id: this.tempIdCustomer,
+                                        razonsocial: this.tempNameCustomer
+                                    };
+                                    this.associatedBrand.marca = {
+                                        id: this.tempIdBrand,
+                                        nombre: this.tempNameBrand
+                                    };
+                                    this.associatedBrand.cadena = {
+                                        id: this.tempIdChain,
+                                        nombre: this.tempNameChain
+                                    };
+                                    this.associatedBrand.local = {
+                                        id: this.tempIdStore,
+                                        nombre: this.tempNameStore
+                                    };
+                                    this.associatedBrand.sku = this.skuList;
+                                    this.spinnerService.show();
+                                    this.cs.addAssocBrand(this.associatedBrand).then(() => {
+                                        this.spinnerService.hide();
+                                    }).catch(er => {
+                                        this.spinnerService.hide();
+                                        this.openAlert('Scope Error', er.message);
+                                    });
+                                    this.clearObject();
+                                    this.salir();
+                                }
                             });
                         } else {
                             this.cs.updAssocBrand(this.associatedBrand);
                             this.editState = false;
+                            this.clearObject();
+                            this.salir();
                         }
-                        this.clearObject();
-                        this.salir();
                     } else {
                         this.openAlert('Scope Alert!', 'Debe escojer una Marca');
                     }

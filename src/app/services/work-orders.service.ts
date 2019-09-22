@@ -43,7 +43,12 @@ export class WorkOrdersService {
   }
 
   getWorkOrdersList() {
-    return this.afs.collection<IWorkOrder>('work-orders').snapshotChanges().pipe(
+    let d = new Date();
+    d.setMonth(d.getMonth() - 1);
+    d.setDate(1);
+    let start = d;    
+    return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+    .where('creacion', '>', start)).snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as IWorkOrder;
         const id = a.payload.doc.id;

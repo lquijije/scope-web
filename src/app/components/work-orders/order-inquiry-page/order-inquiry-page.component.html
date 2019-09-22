@@ -237,7 +237,7 @@
               <div class="row">
                 <div class="col">
                   <div class="d-flex flex-column">
-                    <span for="" class="text-primary">Novedad:</span>
+                    <span for="" class="text-primary">Competencia:</span>
                     <label for="" id="lbNov"></label>
                   </div>
                 </div>
@@ -259,7 +259,7 @@
                       <th>Observacion</th>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let sku of skuList" [ngClass]="{
+                      <tr *ngFor="let sku of skuList;let index = index" [ngClass]="{
                         'bg-secondary text-white':sku.bloqueado
                       }">
                         <td>{{sku.sku}}</td>
@@ -268,12 +268,31 @@
                         <td>{{sku.sabor}}</td>
                         <td>{{sku.ds_cliente}}</td>
                         <td>{{sku.ds_marca}}</td>
-                        <td>{{sku.inicial}}</td>
-                        <!-- <td><input type="text" class='form-control form-control-sm' style= 'width: 40px;'value={{sku.inicial}} readonly></td> -->
-                        <td>{{sku.final}}</td>
-                        <td>{{sku.caras}}</td>
-                        <td>{{sku.sugerido}}</td>
-                        <td>{{sku.observacion}}</td>
+                        <!-- <td>{{sku.inicial}}</td> -->
+                        <td>
+                          <input type="text" class='form-control form-control-sm txInt' style= 'width: 40px;' [(ngModel)]="skuList[index].inicial"
+                                  value={{sku.inicial}} [attr.readonly]="estado != 'FINALIZADA' ? 'readonly' : null">
+                        </td>
+                        <!-- <td>{{sku.final}}</td> -->
+                        <td>
+                            <input type="text" class='form-control form-control-sm txInt' style= 'width: 40px;' [(ngModel)]="skuList[index].final"
+                                    value={{sku.final}} [attr.readonly]="estado != 'FINALIZADA' ? 'readonly' : null">
+                        </td>
+                        <!-- <td>{{sku.caras}}</td> -->
+                        <td>
+                            <input type="text" class='form-control form-control-sm txInt' style= 'width: 40px;' [(ngModel)]="skuList[index].caras"
+                                    value={{sku.caras}} [attr.readonly]="estado != 'FINALIZADA' ? 'readonly' : null">
+                        </td>
+                        <!-- <td>{{sku.sugerido}}</td> -->
+                        <td>
+                            <input type="text" class='form-control form-control-sm txInt' style= 'width: 40px;' [(ngModel)]="skuList[index].sugerido"
+                                    value={{sku.sugerido}} [attr.readonly]="estado != 'FINALIZADA' ? 'readonly' : null">
+                        </td>
+                        <!-- <td>{{sku.observacion}}</td> -->
+                        <td>
+                            <input type="text" class='form-control form-control-sm'  [(ngModel)]="skuList[index].observacion"
+                                    value={{sku.observacion}} [attr.readonly]="estado != 'FINALIZADA' ? 'readonly' : null">
+                        </td>
                       </tr>
                     </tbody>
                     <tfoot>
@@ -281,9 +300,15 @@
                   </table>
                 </div>
               </div>
-              <div class="row d-flex justify-content-end">
-                <div class="col col-sm-3 col-xl-1">
-                  <input type="button" value="Salir" class="btn btn-secondary rounded btn-sm btn-block btn-lg" (click)='salir()'>
+              <div class="row">
+                <div class="col-12 d-flex justify-content-end">
+                  <button *ngIf="estado === 'FINALIZADA'" class="btn btn-outline-primary rounded btn-sm" (click)='actualizar()'>
+                    <i class="fa fa-save">
+                    </i> Actualizar
+                  </button>
+                  <button class="btn btn-secondary rounded btn-sm ml-1" (click)='salir()'>
+                    Salir
+                  </button>
                 </div>
               </div>
             </div>
@@ -295,6 +320,7 @@
                         <div class="col col-sm-5 col-xl-9 justify-content-start">
                             <h2 id="hTitImg"></h2>
                         </div>
+                        
                         <div class="col col-sm-4 col-xl-3 justify-content-end">
                           <!-- <input type="button" value="Download" class="btn btn-primary rounded btn-sm btn-block btn-lg" (click)='downloadAll()'> -->
                           <button class="btn btn-primary rounded btn-sm" (click)="downloadAll()">
@@ -305,6 +331,51 @@
                             <i class="fa fa-download">
                             </i> Salir
                           </button>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          <div class="d-flex flex-column">
+                            <span for="" class="text-primary">Cadena:</span>
+                            <label for="" id="lbCadImg"></label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="d-flex flex-column">
+                            <span for="" class="text-primary">Local:</span>
+                            <label for="" id="lbLocImg"></label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="d-flex flex-column">
+                            <span for="" class="text-primary">Cliente:</span>
+                            <label for="" id="lbCliImg"></label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          <div class="d-flex flex-column">
+                            <span for="" class="text-primary">Estado:</span>
+                            <label for="" [ngClass]="{
+                                    'text-success':estado === 'CREADA',
+                                    'text-primary':estado === 'FINALIZADA',
+                                    'text-warning':estado === 'EN PROGRESO',
+                                    'text-semi-warning':estado === 'INICIADA'
+                                  }" id="lbEstImg"></label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="d-flex flex-column">
+                            <span for="" class="text-primary">Mercaderista:</span>
+                            <label for="" id="lbMerImg"></label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="d-flex flex-column">
+                            <span for="" class="text-primary">Visita:</span>
+                            <label for="" id="lbVisImg"></label>
+                          </div>
                         </div>
                       </div>
                   </div>

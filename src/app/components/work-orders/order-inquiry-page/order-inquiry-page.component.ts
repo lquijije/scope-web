@@ -345,6 +345,9 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
           return a.nombre > b.nombre ? -1 : 1;
         });
     });
+    /*var d = new Date();
+    this.hasta = `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}-${d.getDate()}`;
+    this.desde = `${d.getFullYear()}-${('0' + (d.getMonth())).slice(-2)}-${d.getDate()}`;*/
   }
   ngOnDestroy() {
     this.orderSubscription.unsubscribe();
@@ -494,8 +497,23 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     $('#lbCrea').text(order.creacion.toDate().toLocaleString());
     this.skuList = order.sku;
     this.showDetailView();
+    let inter = setInterval(function(){
+      $('.txInt').keypress(e => {
+        if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+            return false;
+        }
+      });
+      clearInterval(inter);
+    }, 500);
   }
   images(order: any) {
+    this.estado = order.estado.nombre;
+    $('#lbCadImg').text(order.cadena.nombre);
+    $('#lbLocImg').text(order.local.nombre);
+    $('#lbCliImg').text(order.sku[0].ds_cliente);
+    $('#lbMerImg').text(order.mercaderista.nombre);
+    $('#lbVisImg').text(order.visita);
+    $('#lbEstImg').text(order.estado.nombre);
     this.orderCurrent = Object.assign({}, order);
     $('#hTitImg').html('Fotos de orden #' + order.numero);
     this.showImageView();
@@ -772,5 +790,15 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     } else {
       this.openAlert('Scope Alert', 'No encontramos ordenes con fotos en esa fecha');
     }
+  }
+  actualizar() {
+    console.log(this.orderCurrent);
+    this.spinnerService.show();
+    this.ow.updWorkOrder(this.orderCurrent).then(() => {
+      this.spinnerService.hide();
+      this.openAlert('Scope Web', 'Orden fué modificada correctamente.');
+    }).catch(err => {
+      this.openAlert('Scope Error', err.message);
+    });
   }
 }
