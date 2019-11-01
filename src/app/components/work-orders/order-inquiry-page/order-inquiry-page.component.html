@@ -271,27 +271,27 @@
                         <!-- <td>{{sku.inicial}}</td> -->
                         <td>
                           <input type="text" class='form-control form-control-sm txInt' style= 'width: 40px;' [(ngModel)]="skuList[index].inicial"
-                                  value={{sku.inicial}} [attr.readonly]="estado != 'FINALIZADA' ? 'readonly' : null">
+                                  value={{sku.inicial}} [attr.readonly]="estado == '' ? 'readonly' : null">
                         </td>
                         <!-- <td>{{sku.final}}</td> -->
                         <td>
                             <input type="text" class='form-control form-control-sm txInt' style= 'width: 40px;' [(ngModel)]="skuList[index].final"
-                                    value={{sku.final}} [attr.readonly]="estado != 'FINALIZADA' ? 'readonly' : null">
+                                    value={{sku.final}} [attr.readonly]="estado == '' ? 'readonly' : null">
                         </td>
                         <!-- <td>{{sku.caras}}</td> -->
                         <td>
                             <input type="text" class='form-control form-control-sm txInt' style= 'width: 40px;' [(ngModel)]="skuList[index].caras"
-                                    value={{sku.caras}} [attr.readonly]="estado != 'FINALIZADA' ? 'readonly' : null">
+                                    value={{sku.caras}} [attr.readonly]="estado == '' ? 'readonly' : null">
                         </td>
                         <!-- <td>{{sku.sugerido}}</td> -->
                         <td>
                             <input type="text" class='form-control form-control-sm txInt' style= 'width: 40px;' [(ngModel)]="skuList[index].sugerido"
-                                    value={{sku.sugerido}} [attr.readonly]="estado != 'FINALIZADA' ? 'readonly' : null">
+                                    value={{sku.sugerido}} [attr.readonly]="estado == '' ? 'readonly' : null">
                         </td>
                         <!-- <td>{{sku.observacion}}</td> -->
                         <td>
                             <input type="text" class='form-control form-control-sm'  [(ngModel)]="skuList[index].observacion"
-                                    value={{sku.observacion}} [attr.readonly]="estado != 'FINALIZADA' ? 'readonly' : null">
+                                    value={{sku.observacion}} [attr.readonly]="estado == '' ? 'readonly' : null">
                         </td>
                       </tr>
                     </tbody>
@@ -302,7 +302,7 @@
               </div>
               <div class="row">
                 <div class="col-12 d-flex justify-content-end">
-                  <button *ngIf="estado === 'FINALIZADA'" class="btn btn-outline-primary rounded btn-sm" (click)='actualizar()'>
+                  <button *ngIf="estado != ''" class="btn btn-outline-primary rounded btn-sm" (click)='actualizar()'>
                     <i class="fa fa-save">
                     </i> Actualizar
                   </button>

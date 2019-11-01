@@ -792,6 +792,10 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     }
   }
   actualizar() {
+    this.orderCurrent.estado = {
+      id: "kq5JBF6UyK26E2S7fEz1",
+      nombre: "FINALIZADA"
+    };
     console.log(this.orderCurrent);
     this.spinnerService.show();
     this.ow.updWorkOrder(this.orderCurrent).then(() => {
