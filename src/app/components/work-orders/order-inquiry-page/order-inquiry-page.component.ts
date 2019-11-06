@@ -85,49 +85,10 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit() {
-    this.spinnerService.show();
-    this.orderSubscription = this.ow.getWorkOrdersList().subscribe(orders => {
-      this.spinnerService.hide();
-      this.sourceList = orders;
-      if (!this.orderCurrent) {
-        this.orderCurrent = {
-          cadena: {id: "Bs1mZF3XIvOb9TCwBha7", nombre: "MI COMISARIATO"},
-          creacion: "",
-          estado: {id: "eNyPUyFqo8SrwkKvDAgD", nombre: "CREADA"},
-          id: "lfBAc8aZ9rh17SRcTwLu",
-          local: {id: "nwdBVaEJ3CtySCcVTsgx", nombre: "CALIFORNIA"},
-          mercaderista: {id: "gMoj90f5n0DUhcasU1fY", nombre: "Luis Quijije P."},
-          numero: "00001",
-          prioridad: "NORMAL",
-          sku: [{
-            cliente: "d1IUeEnOmfEgwsLVALLa",
-            descripcion: "ARROZ HOME DELIVERERS",
-            ds_cliente: "BANAPOV",
-            ds_marca: "ARROZ HOME DELIVERERS",
-            estado: "A",
-            id: "9vrUVbdpoeHLB8A4LvBj",
-            marca: "CfS1fkkDEAZu6wAOqh8y",
-            presentacion: "5 KG",
-            sabor: "",
-            sku: "40010211",
-          }],
-          visita: "2019-05-27 09:00"
-        } 
-      } else {
-        const curOrNum = this.orderCurrent.numero;
-        this.orderCurrent = this.sourceList.filter(o => {
-          return o.numero == curOrNum;
-        })[0];
-        this.skuList = this.orderCurrent.sku;
-        this.estado = this.orderCurrent.estado.nombre;
-      }
-      //if (!this.hasOrdered) {  
-        this.orderList = this.sourceList.sort( (a, b) => {
-          this.hasOrdered = true;
-          return a.creacion < b.creacion ? 1 : -1;
-        });
-      //}
-    });
+    var inter = setInterval(() => {
+      this.consultar();
+      clearInterval(inter);
+    },500);
     $('#table_details tr').click(function (e) {
       $('#table_details tbody tr').removeClass('highlight');
       $(this).addClass('highlight');
@@ -369,13 +330,43 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     $('#cmbCustomer').val('').trigger('change');
     $('#cmbMerchant').val('').trigger('change');
     $('#cmbStatus').val('').trigger('change');
-  }
-  consultar() {
-    this.orderList = this.sourceList;
-    this.orderList = this.sourceList.sort((a, b) => {
+    this.orderList = this.sourceList.sort( (a, b) => {
       this.hasOrdered = true;
       return a.creacion < b.creacion ? 1 : -1;
     });
+  }
+  consultar() {
+    if(this.orderList) {
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '300px',
+        data: { title: 'Confirmación', msg: 'Desea actualizar la información? (consumo)' }
+      });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          this.spinnerService.show();
+          this.orderSubscription = this.ow.getWorkOrdersList().subscribe(orders => {
+            this.spinnerService.hide();
+            this.sourceList = orders;
+            this.orderList = this.sourceList.sort( (a, b) => {
+              this.hasOrdered = true;
+              return a.creacion < b.creacion ? 1 : -1;
+            });
+            this.orderSubscription.unsubscribe();
+          });
+        }
+      });
+    } else {
+      this.spinnerService.show();
+      this.orderSubscription = this.ow.getWorkOrdersList().subscribe(orders => {
+        this.spinnerService.hide();
+        this.sourceList = orders;
+        this.orderList = this.sourceList.sort( (a, b) => {
+          this.hasOrdered = true;
+          return a.creacion < b.creacion ? 1 : -1;
+        });
+        this.orderSubscription.unsubscribe();
+      });
+    }
     
     if ($('#rd-crea').is(':checked')) {
       if ($('#fedesde').val() && $('#fehasta').val()) {
@@ -677,6 +668,11 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     });
   }
   downloadImages() {
+    if (!this.sourceList) {
+      this.openAlert('Scope Alert', 'Realice una consulta primero');
+      return false;
+    }
+
     if (!$('#fedesde').val() && !$('#fehasta').val()) {
       this.openAlert('Scope Alert', 'Debe escoger una fecha de filtro');
       return false;
@@ -718,6 +714,15 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
         });
       }
     }
+
+    if ($('#cmbCustomer').val() !== '') {
+      this.imagesOrderList = this.imagesOrderList.filter(e => {
+        return e.sku.find(s => {
+          return s.cliente === this.customerObj.id;
+        });
+      });
+    }
+
     if(this.imagesOrderList.length > 0) {
       this.imagesOrderList = this.imagesOrderList.filter(e => {
         return e.fotos;
