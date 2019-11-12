@@ -18,24 +18,33 @@
                 <h4 class="text-center"><strong> Consulta de &oacute;rden de trabajo </strong></h4>
                 <div class="row">
                   <div class="col-12 col-md-3">
-                    <div class="col">
-                      <mat-form-field class="w-100">
-                        <input matInput placeholder="Fecha Desde: " type="text" name="" id="fedesde" [(ngModel)]="desde">
-                      </mat-form-field>
-                    </div>
-                    <div class="col">
-                      <mat-form-field class="w-100">
-                        <input matInput placeholder="Fecha Hasta: " type="text" name="" id="fehasta" [(ngModel)]="hasta">
-                      </mat-form-field>
-                    </div>
-                    <div class="col">
-                      <div class="custom-control custom-radio">
-                        <input type="radio" id="rd-crea" name="fecha" class="custom-control-input" checked>
-                        <label class="custom-control-label" for="rd-crea">Creaci&oacute;n</label>
+                    <div class="row">
+                      <div class="col">
+                        <mat-form-field class="w-100">
+                          <input matInput placeholder="Fecha Desde: " type="text" name="" id="fedesde" [(ngModel)]="desde">
+                        </mat-form-field>
                       </div>
-                      <div class="custom-control custom-radio pt-2">
-                        <input type="radio" id="rd-vis" name="fecha" class="custom-control-input">
-                        <label class="custom-control-label" for="rd-vis">Visita</label>
+                      <div class="col">
+                        <mat-form-field class="w-100">
+                          <input matInput placeholder="Fecha Hasta: " type="text" name="" id="fehasta" [(ngModel)]="hasta">
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <div class="custom-control custom-radio">
+                          <input type="radio" id="rd-crea" name="fecha" class="custom-control-input" checked>
+                          <label class="custom-control-label" for="rd-crea">Creaci&oacute;n</label>
+                        </div>
+                        <div class="custom-control custom-radio pt-2">
+                          <input type="radio" id="rd-vis" name="fecha" class="custom-control-input">
+                          <label class="custom-control-label" for="rd-vis">Visita</label>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                          <button type="button" class="btn btn-block btn-primary rounded btn-sm px-4 pt-2 ml-1 pb-2 btUpd" (click)="updateFirestore()">
+                              <i class="fa fa-refresh"></i> Actualizar
+                            </button>
                       </div>
                     </div>
                   </div>
@@ -115,7 +124,7 @@
                   </div>
                   <div class="col-12 col-sm-3 col-lg-2 mt-2 mb-3">
                     <button type="button" class="btn btn-block btn-primary rounded btn-sm px-4 pt-2 ml-1 pb-2 btProc" (click)="consultar()">
-                      <i class="fa fa-search"></i> Consultar
+                      <i class="fa fa-filter"></i> Filtrar
                     </button>
                   </div>
                 </div>

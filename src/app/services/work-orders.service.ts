@@ -42,19 +42,38 @@ export class WorkOrdersService {
     return this.wOrderObs;
   }
 
-  getWorkOrdersList() {
-    let d = new Date();
-    d.setMonth(d.getMonth() - 1);
-    d.setDate(1);
-    let start = d;    
-    return this.afs.collection<IWorkOrder>('work-orders', ref => ref
-    .where('creacion', '>', start)).snapshotChanges().pipe(
-      map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as IWorkOrder;
-        const id = a.payload.doc.id;
-        return { id, ...data };
-      }))
-    );
+  getWorkOrdersList(desde: string, hasta: string, condicion: string) {
+    if(condicion == 'creacion') {
+      desde = desde + ' 00:00:00';
+      hasta = hasta + ' 23:59:59';
+      console.log(desde);
+      console.log(hasta);
+      return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+      .where(condicion, '>=', new Date(desde))
+      .where(condicion, '<=', new Date(hasta))
+      ).snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as IWorkOrder;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      );
+    } else {
+      desde = desde + ' 00:00:00';
+      hasta = hasta + ' 23:59:59';
+      console.log(desde);
+      console.log(hasta);
+      return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+      .where(condicion, '>=', desde)
+      .where(condicion, '<=', hasta)
+      ).snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as IWorkOrder;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      );
+    }
   }
 
   getOrderStatus() {

@@ -85,10 +85,10 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit() {
-    var inter = setInterval(() => {
-      this.consultar();
-      clearInterval(inter);
-    },500);
+    // var inter = setInterval(() => {
+    //   this.consultar();
+    //   clearInterval(inter);
+    // },500);
     $('#table_details tr').click(function (e) {
       $('#table_details tbody tr').removeClass('highlight');
       $(this).addClass('highlight');
@@ -336,38 +336,10 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     });
   }
   consultar() {
-    if(this.orderList) {
-      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        width: '300px',
-        data: { title: 'Confirmación', msg: 'Desea actualizar la información? (consumo)' }
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          this.spinnerService.show();
-          this.orderSubscription = this.ow.getWorkOrdersList().subscribe(orders => {
-            this.spinnerService.hide();
-            this.sourceList = orders;
-            this.orderList = this.sourceList.sort( (a, b) => {
-              this.hasOrdered = true;
-              return a.creacion < b.creacion ? 1 : -1;
-            });
-            this.orderSubscription.unsubscribe();
-          });
-        }
-      });
-    } else {
-      this.spinnerService.show();
-      this.orderSubscription = this.ow.getWorkOrdersList().subscribe(orders => {
-        this.spinnerService.hide();
-        this.sourceList = orders;
-        this.orderList = this.sourceList.sort( (a, b) => {
-          this.hasOrdered = true;
-          return a.creacion < b.creacion ? 1 : -1;
-        });
-        this.orderSubscription.unsubscribe();
-      });
-    }
-    
+    if (!this.sourceList) {
+      this.openAlert('Scope Alert', 'Realice una actualización primero');
+      return false;
+    }    
     if ($('#rd-crea').is(':checked')) {
       if ($('#fedesde').val() && $('#fehasta').val()) {
         this.orderList = this.orderList.filter(e => {
@@ -623,18 +595,39 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
     }
   }
   editOrder(order: any) {
-    $('#fevisita').datetimepicker({
-      format: 'Y-m-d H:i',
-      lang: 'es',
-      timepicker: true,
-      closeOnDateSelect: true
-    });
+    
     this.orderCurrent = Object.assign({}, order);
     $('#fevisita').val(this.orderCurrent.visita);
     $('#hTitEdit').html('Editar Orden #' + this.orderCurrent.numero);
     $('#cmbMerchantOrder').val(this.orderCurrent.mercaderista.id).trigger('change');
     $('#cmbPriority').val($('#cmbPriority option:contains(' + this.orderCurrent.prioridad + ')').val()).trigger('change');
     // $('#cmbMerchantOrder').text(this.orderCurrent.mercaderista.nombre);
+    let inter = setInterval( function() {
+      $('#fevisita').datetimepicker({
+        format: 'Y-m-d H:i',
+        lang: 'es',
+        timepicker: true,
+        closeOnDateSelect: true
+      });
+    
+      $('#cmbMerchantOrder').select2({
+        placeholder: 'Seleccione Mercaderista',
+        language: {
+          'noResults': function () {
+            return '';
+          }
+        }
+      });
+      $('#cmbPriority').select2({
+        placeholder: 'Seleccione Prioridad',
+        language: {
+          'noResults': function () {
+            return '';
+          }
+        }
+      });
+      clearInterval(inter);
+    }, 500);
     this.showEditView();
   }
   exclude(sku: any) {
@@ -808,6 +801,30 @@ export class OrderInquiryPageComponent implements OnInit, OnDestroy {
       this.openAlert('Scope Web', 'Orden fué modificada correctamente.');
     }).catch(err => {
       this.openAlert('Scope Error', err.message);
+    });
+  }
+  updateFirestore() {
+    let opcion = "";
+    if (!$('#fedesde').val() && !$('#fehasta').val()) {
+      this.openAlert('Scope Alert', 'Debe escoger una fecha de filtro');
+      return false;
+    }
+    if ($('#rd-crea').is(':checked')) {
+      opcion = "creacion";
+    }
+    if ($('#rd-vis').is(':checked')) {
+      opcion = "visita";
+    }
+    let desde = $('#fedesde').val();
+    let hasta = $('#fehasta').val();
+    this.spinnerService.show();
+    this.orderSubscription = this.ow.getWorkOrdersList(desde, hasta, opcion).subscribe(orders => {
+      this.spinnerService.hide();
+      this.sourceList = orders;
+      this.orderList = this.sourceList.sort( (a, b) => {
+        this.hasOrdered = true;
+        return a.creacion < b.creacion ? 1 : -1;
+      });
     });
   }
 }
