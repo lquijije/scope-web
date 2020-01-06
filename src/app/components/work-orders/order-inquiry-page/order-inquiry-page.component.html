@@ -1,307 +1,631 @@
 <div class="pt-2 px-xs-0 px-sm-3 px-md-5 w-100" style="height: 90vh;">
-    <div class="col p-0">
-        <div class="row">
-          <div class="col-12">
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
-                <li class="breadcrumb-item d-block d-sm-none"><a href="javascript:void(0)">...</a></li>
-                <li class="breadcrumb-item d-none d-sm-block"><a href="javascript:void(0)">Ordenes de Trabajo</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Consulta de Ordenes</li>
-              </ol>
-            </nav>
+  <div class="col p-0">
+    <div class="row">
+      <div class="col-12">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
+            <li class="breadcrumb-item d-block d-sm-none"><a href="javascript:void(0)">...</a></li>
+            <li class="breadcrumb-item d-none d-sm-block"><a href="javascript:void(0)">Ordenes de Trabajo</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Consulta de Ordenes</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card-body bg-light border rounded" id='pnlList'>
+          <h4 class="text-center"><strong> Consulta de &oacute;rden de trabajo </strong></h4>
+          <div class="row">
+            <div class="col-12 col-md-3">
+              <div class="row">
+                <div class="col">
+                  <mat-form-field class="w-100">
+                    <input matInput placeholder="Fecha Desde: " type="text" name="" id="fedesde" [(ngModel)]="desde">
+                  </mat-form-field>
+                </div>
+                <div class="col">
+                  <mat-form-field class="w-100">
+                    <input matInput placeholder="Fecha Hasta: " type="text" name="" id="fehasta" [(ngModel)]="hasta">
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <div class="custom-control custom-radio">
+                    <input type="radio" id="rd-crea" name="fecha" class="custom-control-input" checked>
+                    <label class="custom-control-label" for="rd-crea">Creaci&oacute;n</label>
+                  </div>
+                  <div class="custom-control custom-radio pt-2">
+                    <input type="radio" id="rd-vis" name="fecha" class="custom-control-input">
+                    <label class="custom-control-label" for="rd-vis">Visita</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <button type="button" class="btn btn-block btn-primary rounded btn-sm px-4 pt-2 ml-1 pb-2 btUpd"
+                    (click)="updateFirestore()">
+                    <i class="fa fa-refresh"></i> Actualizar
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-9">
+              <div class="row pt-3">
+                <div class="col-12 col-md-6">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary">Mercaderista:</span>
+                    <select class="form-control" id="cmbMerchant">
+                      <option *ngFor="let merchant of merchantList" value="{{merchant.id}}">{{merchant.nombre}}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary">Estado:</span>
+                    <select class="form-control" id="cmbStatus" multiple>
+                      <option *ngFor="let status of statusList" value="{{status.id}}">{{status.nombre}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row pt-3">
+                <div class="col-12 col-md-6">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary">Cadena:</span>
+                    <select class="form-control" id="cmbChain">
+                      <option *ngFor="let chain of chainList" value="{{chain.id}}">{{chain.nombre}}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary">Tienda:</span>
+                    <select class="form-control" id="cmbStore">
+                      <option *ngFor="let store of storeList" value="{{store.id}}">{{store.nombre}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row pt-3">
+                <div class="col-12 col-md-6">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary">Cliente:</span>
+                    <select class="form-control" id="cmbCustomer">
+                      <option *ngFor="let customer of customerList" value="{{customer.id}}">{{customer.razonsocial}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="d-flex flex-column">
+                    <span for="" class="text-primary"> Marca:</span>
+                    <select class="form-control" id="cmbBrand" multiple>
+                      <option *ngFor="let brand of brandList" value="{{brand.id}}">{{brand.nombre}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <div class="card-body bg-light border rounded" id='pnlList'>
-                <h4 class="text-center"><strong> Consulta de &oacute;rden de trabajo </strong></h4>
-                <div class="row">
-                  <div class="col-12 col-md-3">
-                    <div class="row">
-                      <div class="col">
-                        <mat-form-field class="w-100">
-                          <input matInput placeholder="Fecha Desde: " type="text" name="" id="fedesde" [(ngModel)]="desde">
-                        </mat-form-field>
-                      </div>
-                      <div class="col">
-                        <mat-form-field class="w-100">
-                          <input matInput placeholder="Fecha Hasta: " type="text" name="" id="fehasta" [(ngModel)]="hasta">
-                        </mat-form-field>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6">
-                        <div class="custom-control custom-radio">
-                          <input type="radio" id="rd-crea" name="fecha" class="custom-control-input" checked>
-                          <label class="custom-control-label" for="rd-crea">Creaci&oacute;n</label>
-                        </div>
-                        <div class="custom-control custom-radio pt-2">
-                          <input type="radio" id="rd-vis" name="fecha" class="custom-control-input">
-                          <label class="custom-control-label" for="rd-vis">Visita</label>
-                        </div>
-                      </div>
-                      <div class="col-6">
-                          <button type="button" class="btn btn-block btn-primary rounded btn-sm px-4 pt-2 ml-1 pb-2 btUpd" (click)="updateFirestore()">
-                              <i class="fa fa-refresh"></i> Actualizar
-                            </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-9">
-                    <div class="row pt-3">
-                      <div class="col-12 col-md-6">
-                        <div class="d-flex flex-column">
-                          <span for="" class="text-primary">Mercaderista:</span>
-                          <select class="form-control" id="cmbMerchant">
-                            <option *ngFor="let merchant of merchantList" value="{{merchant.id}}">{{merchant.nombre}}</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-12 col-md-6">
-                        <div class="d-flex flex-column">
-                          <span for="" class="text-primary">Estado:</span>
-                          <select class="form-control" id="cmbStatus" multiple>
-                            <option *ngFor="let status of statusList" value="{{status.id}}">{{status.nombre}}</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row pt-3">
-                      <div class="col-12 col-md-6">
-                        <div class="d-flex flex-column">
-                          <span for="" class="text-primary">Cadena:</span>
-                          <select class="form-control" id="cmbChain">
-                            <option *ngFor="let chain of chainList" value="{{chain.id}}">{{chain.nombre}}</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-12 col-md-6">
-                        <div class="d-flex flex-column">
-                          <span for="" class="text-primary">Tienda:</span>
-                          <select class="form-control" id="cmbStore">
-                            <option *ngFor="let store of storeList" value="{{store.id}}">{{store.nombre}}</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row pt-3">
-                      <div class="col-12 col-md-6">
-                        <div class="d-flex flex-column">
-                          <span for="" class="text-primary">Cliente:</span>
-                          <select class="form-control" id="cmbCustomer">
-                            <option *ngFor="let customer of customerList" value="{{customer.id}}">{{customer.razonsocial}}</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-12 col-md-6">
-                        <div class="d-flex flex-column">
-                          <span for="" class="text-primary"> Marca:</span>
-                          <select class="form-control" id="cmbBrand" multiple>
-                            <option *ngFor="let brand of brandList" value="{{brand.id}}">{{brand.nombre}}</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="row pt-4">
-                  <div class="col-12 col-sm-3 col-lg-2 offset-lg-4 mt-2 mb-3">
-                    <button type="button" class="btn btn-block btn-outline-secondary rounded btn-sm  px-4 pt-2 pb-2 btExp" (click)="exportAsXLSX()">
-                      <i class="fa fa-file-excel-o"></i> Exportar
-                    </button>
-                  </div>
-                  <div class="col-12 col-sm-3 col-lg-2 mt-2 mb-3">
-                    <button type="button" class="btn btn-block btn-outline-secondary rounded btn-sm ml-1 px-4 pt-2 pb-2 btLimp" (click)='downloadImages()'>
-                      <i class="fa fa-download"></i> Images
-                    </button>
-                  </div>
-                  <div class="col-12 col-sm-3 col-lg-2 mt-2 mb-3">
-                    <button type="button" class="btn btn-block btn-outline-secondary rounded btn-sm ml-1 px-4 pt-2 pb-2 btLimp" (click)='limpiar()'>
-                      <i class="fa fa-eraser"></i> Limpiar Filtros
-                    </button>
-                  </div>
-                  <div class="col-12 col-sm-3 col-lg-2 mt-2 mb-3">
-                    <button type="button" class="btn btn-block btn-primary rounded btn-sm px-4 pt-2 ml-1 pb-2 btProc" (click)="consultar()">
-                      <i class="fa fa-filter"></i> Filtrar
-                    </button>
-                  </div>
-                </div>
-                <div class="row mt-1" *ngIf="orderList">
-                  <div class="col">
-                    <table id="table_orders" class="table table-bordered table-sm">
-                      <thead class="text-center bg-primary text-white">
-                        <th># Orden</th>
-                        <th>Estado</th>
-                        <th><i class="fa fa-search"></i></th>
-                        <th><i class="fa fa-edit"></i></th>
-                        <th><i class="fa fa-trash"></i></th>
-                        <th><i class="fa fa-image"></i></th>
-                        <th>Cadena</th>
-                        <th>Local</th>
-                        <th>Mercaderista</th>
-                        <th>Cliente</th>
-                        <!-- <th>Creaci&oacute;n</th> -->
-                        <th>Visita</th>
-                        <th>Inicio</th>
-                        <th>Fin</th>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let order of orderList">
-                          <td>{{order.numero}}</td>
-                          <td [ngClass]="{
+
+          <div class="row pt-4">
+            <div class="col-12 col-sm-3 col-lg-2 offset-lg-4 mt-2 mb-3">
+              <button type="button" class="btn btn-block btn-outline-secondary rounded btn-sm  px-4 pt-2 pb-2 btExp"
+                (click)="exportAsXLSX()">
+                <i class="fa fa-file-excel-o"></i> Exportar
+              </button>
+            </div>
+            <div class="col-12 col-sm-3 col-lg-2 mt-2 mb-3">
+              <button type="button"
+                class="btn btn-block btn-outline-secondary rounded btn-sm ml-1 px-4 pt-2 pb-2 btLimp"
+                (click)='downloadImages()'>
+                <i class="fa fa-download"></i> Images
+              </button>
+            </div>
+            <div class="col-12 col-sm-3 col-lg-2 mt-2 mb-3">
+              <button type="button"
+                class="btn btn-block btn-outline-secondary rounded btn-sm ml-1 px-4 pt-2 pb-2 btLimp"
+                (click)='limpiar()'>
+                <i class="fa fa-eraser"></i> Limpiar Filtros
+              </button>
+            </div>
+            <div class="col-12 col-sm-3 col-lg-2 mt-2 mb-3">
+              <button type="button" class="btn btn-block btn-primary rounded btn-sm px-4 pt-2 ml-1 pb-2 btProc"
+                (click)="consultar()">
+                <i class="fa fa-filter"></i> Filtrar
+              </button>
+            </div>
+          </div>
+          <div class="row mt-1" *ngIf="orderList">
+            <div class="col">
+              <table id="table_orders" class="table table-bordered table-sm">
+                <thead class="text-center bg-primary text-white">
+                  <th>#Orden</th>
+                  <th>Estado</th>
+                  <th><i class="fa fa-search"></i></th>
+                  <th><i class="fa fa-edit"></i></th>
+                  <th><i class="fa fa-trash"></i></th>
+                  <th><i class="fa fa-image"></i></th>
+                  <th><i class="fa fa-map-marker"></i></th>
+                  <th>Cadena</th>
+                  <th>Local</th>
+                  <th>Mercaderista</th>
+                  <th>Cliente</th>
+                  <!-- <th>Creaci&oacute;n</th> -->
+                  <th>Visita</th>
+                  <th>Inicio</th>
+                  <th>Fin</th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let order of orderList">
+                    <td>{{order.numero}}</td>
+                    <td [ngClass]="{
                             'text-success':order.estado.nombre === 'CREADA',
                             'text-primary':order.estado.nombre === 'FINALIZADA',
                             'text-warning':order.estado.nombre === 'EN PROGRESO',
                             'text-semi-warning':order.estado.nombre === 'INICIADA'
                           }">{{order.estado.nombre}}</td>
-                          <td class='text-center'>
-                            <a class="text-info" href="javascript:void(0);" (click)="search(order)">
-                              <i class="fa fa-search"></i>
-                            </a>
-                          </td>
-                          <td class='text-center'>
-                            <a *ngIf="order.estado.nombre === 'CREADA'" class="text-primary" href="javascript:void(0);" (click)="editOrder(order)">
-                              <i class="fa fa-edit"></i>
-                            </a>
-                          </td>
-                          <td class='text-center'>
-                            <a *ngIf="order.estado.nombre === 'CREADA' || order.estado.nombre === 'INICIADA'" class="text-danger" href="javascript:void(0);" (click)="delete(order)">
-                              <i class="fa fa-trash"></i>
-                            </a>
-                          </td>
-                          <td class='text-center'>
-                            <a *ngIf="order.fotos && order.fotos.length" class="text-primary" href="javascript:void(0);" (click)="images(order)">
-                              <i class="fa fa-image"></i> ({{order.fotos.length}})
-                            </a>
-                          </td>
-                          <td>{{order.cadena.nombre}}</td>
-                          <td>{{order.local.nombre}}</td>
-                          <td>{{order.mercaderista.nombre}}</td>
-                          <td>{{order.sku[0].ds_cliente}}</td>
-                          <!-- <td>{{order.creacion.toDate() | date: 'y-MM-dd HH:mm:ss'}}</td> -->
-                          <td>{{order.visita | date: 'y-MM-dd HH:mm:ss'}}</td>
-                          <td>{{order.iniciada}}</td>
-                          <td>{{order.finalizada}}</td>
-                        </tr>
-                      </tbody>
-                      <tfoot>
-                      </tfoot>
-                    </table>
-                  </div>
-                </div>
+                    <td class='text-center'>
+                      <a class="text-info" href="javascript:void(0);" (click)="search(order)">
+                        <i class="fa fa-search"></i>
+                      </a>
+                    </td>
+                    <td class='text-center'>
+                      <a *ngIf="order.estado.nombre === 'CREADA'" class="text-primary" href="javascript:void(0);"
+                        (click)="editOrder(order)">
+                        <i class="fa fa-edit"></i>
+                      </a>
+                    </td>
+                    <td class='text-center'>
+                      <a *ngIf="order.estado.nombre === 'CREADA' || order.estado.nombre === 'INICIADA'"
+                        class="text-danger" href="javascript:void(0);" (click)="delete(order)">
+                        <i class="fa fa-trash"></i>
+                      </a>
+                    </td>
+                    <td class='text-center'>
+                      <a *ngIf="order.fotos && order.fotos.length" class="text-primary" href="javascript:void(0);"
+                        (click)="images(order)">
+                        <i class="fa fa-image"></i> ({{order.fotos.length}})
+                      </a>
+                    </td>
+                    <td class='text-center'>
+                      <a *ngIf="order.geolocation_iniciada || order.geolocation_finalizada" class="text-warning"
+                        href="javascript:void(0);" (click)="geolocation(order)">
+                        <i class="fa fa-map-marker"></i>
+                      </a>
+                    </td>
+                    <td>{{order.cadena.nombre}}</td>
+                    <td>{{order.local.nombre}}</td>
+                    <td>{{order.mercaderista.nombre}}</td>
+                    <td>{{order.sku[0].ds_cliente}}</td>
+                    <!-- <td>{{order.creacion.toDate() | date: 'y-MM-dd HH:mm:ss'}}</td> -->
+                    <td>{{order.visita | date: 'y-MM-dd HH:mm:ss'}}</td>
+                    <td>{{order.iniciada}}</td>
+                    <td>{{order.finalizada}}</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                </tfoot>
+              </table>
             </div>
-            <div class="card-body bg-light border rounded d-none" id='pnlDetail'>
-              <div class="row mt-1">
-                <div class="col-12 text-center">
-                  <h2 id="hTit">  </h2>
-                </div>
+          </div>
+        </div>
+        <div class="card-body bg-light border rounded d-none" id='pnlDetail'>
+          <div class="row mt-1">
+            <div class="col-12 text-center">
+              <h2 id="hTit"> </h2>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="d-flex flex-column">
+                <span for="" class="text-primary">Cadena:</span>
+                <label for="" id="lbCad"></label>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="d-flex flex-column">
-                    <span for="" class="text-primary">Cadena:</span>
-                    <label for="" id="lbCad"></label>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="d-flex flex-column">
-                    <span for="" class="text-primary">Local:</span>
-                    <label for="" id="lbLoc">}</label>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="d-flex flex-column">
-                    <span for="" class="text-primary">Creación:</span>
-                    <label for="" id="lbCrea"></label>
-                  </div>
-                </div>
+            </div>
+            <div class="col">
+              <div class="d-flex flex-column">
+                <span for="" class="text-primary">Local:</span>
+                <label for="" id="lbLoc">}</label>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="d-flex flex-column">
-                    <span for="" class="text-primary">Estado:</span>
-                    <label for="" [ngClass]="{
+            </div>
+            <div class="col">
+              <div class="d-flex flex-column">
+                <span for="" class="text-primary">Creación:</span>
+                <label for="" id="lbCrea"></label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="d-flex flex-column">
+                <span for="" class="text-primary">Estado:</span>
+                <label for="" [ngClass]="{
                             'text-success':estado === 'CREADA',
                             'text-primary':estado === 'FINALIZADA',
                             'text-warning':estado === 'EN PROGRESO',
                             'text-semi-warning':estado === 'INICIADA'
                           }" id="lbEst"></label>
+              </div>
+            </div>
+            <div class="col">
+              <div class="d-flex flex-column">
+                <span for="" class="text-primary">Mercaderista:</span>
+                <label for="" id="lbMer"></label>
+              </div>
+            </div>
+            <div class="col">
+              <div class="d-flex flex-column">
+                <span for="" class="text-primary">Visita:</span>
+                <label for="" id="lbVis"></label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="d-flex flex-column">
+                <span for="" class="text-primary">Competencia:</span>
+                <label for="" id="lbNov"></label>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-1">
+            <div class="col">
+              <table id="table_details" class="table table-bordered table-sm">
+                <thead class="text-center bg-primary text-white">
+                  <th>Sku</th>
+                  <th>Descripcion</th>
+                  <th>Presentacion</th>
+                  <th>Sabor</th>
+                  <th>Cliente</th>
+                  <th>Marca</th>
+                  <th>Inicial</th>
+                  <th>Final</th>
+                  <th>Caras</th>
+                  <th>Sugerido</th>
+                  <th>Observacion</th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let sku of skuList;let index = index" [ngClass]="{
+                        'bg-secondary text-white':sku.bloqueado
+                      }">
+                    <td>{{sku.sku}}</td>
+                    <td>{{sku.descripcion}}</td>
+                    <td>{{sku.presentacion}}</td>
+                    <td>{{sku.sabor}}</td>
+                    <td>{{sku.ds_cliente}}</td>
+                    <td>{{sku.ds_marca}}</td>
+                    <!-- <td>{{sku.inicial}}</td> -->
+                    <td>
+                      <input type="text" class='form-control form-control-sm txInt' style='width: 40px;'
+                        [(ngModel)]="skuList[index].inicial" value={{sku.inicial}}
+                        [attr.readonly]="estado == '' ? 'readonly' : null">
+                    </td>
+                    <!-- <td>{{sku.final}}</td> -->
+                    <td>
+                      <input type="text" class='form-control form-control-sm txInt' style='width: 40px;'
+                        [(ngModel)]="skuList[index].final" value={{sku.final}}
+                        [attr.readonly]="estado == '' ? 'readonly' : null">
+                    </td>
+                    <!-- <td>{{sku.caras}}</td> -->
+                    <td>
+                      <input type="text" class='form-control form-control-sm txInt' style='width: 40px;'
+                        [(ngModel)]="skuList[index].caras" value={{sku.caras}}
+                        [attr.readonly]="estado == '' ? 'readonly' : null">
+                    </td>
+                    <!-- <td>{{sku.sugerido}}</td> -->
+                    <td>
+                      <input type="text" class='form-control form-control-sm txInt' style='width: 40px;'
+                        [(ngModel)]="skuList[index].sugerido" value={{sku.sugerido}}
+                        [attr.readonly]="estado == '' ? 'readonly' : null">
+                    </td>
+                    <!-- <td>{{sku.observacion}}</td> -->
+                    <td>
+                      <input type="text" class='form-control form-control-sm' [(ngModel)]="skuList[index].observacion"
+                        value={{sku.observacion}} [attr.readonly]="estado == '' ? 'readonly' : null">
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 d-flex justify-content-end">
+              <button *ngIf="estado != ''" class="btn btn-outline-primary rounded btn-sm" (click)='actualizar()'>
+                <i class="fa fa-save">
+                </i> Actualizar
+              </button>
+              <button class="btn btn-secondary rounded btn-sm ml-1" (click)='salir()'>
+                Salir
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body bg-light border rounded d-none" id="pnlImages">
+          <div class="gallery-block cards-gallery">
+            <div class="container">
+              <div class="heading">
+                <div class="row d-flex">
+                  <div class="col col-sm-5 col-xl-9 justify-content-start">
+                    <h2 id="hTitImg"></h2>
+                  </div>
+
+                  <div class="col col-sm-4 col-xl-3 justify-content-end">
+                    <!-- <input type="button" value="Download" class="btn btn-primary rounded btn-sm btn-block btn-lg" (click)='downloadAll()'> -->
+                    <button class="btn btn-primary rounded btn-sm" (click)="downloadAll()">
+                      <i class="fa fa-download">
+                      </i> Download
+                    </button>
+                    <button class="btn btn-secondary rounded btn-sm ml-1" (click)="salir()">
+                      <i class="fa fa-download">
+                      </i> Salir
+                    </button>
                   </div>
                 </div>
-                <div class="col">
-                  <div class="d-flex flex-column">
-                    <span for="" class="text-primary">Mercaderista:</span>
-                    <label for="" id="lbMer"></label>
+                <div class="row">
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <span for="" class="text-primary">Cadena:</span>
+                      <label for="" id="lbCadImg"></label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <span for="" class="text-primary">Local:</span>
+                      <label for="" id="lbLocImg"></label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <span for="" class="text-primary">Cliente:</span>
+                      <label for="" id="lbCliImg"></label>
+                    </div>
                   </div>
                 </div>
-                <div class="col">
-                  <div class="d-flex flex-column">
-                    <span for="" class="text-primary">Visita:</span>
-                    <label for="" id="lbVis"></label>
+                <div class="row">
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <span for="" class="text-primary">Estado:</span>
+                      <label for="" [ngClass]="{
+                                    'text-success':estado === 'CREADA',
+                                    'text-primary':estado === 'FINALIZADA',
+                                    'text-warning':estado === 'EN PROGRESO',
+                                    'text-semi-warning':estado === 'INICIADA'
+                                  }" id="lbEstImg"></label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <span for="" class="text-primary">Mercaderista:</span>
+                      <label for="" id="lbMerImg"></label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <span for="" class="text-primary">Visita:</span>
+                      <label for="" id="lbVisImg"></label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row" *ngIf="orderCurrent">
+                <div class="col-md-6 col-lg-4" *ngFor="let img of orderCurrent.fotos">
+                  <div class="card boder-0 transform-on-hover position-relative">
+                    <div class="position-absolute">
+                      <button class="btn btn-icon btn-primary" (click)="download(img)" style="top:0px; right:0px;">
+                        <i class="fa fa-download">
+                        </i>
+                      </button>
+                    </div>
+                    <img src="{{img.url}}" alt="" class="card-img-top">
+                    <div class="card-body">
+                      <h6>{{img.nombre}}</h6>
+                      <p class="text-muted card-text">
+                        Fecha: {{img.fecha}}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- <a href="assets/cajonera_nova.jpg" >Descargar</a> -->
+            </div>
+          </div>
+        </div>
+        <div class="card-body bg-light border rounded d-none" id="pnlGeolocation">
+          <div class="gallery-block cards-gallery">
+            <div class="container">
+              <div class="heading">
+                <div class="row d-flex">
+                  <div class="col col-sm-5 col-xl-9 justify-content-start">
+                    <h2 id="hTitGeo"></h2>
+                  </div>
+
+                  <div class="col col-sm-4 col-xl-3 justify-content-end">
+                    <button class="btn btn-secondary rounded btn-sm ml-1" (click)="salir()">
+                      <i class="fa fa-download">
+                      </i> Salir
+                    </button>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <span for="" class="text-primary">Cadena:</span>
+                      <label for="" id="lbCadGeo"></label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <span for="" class="text-primary">Local:</span>
+                      <label for="" id="lbLocGeo"></label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <span for="" class="text-primary">Cliente:</span>
+                      <label for="" id="lbCliGeo"></label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <span for="" class="text-primary">Estado:</span>
+                      <label for="" [ngClass]="{
+                                   'text-success':estado === 'CREADA',
+                                   'text-primary':estado === 'FINALIZADA',
+                                   'text-warning':estado === 'EN PROGRESO',
+                                   'text-semi-warning':estado === 'INICIADA'
+                                 }" id="lbEstGeo"></label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <span for="" class="text-primary">Mercaderista:</span>
+                      <label for="" id="lbMerGeo"></label>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="d-flex flex-column">
+                      <span for="" class="text-primary">Visita:</span>
+                      <label for="" id="lbVisGeo"></label>
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <div class="d-flex flex-column">
-                    <span for="" class="text-primary">Competencia:</span>
-                    <label for="" id="lbNov"></label>
+                  <div class="card p-5" id="dvGeoIni">
+
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card p-5" id="dvGeoFin">
+
                   </div>
                 </div>
               </div>
-              <div class="row mt-1">
+            </div>
+          </div>
+        </div>
+        <div class="card-body bg-light border rounded d-none" id="pnlEdit">
+          <div class="row mt-1">
+            <div class="col-12 text-center">
+              <h2 id="hTitEdit"> </h2>
+            </div>
+          </div>
+          <div class="row mt-1">
+            <div class="col-12 col-xl-8 offset-xl-2">
+              <div class="card-body bg-light border border-primary rounded pl-lg-5" *ngIf="orderCurrent">
+                <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
+                  <div class="row">
+                    <div class="col-12 col-md-9 p-0">
+                      <div class="row pt-2">
+                        <div class="col-12 col-md-6">
+                          <div class="d-flex flex-column">
+                            <span for="" class="text-primary"> Mercaderista:</span>
+                            <!-- <label for="">{{orderCurrent.mercaderista.nombre}}</label> -->
+                            <select class="form-control" id="cmbMerchantOrder">
+                              <option *ngFor="let merchant of merchantList" value="{{merchant.id}}">{{merchant.nombre}}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                          <div class="d-flex flex-column">
+                            <span for="" class="text-primary"> Prioridad:</span>
+                            <!-- <label for="">{{orderCurrent.prioridad}}</label> -->
+                            <select class="form-control" id="cmbPriority">
+                              <option *ngFor="let priority of priorityList" value="{{priority.id}}">{{priority.nombre}}
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row pt-3">
+                        <div class="col-12 col-md-6">
+                          <div class="d-flex flex-column">
+                            <span for="" class="text-primary">Cadena:</span>
+                            <label for="">{{orderCurrent.cadena.nombre}}</label>
+                          </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                          <div class="d-flex flex-column">
+                            <span for="" class="text-primary">Tienda:</span>
+                            <label for="">{{orderCurrent.local.nombre}}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row pt-3">
+                        <div class="col-12 col-md-6">
+                          <div class="d-flex flex-column">
+                            <span for="" class="text-primary">Cliente:</span>
+                            <label for="">{{orderCurrent.sku[0].ds_cliente}}</label>
+                          </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                          <div class="d-flex flex-column">
+                            <span for="" class="text-primary"> Marca:</span>
+                            <label *ngFor='let sku of orderCurrent.sku | unique'>{{sku.ds_marca}}</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                      <div class="row">
+                        <div class="col d-flex flex-column">
+                          <span for="" class="text-primary"> Fecha Visita:</span>
+                          <div id="times">
+                            <div class="row">
+                              <div class="col d-flex flex-row align-items-center">
+                                <!-- <input id="visita" value="{{orderCurrent.visita}}"> -->
+                                <mat-form-field class="w-100">
+                                  <input matInput placeholder="Fecha Visita: " type="text" name="" id="fevisita"
+                                    value="{{orderCurrent.visita}}">
+                                </mat-form-field>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row d-flex justify-content-end">
+                    <div class="col-12 col-sm-4 col-xl-3">
+                      <input type="submit" value="Modificar Orden"
+                        class="btn btn-primary rounded btn-sm btn-block btn-lg">
+                    </div>
+                    <div class="col-12 col-sm-4 col-xl-3">
+                      <input type="button" value="Salir" class="btn btn-secondary rounded btn-sm btn-block btn-lg"
+                        (click)='salir()'>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="card card-block mt-2 dvskulist" *ngIf="orderCurrent">
                 <div class="col">
-                  <table id="table_details" class="table table-bordered table-sm">
-                    <thead class="text-center bg-primary text-white">
-                      <th>Sku</th>
-                      <th>Descripcion</th>
-                      <th>Presentacion</th>
-                      <th>Sabor</th>
+                  <table id="table_skus" class="table table-bordered table-sm">
+                    <thead class="text-center bg-dark text-white">
+                      <th></th>
                       <th>Cliente</th>
                       <th>Marca</th>
-                      <th>Inicial</th>
-                      <th>Final</th>
-                      <th>Caras</th>
-                      <th>Sugerido</th>
-                      <th>Observacion</th>
+                      <th>Producto</th>
+                      <th>Presentaci&oacute;n</th>
+                      <th>Sabor</th>
+                      <th>SKU</th>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let sku of skuList;let index = index" [ngClass]="{
-                        'bg-secondary text-white':sku.bloqueado
-                      }">
-                        <td>{{sku.sku}}</td>
+                      <tr *ngFor="let sku of orderCurrent.sku">
+                        <td class='text-center'> <a href="javascript:void(0);" (click)="exclude(sku)"> <i
+                              class="fa fa-trash"></i></a></td>
+                        <td>{{sku.ds_cliente}}</td>
+                        <td>{{sku.ds_marca}}</td>
                         <td>{{sku.descripcion}}</td>
                         <td>{{sku.presentacion}}</td>
                         <td>{{sku.sabor}}</td>
-                        <td>{{sku.ds_cliente}}</td>
-                        <td>{{sku.ds_marca}}</td>
-                        <!-- <td>{{sku.inicial}}</td> -->
-                        <td>
-                          <input type="text" class='form-control form-control-sm txInt' style= 'width: 40px;' [(ngModel)]="skuList[index].inicial"
-                                  value={{sku.inicial}} [attr.readonly]="estado == '' ? 'readonly' : null">
-                        </td>
-                        <!-- <td>{{sku.final}}</td> -->
-                        <td>
-                            <input type="text" class='form-control form-control-sm txInt' style= 'width: 40px;' [(ngModel)]="skuList[index].final"
-                                    value={{sku.final}} [attr.readonly]="estado == '' ? 'readonly' : null">
-                        </td>
-                        <!-- <td>{{sku.caras}}</td> -->
-                        <td>
-                            <input type="text" class='form-control form-control-sm txInt' style= 'width: 40px;' [(ngModel)]="skuList[index].caras"
-                                    value={{sku.caras}} [attr.readonly]="estado == '' ? 'readonly' : null">
-                        </td>
-                        <!-- <td>{{sku.sugerido}}</td> -->
-                        <td>
-                            <input type="text" class='form-control form-control-sm txInt' style= 'width: 40px;' [(ngModel)]="skuList[index].sugerido"
-                                    value={{sku.sugerido}} [attr.readonly]="estado == '' ? 'readonly' : null">
-                        </td>
-                        <!-- <td>{{sku.observacion}}</td> -->
-                        <td>
-                            <input type="text" class='form-control form-control-sm'  [(ngModel)]="skuList[index].observacion"
-                                    value={{sku.observacion}} [attr.readonly]="estado == '' ? 'readonly' : null">
-                        </td>
+                        <td class='text-center'>{{sku.sku}}</td>
                       </tr>
                     </tbody>
                     <tfoot>
@@ -309,233 +633,16 @@
                   </table>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-12 d-flex justify-content-end">
-                  <button *ngIf="estado != ''" class="btn btn-outline-primary rounded btn-sm" (click)='actualizar()'>
-                    <i class="fa fa-save">
-                    </i> Actualizar
-                  </button>
-                  <button class="btn btn-secondary rounded btn-sm ml-1" (click)='salir()'>
-                    Salir
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="card-body bg-light border rounded d-none" id="pnlImages">
-              <div class="gallery-block cards-gallery">
-                <div class="container">
-                  <div class="heading">
-                      <div class="row d-flex">
-                        <div class="col col-sm-5 col-xl-9 justify-content-start">
-                            <h2 id="hTitImg"></h2>
-                        </div>
-                        
-                        <div class="col col-sm-4 col-xl-3 justify-content-end">
-                          <!-- <input type="button" value="Download" class="btn btn-primary rounded btn-sm btn-block btn-lg" (click)='downloadAll()'> -->
-                          <button class="btn btn-primary rounded btn-sm" (click)="downloadAll()">
-                            <i class="fa fa-download">
-                            </i> Download
-                          </button>
-                          <button class="btn btn-secondary rounded btn-sm ml-1" (click)="salir()">
-                            <i class="fa fa-download">
-                            </i> Salir
-                          </button>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col">
-                          <div class="d-flex flex-column">
-                            <span for="" class="text-primary">Cadena:</span>
-                            <label for="" id="lbCadImg"></label>
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="d-flex flex-column">
-                            <span for="" class="text-primary">Local:</span>
-                            <label for="" id="lbLocImg"></label>
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="d-flex flex-column">
-                            <span for="" class="text-primary">Cliente:</span>
-                            <label for="" id="lbCliImg"></label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col">
-                          <div class="d-flex flex-column">
-                            <span for="" class="text-primary">Estado:</span>
-                            <label for="" [ngClass]="{
-                                    'text-success':estado === 'CREADA',
-                                    'text-primary':estado === 'FINALIZADA',
-                                    'text-warning':estado === 'EN PROGRESO',
-                                    'text-semi-warning':estado === 'INICIADA'
-                                  }" id="lbEstImg"></label>
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="d-flex flex-column">
-                            <span for="" class="text-primary">Mercaderista:</span>
-                            <label for="" id="lbMerImg"></label>
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="d-flex flex-column">
-                            <span for="" class="text-primary">Visita:</span>
-                            <label for="" id="lbVisImg"></label>
-                          </div>
-                        </div>
-                      </div>
-                  </div>
-                  <div class="row" *ngIf="orderCurrent">
-                      <div class="col-md-6 col-lg-4" *ngFor="let img of orderCurrent.fotos">
-                        <div class="card boder-0 transform-on-hover position-relative">
-                          <div class="position-absolute">
-                            <button class="btn btn-icon btn-primary"  (click)="download(img)" style="top:0px; right:0px;">
-                              <i class="fa fa-download">
-                              </i>
-                            </button>
-                          </div>
-                          <img src="{{img.url}}"  alt="" class="card-img-top">
-                          <div class="card-body">
-                            <h6>{{img.nombre}}</h6>
-                            <p class="text-muted card-text">
-                              Fecha: {{img.fecha}}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                  </div>
-                  <!-- <a href="assets/cajonera_nova.jpg" >Descargar</a> -->
-                </div>
-              </div>
-            </div>
-            <div class="card-body bg-light border rounded d-none" id="pnlEdit">
-              <div class="row mt-1">
-                <div class="col-12 text-center">
-                  <h2 id="hTitEdit"> </h2>
-                </div>
-              </div>
-              <div class="row mt-1">
-                <div class="col-12 col-xl-8 offset-xl-2">
-                  <div class="card-body bg-light border border-primary rounded pl-lg-5" *ngIf="orderCurrent">
-                    <form (ngSubmit)="onSubmit(formNew)" #formNew="ngForm">
-                      <div class="row">
-                        <div class="col-12 col-md-9 p-0">
-                          <div class="row pt-2">
-                            <div class="col-12 col-md-6">
-                              <div class="d-flex flex-column">
-                                <span for="" class="text-primary"> Mercaderista:</span>
-                                <!-- <label for="">{{orderCurrent.mercaderista.nombre}}</label> -->
-                                <select class="form-control" id="cmbMerchantOrder">
-                                  <option *ngFor="let merchant of merchantList" value="{{merchant.id}}">{{merchant.nombre}}</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                              <div class="d-flex flex-column">
-                                <span for="" class="text-primary"> Prioridad:</span>
-                                <!-- <label for="">{{orderCurrent.prioridad}}</label> -->
-                                <select class="form-control" id="cmbPriority">
-                                  <option *ngFor="let priority of priorityList" value="{{priority.id}}">{{priority.nombre}}</option>
-                                </select>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row pt-3">
-                            <div class="col-12 col-md-6">
-                              <div class="d-flex flex-column">
-                                <span for="" class="text-primary">Cadena:</span>
-                                <label for="">{{orderCurrent.cadena.nombre}}</label>
-                              </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                              <div class="d-flex flex-column">
-                                <span for="" class="text-primary">Tienda:</span>
-                                <label for="">{{orderCurrent.local.nombre}}</label>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row pt-3">
-                            <div class="col-12 col-md-6">
-                              <div class="d-flex flex-column">
-                                <span for="" class="text-primary">Cliente:</span>
-                                <label for="">{{orderCurrent.sku[0].ds_cliente}}</label>
-                              </div>
-                            </div>
-                            <div class="col-12 col-md-6">
-                              <div class="d-flex flex-column">
-                                <span for="" class="text-primary"> Marca:</span>
-                                <label *ngFor='let sku of orderCurrent.sku | unique'>{{sku.ds_marca}}</label>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-12 col-md-3">
-                          <div class="row">
-                            <div class="col d-flex flex-column">
-                              <span for="" class="text-primary"> Fecha Visita:</span>
-                              <div id="times">
-                                <div class="row">
-                                  <div class="col d-flex flex-row align-items-center">
-                                    <!-- <input id="visita" value="{{orderCurrent.visita}}"> -->
-                                    <mat-form-field class="w-100">
-                                      <input matInput placeholder="Fecha Visita: " type="text" name="" id="fevisita" value="{{orderCurrent.visita}}">
-                                    </mat-form-field>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row d-flex justify-content-end">
-                        <div class="col-12 col-sm-4 col-xl-3">
-                          <input type="submit" value="Modificar Orden" class="btn btn-primary rounded btn-sm btn-block btn-lg">
-                        </div>
-                        <div class="col-12 col-sm-4 col-xl-3">
-                          <input type="button" value="Salir" class="btn btn-secondary rounded btn-sm btn-block btn-lg" (click)='salir()'>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                  <div class="card card-block mt-2 dvskulist" *ngIf="orderCurrent"> 
-                    <div class="col">
-                      <table id="table_skus" class="table table-bordered table-sm">
-                        <thead class="text-center bg-dark text-white">
-                          <th></th>
-                          <th>Cliente</th>
-                          <th>Marca</th>
-                          <th>Producto</th>
-                          <th>Presentaci&oacute;n</th>
-                          <th>Sabor</th>
-                          <th>SKU</th>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let sku of orderCurrent.sku">
-                            <td class='text-center'> <a href="javascript:void(0);" (click)="exclude(sku)"> <i
-                                  class="fa fa-trash"></i></a></td>
-                            <td>{{sku.ds_cliente}}</td>
-                            <td>{{sku.ds_marca}}</td>
-                            <td>{{sku.descripcion}}</td>
-                            <td>{{sku.presentacion}}</td>
-                            <td>{{sku.sabor}}</td>
-                            <td class='text-center'>{{sku.sku}}</td>
-                          </tr>
-                        </tbody>
-                        <tfoot>
-                        </tfoot>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 <script>
-  baguetteBox.run('.cards-gallery',{animation: 'slideIn'});
+  baguetteBox.run('.cards-gallery', {
+    animation: 'slideIn'
+  });
+
 </script>
