@@ -108,6 +108,7 @@ OnDestroy {
         });
         self.spinnerService.show();
         this.customerSubscription = this.cs.getCustomer().subscribe(customers => {
+            console.log(customers);
             self.spinnerService.hide();
             this.customerList = customers.filter(ch => ch.estado === 'A').sort((a, b) => {
                 return a.razonsocial < b.razonsocial ? -1 : 1;
@@ -151,7 +152,7 @@ OnDestroy {
                 let subSku: Subscription;
 
                 subSku = this.cs.getSkuFromCustomerBrandAndSku(this.tempIdCustomer, this.tempIdBrand, this.sku.sku).subscribe(skus => {
-                    if(!skus.length) {
+                    if (!skus.length) {
                         this.spinnerService.show();
                         this.cs.addSku(this.sku).then((e) => {
                             this.spinnerService.hide();

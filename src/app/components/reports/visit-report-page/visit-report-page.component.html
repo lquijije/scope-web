@@ -1,0 +1,63 @@
+<div class="pt-2 px-xs-0 px-sm-3 px-md-5 w-100" style="height: 90vh;">
+  <div class="col-12 col-sm-10 col-md-8 col-lg-6 mx-auto mt-1">
+    <div class="row">
+      <div class="col-12">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
+            <li class="breadcrumb-item d-block d-sm-none"><a href="javascript:void(0)">...</a></li>
+            <li class="breadcrumb-item d-none d-sm-block"><a href="javascript:void(0)">Reportes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Informe de visitas</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card-body bg-light border rounded" id='pnlList'>
+          <h4 class="text-center"><strong> Informe de Visitas </strong></h4>
+          <div class="row">
+            <div class="col-12">
+              <div class="row">
+                <div class="col">
+                  <mat-form-field class="w-100">
+                    <input matInput placeholder="Fecha Desde: " type="text" name="" id="fedesde" [(ngModel)]="desde">
+                  </mat-form-field>
+                </div>
+                <div class="col">
+                  <mat-form-field class="w-100">
+                    <input matInput placeholder="Fecha Hasta: " type="text" name="" id="fehasta" [(ngModel)]="hasta">
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <div class="row">
+                    <div class="col">
+                      <div class="custom-control custom-radio">
+                        <input type="radio" id="rd-crea" name="fecha" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="rd-crea">Creaci&oacute;n</label>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="custom-control custom-radio">
+                        <input type="radio" id="rd-vis" name="fecha" class="custom-control-input">
+                        <label class="custom-control-label" for="rd-vis">Visita</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <button type="button" class="btn btn-block btn-success rounded btn-sm px-4 pt-2 ml-1 pb-2 btUpd"
+                    (click)="processReport()">
+                    <i class="fa fa-refresh"></i> Procesar Informe
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
