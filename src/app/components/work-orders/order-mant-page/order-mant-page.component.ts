@@ -391,6 +391,7 @@ OnDestroy {
         this.skuList.forEach(sku => {
             sku['orden'] = this.skuList.indexOf(sku) + 1;
         });
+        this.merchantObj.nombre = this.merchantObj.nombre.trim();
         dates.forEach(i => {
             this.workOrderList.push({ // numero: this.chainObj.nombre.trim().replace(' ', '').substr(0, 3) + '-' + this.generateUID(),
                 numero: ('00000' + this.sequential).slice(-5),

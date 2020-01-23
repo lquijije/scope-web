@@ -1,23 +1,23 @@
-import {Component, OnInit, OnDestroy} from "@angular/core";
-import {WorkOrdersService} from "../../../services/work-orders.service";
-import {MatDialog} from "@angular/material";
-import {Subscription} from "rxjs";
-import {IUser} from "src/app/models/users/user";
-import {SupermaketsService} from "../../../services/supermakets.service";
-import {CustomerService} from "../../../services/customer.service";
-import {UsersService} from "../../../services/users.service";
-import {ConfirmDialogComponent} from "../../dialog-components/confirm-dialog/confirm-dialog.component";
-import {AlertDialogComponent} from "../../dialog-components/alert-dialog/alert-dialog.component";
-import {Ng4LoadingSpinnerService} from "ng4-loading-spinner";
-import {ISuperStore} from "src/app/models/supermarkets/super-store";
-import {ExcelService} from "../../../services/excel.service";
-import {AngularFireStorage} from "angularfire2/storage";
-import {GeneralService} from "../../../services/general.service";
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { WorkOrdersService } from "../../../services/work-orders.service";
+import { MatDialog } from "@angular/material";
+import { Subscription } from "rxjs";
+import { IUser } from "src/app/models/users/user";
+import { SupermaketsService } from "../../../services/supermakets.service";
+import { CustomerService } from "../../../services/customer.service";
+import { UsersService } from "../../../services/users.service";
+import { ConfirmDialogComponent } from "../../dialog-components/confirm-dialog/confirm-dialog.component";
+import { AlertDialogComponent } from "../../dialog-components/alert-dialog/alert-dialog.component";
+import { Ng4LoadingSpinnerService } from "ng4-loading-spinner";
+import { ISuperStore } from "src/app/models/supermarkets/super-store";
+import { ExcelService } from "../../../services/excel.service";
+import { AngularFireStorage } from "angularfire2/storage";
+import { GeneralService } from "../../../services/general.service";
 import * as firebase from "firebase/app";
 import "firebase/storage";
 import * as JSZip from "jszip";
 import * as JSZipUtils from "jszip-utils";
-import {saveAs} from "file-saver";
+import { saveAs } from "file-saver";
 
 declare var $: any;
 export interface IChainObj {
@@ -36,39 +36,39 @@ export interface IBrandObj {
     id?: string;
     razojnsocial?: string;
 }
-@Component({selector: "app-order-inquiry-page", templateUrl: "./order-inquiry-page.component.html", styleUrls: ["./order-inquiry-page.component.css"]})
+@Component({ selector: "app-order-inquiry-page", templateUrl: "./order-inquiry-page.component.html", styleUrls: ["./order-inquiry-page.component.css"] })
 export class OrderInquiryPageComponent implements OnInit,
-OnDestroy {
-    sourceList : any;
-    orderList : any;
-    imagesOrderList : any;
-    orderSubscription : Subscription;
-    chainSubscription : Subscription;
-    customerSubscription : Subscription;
-    merchantSubscription : Subscription;
-    statusSubscription : Subscription;
-    prioritySubscription : Subscription;
-    chainList : any;
-    storeList : any = [];
-    customerList : any = [];
-    brandList : any = [];
-    skuList : any;
-    orderCurrent : any;
-    merchantObj : IUser;
-    merchantList : any;
-    priorityList : any;
-    statusList : any;
-    chainObj : IChainObj;
-    customerObj : ICustomerObj;
-    storeObj : IStoreObj;
-    brandObj : any;
-    arrBrands : any[] = [];
-    arrStatus : any[] = [];
-    desde : string = "";
-    hasta : string = "";
-    estado : string = "";
-    hasOrdered : boolean = false;
-    constructor(public dialog : MatDialog, private ow : WorkOrdersService, private sc : SupermaketsService, private cu : CustomerService, private us : UsersService, private excelService : ExcelService, private spinnerService : Ng4LoadingSpinnerService, private afStorage : AngularFireStorage, private gs : GeneralService) {
+    OnDestroy {
+    sourceList: any;
+    orderList: any;
+    imagesOrderList: any;
+    orderSubscription: Subscription;
+    chainSubscription: Subscription;
+    customerSubscription: Subscription;
+    merchantSubscription: Subscription;
+    statusSubscription: Subscription;
+    prioritySubscription: Subscription;
+    chainList: any;
+    storeList: any = [];
+    customerList: any = [];
+    brandList: any = [];
+    skuList: any;
+    orderCurrent: any;
+    merchantObj: IUser;
+    merchantList: any;
+    priorityList: any;
+    statusList: any;
+    chainObj: IChainObj;
+    customerObj: ICustomerObj;
+    storeObj: IStoreObj;
+    brandObj: any;
+    arrBrands: any[] = [];
+    arrStatus: any[] = [];
+    desde: string = "";
+    hasta: string = "";
+    estado: string = "";
+    hasOrdered: boolean = false;
+    constructor(public dialog: MatDialog, private ow: WorkOrdersService, private sc: SupermaketsService, private cu: CustomerService, private us: UsersService, private excelService: ExcelService, private spinnerService: Ng4LoadingSpinnerService, private afStorage: AngularFireStorage, private gs: GeneralService) {
         console.log(this.orderCurrent);
     }
 
@@ -82,8 +82,8 @@ OnDestroy {
             $(this).addClass("highlight");
         });
 
-        $("#fedesde").datetimepicker({format: "Y-m-d", lang: "es", timepicker: false, closeOnDateSelect: true});
-        $("#fehasta").datetimepicker({format: "Y-m-d", lang: "es", timepicker: false, closeOnDateSelect: true});
+        $("#fedesde").datetimepicker({ format: "Y-m-d", lang: "es", timepicker: false, closeOnDateSelect: true });
+        $("#fehasta").datetimepicker({ format: "Y-m-d", lang: "es", timepicker: false, closeOnDateSelect: true });
 
         // $('#table_orders').DataTable();
         const self = this;
@@ -329,34 +329,34 @@ OnDestroy {
         if ($("#rd-crea").is(":checked")) {
             if ($("#fedesde").val() && $("#fehasta").val()) {
                 this.orderList = this.orderList.filter(e => {
-                    return(e.creacion.toDate().getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime() && e.creacion.toDate().getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
+                    return (e.creacion.toDate().getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime() && e.creacion.toDate().getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
                 });
             }
-            if ($("#fedesde").val() && ! $("#fehasta").val()) {
+            if ($("#fedesde").val() && !$("#fehasta").val()) {
                 this.orderList = this.orderList.filter(e => {
-                    return(e.creacion.toDate().getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime());
+                    return (e.creacion.toDate().getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime());
                 });
             }
-            if (! $("#fedesde").val() && $("#fehasta").val()) {
+            if (!$("#fedesde").val() && $("#fehasta").val()) {
                 this.orderList = this.orderList.filter(e => {
-                    return(e.creacion.toDate().getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
+                    return (e.creacion.toDate().getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
                 });
             }
         }
         if ($("#rd-vis").is(":checked")) {
             if ($("#fedesde").val() && $("#fehasta").val()) {
                 this.orderList = this.orderList.filter(e => {
-                    return(new Date(e.visita).getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime() && new Date(e.visita).getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
+                    return (new Date(e.visita).getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime() && new Date(e.visita).getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
                 });
             }
-            if ($("#fedesde").val() && ! $("#fehasta").val()) {
+            if ($("#fedesde").val() && !$("#fehasta").val()) {
                 this.orderList = this.orderList.filter(e => {
-                    return(new Date(e.visita).getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime());
+                    return (new Date(e.visita).getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime());
                 });
             }
-            if (! $("#fedesde").val() && $("#fehasta").val()) {
+            if (!$("#fedesde").val() && $("#fehasta").val()) {
                 this.orderList = this.orderList.filter(e => {
-                    return(new Date(e.visita).getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
+                    return (new Date(e.visita).getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
                 });
             }
         }
@@ -395,7 +395,7 @@ OnDestroy {
             });
         }
     }
-    delete(order : any) {
+    delete(order: any) {
         if (order.estado.nombre !== "CREADA" && order.estado.nombre !== "INICIADA") {
             this.openAlert("Scope Alert", "Sólo se pueden eliminar ordenes CREADAS o INICIADAS, la orden seleccionada está en estado " + order.estado.nombre);
             return false;
@@ -419,7 +419,7 @@ OnDestroy {
             }
         });
     }
-    openAlert(tit : string, msg : string): void {
+    openAlert(tit: string, msg: string): void {
         const dialogRef = this.dialog.open(AlertDialogComponent, {
             width: "30%",
             data: {
@@ -432,7 +432,7 @@ OnDestroy {
             console.log(result);
         });
     }
-    search(order : any) {
+    search(order: any) {
         this.orderCurrent = Object.assign({}, order);
         this.estado = order.estado.nombre;
         $("#hTit").html("Orden #" + order.numero);
@@ -458,7 +458,7 @@ OnDestroy {
             clearInterval(inter);
         }, 500);
     }
-    images(order : any) {
+    images(order: any) {
         this.estado = order.estado.nombre;
         $("#lbCadImg").text(order.cadena.nombre);
         $("#lbLocImg").text(order.local.nombre);
@@ -470,7 +470,7 @@ OnDestroy {
         $("#hTitImg").html("Fotos de orden #" + order.numero);
         this.showImageView();
     }
-    geolocation(order : any) {
+    geolocation(order: any) {
         this.estado = order.estado.nombre;
         $("#lbCadGeo").text(order.cadena.nombre);
         $("#lbLocGeo").text(order.local.nombre);
@@ -489,26 +489,23 @@ OnDestroy {
         this.showGeolocationView();
         $("#dvGeoIni").html('');
         $("#dvGeoFin").html('');
-        if (this.orderCurrent.geolocation_iniciada.latitude && this.orderCurrent.geolocation_iniciada.longitude) {
-            $("#dvGeoIni").html(`<strong class="text-primary">INICIADA</strong> <iframe src="https://maps.google.com/maps?q=${
-                this.orderCurrent.geolocation_iniciada.latitude
-            },${
-                this.orderCurrent.geolocation_iniciada.longitude
-            }&hl=es;z=14&amp;output=embed"
-    width="100%" height="350" frameborder="0" style="border:0;" allowfullscreen="" target="_parent">
-    </iframe>`);
+        if (this.orderCurrent.geolocation_iniciada) {
+            if (this.orderCurrent.geolocation_iniciada.latitude && this.orderCurrent.geolocation_iniciada.longitude) {
+                $("#dvGeoIni").html(`<strong class="text-primary">INICIADA</strong> <iframe src="https://maps.google.com/maps?q=${this.orderCurrent.geolocation_iniciada.latitude}
+                ,${this.orderCurrent.geolocation_iniciada.longitude}&hl=es;z=14&amp;output=embed"
+                width="100%" height="350" frameborder="0" style="border:0;" allowfullscreen="" target="_parent">
+                </iframe>`);
+            }
         }
 
-        if (this.orderCurrent.geolocation_finalizada.latitude && this.orderCurrent.geolocation_finalizada.longitude) {
-            $("#dvGeoFin").html(`<strong class="text-primary">FINALIZADA</strong> <iframe src="https://maps.google.com/maps?q=${
-                this.orderCurrent.geolocation_finalizada.latitude
-            },${
-                this.orderCurrent.geolocation_finalizada.longitude
-            }&hl=es;z=14&amp;output=embed"
-    width="100%" height="350" frameborder="0" style="border:0;" allowfullscreen="" target="_parent">
-    </iframe>`);
+        if (this.orderCurrent.geolocation_finalizada) {
+            if (this.orderCurrent.geolocation_finalizada.latitude && this.orderCurrent.geolocation_finalizada.longitude) {
+                $("#dvGeoFin").html(`<strong class="text-primary">FINALIZADA</strong> <iframe src="https://maps.google.com/maps?q=${this.orderCurrent.geolocation_finalizada.latitude}
+            ,${this.orderCurrent.geolocation_finalizada.longitude}&hl=es;z=14&amp;output=embed"
+            width="100%" height="350" frameborder="0" style="border:0;" allowfullscreen="" target="_parent">
+            </iframe>`);
+            }
         }
-
     }
     salir() {
         this.closeEditView();
@@ -564,7 +561,7 @@ OnDestroy {
             this.excelService.exportAsExcelFile(exportJson, "ordenes");
         }
     }
-    download(img : any) {
+    download(img: any) {
         if (img.url !== "") {
             const xhr = new XMLHttpRequest();
             xhr.responseType = "blob";
@@ -594,7 +591,7 @@ OnDestroy {
                 xhr.onload = function (e) {
                     const blob = xhr.response;
                     const localUrl = window.URL.createObjectURL(blob);
-                    urlFiles.push({name: img.nombre, url: localUrl});
+                    urlFiles.push({ name: img.nombre, url: localUrl });
                     if (order.fotos.length === urlFiles.length) {
                         const zip = new JSZip();
                         let zipElem = 0;
@@ -606,9 +603,9 @@ OnDestroy {
                                     throw err;
                                 }
                                 zipElem++;
-                                zip.file(ord.local.nombre + "/" + file.name + ".JPG", data, {binary: true});
+                                zip.file(ord.local.nombre + "/" + file.name + ".JPG", data, { binary: true });
                                 if (zipElem === urlFiles.length) {
-                                    zip.generateAsync({type: "blob"}).then(function (content) {
+                                    zip.generateAsync({ type: "blob" }).then(function (content) {
                                         spin.hide();
                                         saveAs(content, ord.cadena.nombre + "_" + ord.numero + ".zip");
                                     });
@@ -625,7 +622,7 @@ OnDestroy {
             this.openAlert("Scope Alert", " No existen imágenes ");
         }
     }
-    editOrder(order : any) {
+    editOrder(order: any) {
         this.orderCurrent = Object.assign({}, order);
         $("#fevisita").val(this.orderCurrent.visita);
         $("#hTitEdit").html("Editar Orden #" + this.orderCurrent.numero);
@@ -633,7 +630,7 @@ OnDestroy {
         $("#cmbPriority").val($("#cmbPriority option:contains(" + this.orderCurrent.prioridad + ")").val()).trigger("change");
         // $('#cmbMerchantOrder').text(this.orderCurrent.mercaderista.nombre);
         let inter = setInterval(function () {
-            $("#fevisita").datetimepicker({format: "Y-m-d H:i", lang: "es", timepicker: true, closeOnDateSelect: true});
+            $("#fevisita").datetimepicker({ format: "Y-m-d H:i", lang: "es", timepicker: true, closeOnDateSelect: true });
 
             $("#cmbMerchantOrder").select2({
                 placeholder: "Seleccione Mercaderista",
@@ -655,13 +652,13 @@ OnDestroy {
         }, 500);
         this.showEditView();
     }
-    exclude(sku : any) {
+    exclude(sku: any) {
         const index: number = this.orderCurrent.sku.indexOf(sku);
         if (index !== -1) {
             this.orderCurrent.sku.splice(index, 1);
         }
     }
-    onSubmit(formNew : any) {
+    onSubmit(formNew: any) {
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
             width: "300px",
             data: {
@@ -674,7 +671,7 @@ OnDestroy {
                 this.orderCurrent.visita = $("#fevisita").val();
                 this.orderCurrent.mercaderista = {
                     id: $("#cmbMerchantOrder").val(),
-                    nombre: $("#cmbMerchantOrder").select2("data")[0].text
+                    nombre: $("#cmbMerchantOrder").select2("data")[0].text.trim()
                 };
                 this.orderCurrent.prioridad = $("#cmbPriority").select2("data")[0].text;
                 this.spinnerService.show();
@@ -694,7 +691,7 @@ OnDestroy {
             return false;
         }
 
-        if (! $("#fedesde").val() && ! $("#fehasta").val()) {
+        if (!$("#fedesde").val() && !$("#fehasta").val()) {
             this.openAlert("Scope Alert", "Debe escoger una fecha de filtro");
             return false;
         }
@@ -702,34 +699,34 @@ OnDestroy {
         if ($("#rd-crea").is(":checked")) {
             if ($("#fedesde").val() && $("#fehasta").val()) {
                 this.imagesOrderList = this.imagesOrderList.filter(e => {
-                    return(e.creacion.toDate().getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime() && e.creacion.toDate().getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
+                    return (e.creacion.toDate().getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime() && e.creacion.toDate().getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
                 });
             }
-            if ($("#fedesde").val() && ! $("#fehasta").val()) {
+            if ($("#fedesde").val() && !$("#fehasta").val()) {
                 this.imagesOrderList = this.imagesOrderList.filter(e => {
-                    return(e.creacion.toDate().getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime());
+                    return (e.creacion.toDate().getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime());
                 });
             }
-            if (! $("#fedesde").val() && $("#fehasta").val()) {
+            if (!$("#fedesde").val() && $("#fehasta").val()) {
                 this.imagesOrderList = this.imagesOrderList.filter(e => {
-                    return(e.creacion.toDate().getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
+                    return (e.creacion.toDate().getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
                 });
             }
         }
         if ($("#rd-vis").is(":checked")) {
             if ($("#fedesde").val() && $("#fehasta").val()) {
                 this.imagesOrderList = this.imagesOrderList.filter(e => {
-                    return(new Date(e.visita).getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime() && new Date(e.visita).getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
+                    return (new Date(e.visita).getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime() && new Date(e.visita).getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
                 });
             }
-            if ($("#fedesde").val() && ! $("#fehasta").val()) {
+            if ($("#fedesde").val() && !$("#fehasta").val()) {
                 this.imagesOrderList = this.imagesOrderList.filter(e => {
-                    return(new Date(e.visita).getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime());
+                    return (new Date(e.visita).getTime() > new Date($("#fedesde").val() + " 00:00:000").getTime());
                 });
             }
-            if (! $("#fedesde").val() && $("#fehasta").val()) {
+            if (!$("#fedesde").val() && $("#fehasta").val()) {
                 this.imagesOrderList = this.imagesOrderList.filter(e => {
-                    return(new Date(e.visita).getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
+                    return (new Date(e.visita).getTime() < new Date($("#fehasta").val() + " 23:59:59").getTime());
                 });
             }
         }
@@ -751,7 +748,7 @@ OnDestroy {
             const imagesArray = [];
             this.imagesOrderList.forEach(orderItem => {
                 orderItem.fotos.forEach(img => {
-                    imagesArray.push({numero: orderItem.numero, cadena: orderItem.cadena.nombre, local: orderItem.local.nombre, namePhoto: img.nombre, urlPhoto: img.url});
+                    imagesArray.push({ numero: orderItem.numero, cadena: orderItem.cadena.nombre, local: orderItem.local.nombre, namePhoto: img.nombre, urlPhoto: img.url });
                 });
             });
             let urlFiles = [];
@@ -773,7 +770,7 @@ OnDestroy {
                     } else {
                         localUrl = "assets/images/noimage.jpg";
                     }
-                    urlFiles.push({numero: item.numero, cadena: item.cadena, local: item.local, name: item.namePhoto, url: localUrl});
+                    urlFiles.push({ numero: item.numero, cadena: item.cadena, local: item.local, name: item.namePhoto, url: localUrl });
                     if (imgAr.length === urlFiles.length) {
                         const zip = new JSZip();
                         let zipElem = 0;
@@ -784,9 +781,9 @@ OnDestroy {
                                     console.log(err);
                                 }
                                 zipElem++;
-                                zip.file(file.cadena + "/" + file.local + "/" + file.name + ".JPG", data, {binary: true});
+                                zip.file(file.cadena + "/" + file.local + "/" + file.name + ".JPG", data, { binary: true });
                                 if (zipElem === urlFiles.length) {
-                                    zip.generateAsync({type: "blob"}).then(function (content) {
+                                    zip.generateAsync({ type: "blob" }).then(function (content) {
                                         spin.hide();
                                         saveAs(content, "scope_fotos" + ".zip");
                                     });
@@ -808,7 +805,8 @@ OnDestroy {
             id: "kq5JBF6UyK26E2S7fEz1",
             nombre: "FINALIZADA"
         };
-        console.log(this.orderCurrent);
+        // console.log(this.orderCurrent);
+        this.orderCurrent.mercaderista.nombre = this.orderCurrent.mercaderista.nombre.trim();
         this.spinnerService.show();
         this.ow.updWorkOrder(this.orderCurrent).then(() => {
             this.spinnerService.hide();
@@ -819,7 +817,7 @@ OnDestroy {
     }
     updateFirestore() {
         let opcion = "";
-        if (! $("#fedesde").val() && ! $("#fehasta").val()) {
+        if (!$("#fedesde").val() && !$("#fehasta").val()) {
             this.openAlert("Scope Alert", "Debe escoger una fecha de filtro");
             return false;
         }
