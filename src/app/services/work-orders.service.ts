@@ -76,6 +76,39 @@ export class WorkOrdersService {
     }
   }
 
+  getWorkOrdersListFinalized(desde: string, hasta: string, condicion: string) {
+    if(condicion == 'creacion') {
+      desde = desde + ' 00:00:00';
+      hasta = hasta + ' 23:59:59';
+      
+      return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+      .where(condicion, '>=', new Date(desde))
+      .where(condicion, '<=', new Date(hasta))
+      .where('estado', '==', {"id": "kq5JBF6UyK26E2S7fEz1","nombre": "FINALIZADA"})
+      ).snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as IWorkOrder;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      );
+    } else {
+      desde = desde + ' 00:00:00';
+      hasta = hasta + ' 23:59:59';
+      return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+      .where(condicion, '>=', desde)
+      .where(condicion, '<=', hasta)
+      .where('estado', '==', {"id": "kq5JBF6UyK26E2S7fEz1","nombre": "FINALIZADA"})
+      ).snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as IWorkOrder;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      );
+    }
+  }
+
   getOrderStatus() {
     return this.oStatusObs;
   }
