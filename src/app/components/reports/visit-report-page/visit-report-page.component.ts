@@ -8,7 +8,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import * as Excel from "node_modules/exceljs/dist/exceljs.min.js";
 import * as fs from 'file-saver';
-import { triggerAsyncId } from 'async_hooks';
+import { CustomerService } from '../../../services/customer.service';
+//import { triggerAsyncId } from 'async_hooks';
 
 declare var $: any;
 
@@ -19,61 +20,52 @@ export class VisitReportPageComponent implements OnInit {
     realData: any = [];
     preparedData: any = [];
     orderSubscription: Subscription;
-    private _jsonURL = '../../../../assets/data.json';
+    customerSubscription: Subscription;
+
+    //private _jsonURL = '../../../../assets/data.json';
 
     constructor(public dialog: MatDialog,
         private spinnerService: Ng4LoadingSpinnerService,
         private ow: WorkOrdersService,
-        private http: HttpClient) { 
+        private cs: CustomerService,
+        private http: HttpClient) {
     }
-    public getJSON(): Observable<any> {
+    /*public getJSON(): Observable<any> {
         return this.http.get(this._jsonURL);
-    }
+    }*/
 
     prepareData = () => {
-        //const delay = miliseconds => new Promise(resolve => setTimeout(resolve, miliseconds));
-        //console.log(this.realData);
         this.spinnerService.show();
-        let syncro = 0;
         this.realData.forEach(el => {
-            el['cliente'] = {'id': el.sku[0].cliente, 'nombre': el.sku[0].ds_cliente.replace('.','')};
-            el['visita'] = el['visita'].substring(0,10);
-            syncro++;
+            el['cliente'] = { 'id': el.sku[0].cliente, 'nombre': el.sku[0].ds_cliente.replace('.', '') };
+            el['visita'] = el['visita'].substring(0, 10);
         });
 
-        while(syncro < (this.realData.length - 1)){}
-
-        
-        /* const groupByCustomer = key => array =>
-        array.reduce((objectsByKeyValue, obj) => {
-            const value = obj[key];
-            objectsByKeyValue[value.nombre] = (objectsByKeyValue[value.nombre] || []).concat(obj.cadena);
-            return objectsByKeyValue;
-        }, {});
-        const groupByCust = groupByCustomer('cliente');
-        let headers = groupByCust(this.realData);
-        //headers.filter((a, b) => headers.indexOf(a) === b); */
-        let customers = this.grouping(this.realData,'cliente','nombre');
-        //console.log(customers);
-        //syncro = 0;
+        let customers = this.grouping(this.realData, 'cliente', 'nombre');
         customers.forEach(cu => {
+            let customerSubscription = this.cs.getBrandFromCustomer(cu.id).subscribe(data => {
+                cu['marcas'] = data;
+                if (customerSubscription) {
+                    customerSubscription.unsubscribe();
+                }
+            });
             let superChain = this.realData.filter(obj => obj.cliente.id == cu.id);
-            cu['cadenas'] = this.grouping(superChain,'cadena','nombre');
+            cu['cadenas'] = this.grouping(superChain, 'cadena', 'nombre');
             cu['cadenas'].forEach(sc => {
                 let superStore = this.realData.filter(obj => (obj.cliente.id == cu.id && obj.cadena.id == sc.id));
-                sc['locales'] = this.grouping(superStore,'local','nombre');
+                sc['locales'] = this.grouping(superStore, 'local', 'nombre');
                 let skuBySuperChain = [];
                 sc['locales'].forEach(st => {
                     let visits = this.realData.filter(obj => (obj.cliente.id == cu.id && obj.cadena.id == sc.id && obj.local.id == st.id));
-                    let arrayVisits = this.grouping(visits,'visita'); 
+                    let arrayVisits = this.grouping(visits, 'visita');
                     st['visitas'] = [];
                     arrayVisits.forEach(v => {
                         let visitsFiltered = visits.filter(obj => obj.visita == v);
                         let skus = [];
-                        for(var i = 0; i <= (visitsFiltered.length - 1); i++){
-                            for(var j = 0; j <= (visitsFiltered[i].sku.length - 1); j++) {
+                        for (var i = 0; i <= (visitsFiltered.length - 1); i++) {
+                            for (var j = 0; j <= (visitsFiltered[i].sku.length - 1); j++) {
                                 var sku = visitsFiltered[i].sku[j];
-                                if(!sku.bloqueado) {
+                                if (!sku.bloqueado) {
                                     let theSku = {
                                         'marca': sku.ds_marca,
                                         'producto': sku.descripcion,
@@ -92,17 +84,17 @@ export class VisitReportPageComponent implements OnInit {
                         });
                     })
                 });
-                let brands = this.grouping(skuBySuperChain,'marca');
+                let brands = this.grouping(skuBySuperChain, 'marca');
                 sc['tags'] = [];
                 brands.forEach(br => {
                     let arrayProducts = skuBySuperChain.filter(obj => obj.marca == br);
                     let products = this.grouping(arrayProducts, 'producto');
-                    products.forEach(pr =>{
+                    products.forEach(pr => {
                         let arrayPresentations = skuBySuperChain.filter(obj => obj.marca == br && obj.producto == pr);
-                        let presentations = this.grouping(arrayPresentations,'presentacion');
+                        let presentations = this.grouping(arrayPresentations, 'presentacion');
                         presentations.forEach(pt => {
                             let arrayFlavors = skuBySuperChain.filter(obj => obj.marca == br && obj.producto == pr && obj.presentacion == pt);
-                            let flavors = this.grouping(arrayFlavors,'sabor');
+                            let flavors = this.grouping(arrayFlavors, 'sabor');
                             flavors.forEach(fl => {
                                 sc['tags'].push({
                                     'marca': br,
@@ -116,41 +108,30 @@ export class VisitReportPageComponent implements OnInit {
                 });
             });
         });
-        //while(syncro < (customers.length - 1)){}
-
-        //syncro = 0;
-        /* customers.forEach(cu => {
-            cu.cadenas.forEach(sc => {
-                let superStore = this.realData.filter(obj => (obj.cliente.id == cu.id && obj.cadena.id == sc.id));
-                sc['locales'] = this.grouping(superStore,'local','nombre');
-                syncro++;
-            });
-        }); */
 
         this.spinnerService.hide();
         this.preparedData = customers;
-        console.log(this.preparedData);
-        //this.realData.filter((item, index) => this.realData.indexOf(item) == index);
-        //console.log(headers);
+        //console.log(this.preparedData);
+        this.xls();
     }
 
     grouping(originalArray, prop, subprop?) {
         var newArray = [];
-        var lookupObject  = {};
-   
-        for(var i in originalArray) {
+        var lookupObject = {};
+
+        for (var i in originalArray) {
             var obj = originalArray[i][prop];
             if (subprop) {
                 lookupObject[originalArray[i][prop][subprop]] = obj;
             } else {
                 lookupObject[originalArray[i][prop]] = obj;
-            }           
+            }
         }
-   
-        for(i in lookupObject) {
+
+        for (i in lookupObject) {
             newArray.push(lookupObject[i]);
         }
-         return newArray;
+        return newArray;
     }
 
     ngOnInit() {
@@ -164,13 +145,13 @@ export class VisitReportPageComponent implements OnInit {
 
         const header = ["Year", "Month", "Make", "Model", "Quantity", "Quantity"]
         const data = [
-        [2007, 1, "Volkswagen ", "Volkswagen Passat", 1267, 10],
-        [2007, 1, "Toyota ", "Toyota Rav4", 819, 6.5],
-        [2007, 1, "Toyota ", "Toyota Avensis", 787, 6.2],
-        [2007, 1, "Volkswagen ", "Volkswagen Golf", 720, 5.7],
-        [2007, 1, "Toyota ", "Toyota Corolla", 691, 5.4],
+            [2007, 1, "Volkswagen ", "Volkswagen Passat", 1267, 10],
+            [2007, 1, "Toyota ", "Toyota Rav4", 819, 6.5],
+            [2007, 1, "Toyota ", "Toyota Avensis", 787, 6.2],
+            [2007, 1, "Volkswagen ", "Volkswagen Golf", 720, 5.7],
+            [2007, 1, "Toyota ", "Toyota Corolla", 691, 5.4],
         ];
-        
+
         let worksheet = workbook.addWorksheet('Car Data');
         // Add new row
         let titleRow = worksheet.addRow([title]);
@@ -198,7 +179,7 @@ export class VisitReportPageComponent implements OnInit {
             let qty = row.getCell(5);
             let color = 'FF99FF99';
             if (+qty.value < 500) {
-            color = 'FF9999'
+                color = 'FF9999'
             }
             qty.fill = {
                 type: 'pattern',
@@ -207,7 +188,7 @@ export class VisitReportPageComponent implements OnInit {
             }
         });
         worksheet.mergeCells('E4:F4');
-        worksheet.getCell('E4').alignment = { horizontal:'center'} ;
+        worksheet.getCell('E4').alignment = { horizontal: 'center' };
         workbook.xlsx.writeBuffer().then((data) => {
             let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             fs.saveAs(blob, 'CarData.xlsx');
@@ -215,107 +196,150 @@ export class VisitReportPageComponent implements OnInit {
     }
 
     xls() {
-        if(this.preparedData.length) {
+        if (this.preparedData.length) {
             let seekV = 0;
             let workbook = new Excel.Workbook();
+            const setHeaderTitle = (array, data, prop) => {
+                let tag = '';
+                data.tags.forEach(sc => {
+                    if (tag != sc[prop]) {
+                        array.push(sc[prop]);
+                        tag = sc[prop];
+                    } else {
+                        array.push('');
+                    }
+                });
+                return array;
+            };
+
+            const setHeaderDet = (array, data, prop) => {
+                data.tags.forEach(sc => {
+                    array.push(sc[prop]);
+                });
+                return array;
+            }
+
+            const mergeHeader = (data, worksheet, seek, prop) => {
+                let count = 1;
+                let sum = 0;
+                let seekH = 3;
+                let tag = '';
+                data.tags.forEach(sc => {
+                    seekH++;
+                    if (tag != sc[prop]) {
+                        tag = sc[prop];
+                        if (count > 1) {
+                            worksheet.mergeCells(`${this.numToChar(sum)}${seek}:${this.numToChar(seekH - 1)}${seek}`);
+                            worksheet.getCell(`${this.numToChar(sum)}${seek}`).alignment = { horizontal: 'center' };
+                            count = 1;
+                        }
+                        sum = seekH;
+                    } else {
+                        count++;
+                    }
+                });
+                if (count > 1) {
+                    worksheet.mergeCells(`${this.numToChar(sum)}${seek}:${this.numToChar(seekH)}${seek}`);
+                    worksheet.getCell(`${this.numToChar(sum)}${seek}`).alignment = { horizontal: 'center' };
+                }
+            }
+
+            const setStyle = (cell, style) => {
+                if (style.border) {
+                    cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } }
+                }
+                if (style.font) {
+                    cell.font = style.font;
+                }
+            }
+            const period = `Desde el ${this.formatDate($('#fedesde').val())}, hasta el ${this.formatDate($('#fehasta').val())}`;
+
             this.preparedData.forEach(customer => {
                 seekV = 0;
                 let worksheet = workbook.addWorksheet(customer.nombre);
                 customer.cadenas.forEach(superChain => {
-                    seekV+=5;
+                    seekV += 5;
                     worksheet.addRow([]);
-                    worksheet.addRow(['',customer.nombre]);
-                    worksheet.addRow(['',superChain.nombre]);
-                    worksheet.addRow(['',`Desde el ${this.formatDate($('#fedesde').val())}, hasta el ${this.formatDate($('#fehasta').val())}`]);
+                    worksheet.addRow([customer.nombre]).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
+                    worksheet.addRow([superChain.nombre]).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
+                    worksheet.addRow([period]).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
 
-                    worksheet.mergeCells(`B${seekV-3}:${this.numToChar(superChain.tags.length + 4)}${seekV-3}`);
-                    worksheet.getCell(`B${seekV-3}`).alignment = { horizontal:'center'} ;
-                    worksheet.mergeCells(`B${seekV-2}:${this.numToChar(superChain.tags.length + 4)}${seekV-2}`);
-                    worksheet.getCell(`B${seekV-2}`).alignment = { horizontal:'center'} ;
-                    worksheet.mergeCells(`B${seekV-1}:${this.numToChar(superChain.tags.length + 4)}${seekV-1}`);
-                    worksheet.getCell(`B${seekV-1}`).alignment = { horizontal:'center'} ;
-                    
-                    let brand = ['','No','FECHA','LOCALES'];
-                    let brandTag = '';
-                    superChain.tags.forEach(sc => {
-                        if(brandTag != sc.marca) {
-                            brand.push(sc.marca);
-                            brandTag = sc.marca;
-                                                   
-                        } else {
-                            brand.push('');
-                        }
-                    });
-                    worksheet.addRow(brand);
+                    worksheet.mergeCells(`A${seekV - 3}:${this.numToChar(superChain.tags.length + 3)}${seekV - 3}`);
+                    worksheet.getCell(`A${seekV - 3}`).alignment = { horizontal: 'center' };
+                    worksheet.mergeCells(`A${seekV - 2}:${this.numToChar(superChain.tags.length + 3)}${seekV - 2}`);
+                    worksheet.getCell(`A${seekV - 2}`).alignment = { horizontal: 'center' };
+                    worksheet.mergeCells(`A${seekV - 1}:${this.numToChar(superChain.tags.length + 3)}${seekV - 1}`);
+                    worksheet.getCell(`A${seekV - 1}`).alignment = { horizontal: 'center' };
 
-                    let brandCount = 1;
-                    let brandSum = 0;
-                    let brandSeekH = 4;
-                    brandTag = '';
-                    superChain.tags.forEach(sc => {
-                        brandSeekH++;
-                        if(brandTag != sc.marca) {
-                            brandTag = sc.marca;
-                            if(brandCount > 1) {
-                                worksheet.mergeCells(`${this.numToChar(brandSum)}${seekV}:${this.numToChar(brandSeekH-1)}${seekV}`);
-                                worksheet.getCell(`${this.numToChar(brandSum)}${seekV}`).alignment = { horizontal:'center'} ;   
-                                brandCount = 1;
-                            }               
-                            brandSum = brandSeekH;   
-                        } else {
-                            brandCount++;
-                        }
-                    });
-                    if(brandCount > 1) {
-                        worksheet.mergeCells(`${this.numToChar(brandSum)}${seekV}:${this.numToChar(brandSeekH)}${seekV}`);
-                        worksheet.getCell(`${this.numToChar(brandSum)}${seekV}`).alignment = { horizontal:'center'} ;   
-                    } 
+                    worksheet.addRow(setHeaderTitle(['No', 'FECHA', 'LOCALES'], superChain, 'marca')).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
+                    mergeHeader(superChain, worksheet, seekV, 'marca');
+                    worksheet.addRow(setHeaderTitle(['', '', ''], superChain, 'producto')).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
+                    mergeHeader(superChain, worksheet, seekV + 1, 'producto');
+                    worksheet.addRow(setHeaderDet(['', '', ''], superChain, 'presentacion')).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
+                    //mergeHeader(superChain, worksheet, seekV + 2, 'presentacion');
+                    worksheet.addRow(setHeaderDet(['', '', ''], superChain, 'sabor')).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
 
-                    let products = ['','','',''];
-                    let productTag = '';
-                    superChain.tags.forEach(sc => {
-                        if(productTag != sc.producto) {
-                            products.push(sc.producto);
-                            productTag = sc.producto;
-                        } else {
-                            products.push('');
-                        }
-                    });
-                    worksheet.addRow(products);
-
-                    let presentations = ['','','',''];
-                    let presentationTag = '';
-                    superChain.tags.forEach(sc => {
-                        if(presentationTag != sc.presentacion) {
-                            presentations.push(sc.presentacion);
-                            presentationTag = sc.presentacion;
-                        } else {
-                            presentations.push('');
-                        }
-                    });
-                    worksheet.addRow(presentations);
-
-                    let flavors = ['','','',''];
-                    superChain.tags.forEach(sc => {
-                        flavors.push(sc.sabor);
-                    });
-                    worksheet.addRow(flavors);
-
+                    worksheet.mergeCells(`A${seekV}:A${seekV + 3}`);
+                    worksheet.getCell(`A${seekV}`).alignment = { vertical: 'middle', horizontal: 'center' };
                     worksheet.mergeCells(`B${seekV}:B${seekV + 3}`);
-                    worksheet.getCell(`B${seekV}`).alignment = { vertical:'middle'} ;
+                    worksheet.getCell(`B${seekV}`).alignment = { vertical: 'middle', horizontal: 'center' };
                     worksheet.mergeCells(`C${seekV}:C${seekV + 3}`);
-                    worksheet.getCell(`C${seekV}`).alignment = { vertical:'middle'} ;
-                    worksheet.mergeCells(`D${seekV}:D${seekV + 3}`);
-                    worksheet.getCell(`D${seekV}`).alignment = { vertical:'middle'} ;
-                    seekV+=3;
+                    worksheet.getCell(`C${seekV}`).alignment = { vertical: 'middle', horizontal: 'center' };
+                    seekV += 3;
                     let lengthData = 0;
                     superChain.locales.forEach(superStore => {
-                        superStore.visitas.forEach(visit =>{
-                            worksheet.addRow(['', '', visit.visita, superStore.nombre]);
+                        superStore.visitas.forEach(visit => {
                             lengthData++;
+                            let finaldata = [lengthData, visit.visita, superStore.nombre];
+                            let minsValues = [];
+                            superChain.tags.forEach(col => {
+                                let skuMatch = visit.skus.filter(sku => sku.marca = col.marca && sku.producto == col.producto && sku.presentacion == col.presentacion && sku.sabor == col.sabor);
+                                let brandMatch = customer.marcas.filter(brand => brand.nombre == col.marca);
+                                if (brandMatch) {
+                                    if (brandMatch.length) {
+                                        brandMatch = brandMatch[0];
+                                    }
+                                    if (brandMatch.minimo) {
+                                        minsValues.push(parseInt(brandMatch.minimo));
+                                    } else {
+                                        minsValues.push(0);
+                                    }
+                                } else {
+                                    minsValues.push(0);
+                                }
+
+                                if (skuMatch.length) {
+                                    let sum = skuMatch.map(o => o.final).reduce((a, c) => { return a + c });
+                                    finaldata.push(sum);
+                                } else {
+                                    finaldata.push('');
+                                }
+                            });
+
+                            let row = worksheet.addRow(finaldata);
+                            row.eachCell((cell, num) => {
+                                setStyle(cell, { border: true });
+                                if (num > 3 && cell.value === 0) {
+                                    cell.fill = {
+                                        type: 'pattern',
+                                        pattern: 'solid',
+                                        fgColor: { argb: 'FF9999' }
+                                    }
+                                }
+                                if (num > 3 && minsValues[num - 4] > 0) {
+                                    const minimo = parseInt(minsValues[num - 4], 10);
+                                    if (cell.value > 0 && cell.value < minimo) {
+                                        cell.fill = {
+                                            type: 'pattern',
+                                            pattern: 'solid',
+                                            fgColor: { argb: 'c9c9c9' }
+                                        }
+                                    }
+                                }
+                            });
                         });
                     });
-                    seekV+=lengthData;
+                    seekV += lengthData;
                 });
             });
             workbook.xlsx.writeBuffer().then((data) => {
@@ -326,22 +350,22 @@ export class VisitReportPageComponent implements OnInit {
     }
 
     formatDate(date) {
-        var theDate = new Date(parseInt(date.substr(0, 4)),parseInt(date.substr(5, 2))-1, parseInt(date.substr(8, 2)));
+        var theDate = new Date(parseInt(date.substr(0, 4)), parseInt(date.substr(5, 2)) - 1, parseInt(date.substr(8, 2)));
         var monthNames = [
             "Enero", "Febrero", "Marzo",
             "Abril", "Mayo", "Junio", "Julio",
             "Agosto", "Septiembre", "Octubre",
             "Noviembre", "Diciembre"
         ];
-        
+
         var day = theDate.getDate();
         var monthIndex = theDate.getMonth();
         var year = theDate.getFullYear();
-        
+
         return day + ' ' + monthNames[monthIndex] + ' ' + year;
     }
-    
-    numToChar = function(number)    {
+
+    numToChar = function (number) {
         var numeric = (number - 1) % 26;
         var letter = this.chr(65 + numeric);
         var number2 = (number - 1) / 26;
@@ -353,7 +377,7 @@ export class VisitReportPageComponent implements OnInit {
     }
 
     chr = function (codePt) {
-        if (codePt > 0xFFFF) { 
+        if (codePt > 0xFFFF) {
             codePt -= 0x10000;
             return String.fromCharCode(0xD800 + (codePt >> 10), 0xDC00 + (codePt & 0x3FF));
         }
@@ -388,22 +412,22 @@ export class VisitReportPageComponent implements OnInit {
         }
         let desde = $("#fedesde").val();
         let hasta = $("#fehasta").val();
-        this.getJSON().subscribe(data => {
+        /*his.getJSON().subscribe(data => {
             //console.log(data);
             this.realData = data;
             this.prepareData();
-        }); 
-        /* this.spinnerService.show();
+        });*/
+        this.spinnerService.show();
         this.orderSubscription = this.ow.getWorkOrdersListFinalized(desde, hasta, opcion).subscribe(orders => {
             this.spinnerService.hide();
             this.realData = orders;
             if (this.orderSubscription) {
                 this.orderSubscription.unsubscribe();
             }
-            if(this.realData.length) {
-                //this.prepareData();
-                console.log(this.realData);
+            if (this.realData.length) {
+                this.prepareData();
+                //console.log(this.realData);
             }
-        }); */
+        });
     }
 }

@@ -18,7 +18,7 @@ export class CustomerService {
   brandCollection: AngularFirestoreCollection<IBrand>;
   brandObs: Observable<IBrand[]>;
   brandDoc: AngularFirestoreDocument<IBrand>;
-  
+
   skuCollection: AngularFirestoreCollection<ISku>;
   skuObs: Observable<ISku[]>;
   skuDoc: AngularFirestoreDocument<ISku>;
@@ -39,7 +39,7 @@ export class CustomerService {
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as ICustomer;
         const id = a.payload.doc.id;
-        return {id, ...data};
+        return { id, ...data };
       }))
     );
 
@@ -47,7 +47,7 @@ export class CustomerService {
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as IBrand;
         const id = a.payload.doc.id;
-        return {id, ...data};
+        return { id, ...data };
       }))
     );
 
@@ -55,7 +55,7 @@ export class CustomerService {
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as ISku;
         const id = a.payload.doc.id;
-        return {id, ...data};
+        return { id, ...data };
       }))
     );
 
@@ -63,7 +63,7 @@ export class CustomerService {
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as IAssociatedBrands;
         const id = a.payload.doc.id;
-        return {id, ...data};
+        return { id, ...data };
       }))
     );
   }
@@ -75,7 +75,7 @@ export class CustomerService {
     this.customerCollection = this.afs.collection<ICustomer>('customer');
     return this.customerCollection.add(customer);
   }
-  
+
 
   delCustomer(customer: ICustomer) {
     this.customerDoc = this.afs.doc(`customer/${customer.id}`);
@@ -91,16 +91,20 @@ export class CustomerService {
     return this.brandObs;
   }
 
-  getBrandFromCustomer(customer: string){
+  getBrandFromCustomer(customer: string) {
     this.brandCollection = this.afs.collection<IBrand>('brand',
-    ref => ref.where('cliente','==',customer));
+      ref => ref.where('cliente', '==', customer));
     return this.brandCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as IBrand;
         const id = a.payload.doc.id;
-        return {id, ...data};
+        return { id, ...data };
       }))
     );
+  }
+
+  getBrandById(id: string) {
+    return this.afs.doc(`brand/${id}`).ref.get();
   }
 
   addBrand(brand: IBrand) {
@@ -118,33 +122,33 @@ export class CustomerService {
     return this.brandDoc.update(brand);
   }
 
-  getSkus(){
+  getSkus() {
     return this.skuObs;
   }
 
-  getSkuFromCustomerAndBrand(customer: string, brand: string){
+  getSkuFromCustomerAndBrand(customer: string, brand: string) {
     this.skuCollection = this.afs.collection<ISku>('sku',
-    ref => ref.where('cliente','==',customer)
-              .where('marca','==',brand));
+      ref => ref.where('cliente', '==', customer)
+        .where('marca', '==', brand));
     return this.skuCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as IBrand;
         const id = a.payload.doc.id;
-        return {id, ...data};
+        return { id, ...data };
       }))
     );
   }
 
-  getSkuFromCustomerBrandAndSku(customer: string, brand: string, sku: string){
+  getSkuFromCustomerBrandAndSku(customer: string, brand: string, sku: string) {
     this.skuCollection = this.afs.collection<ISku>('sku',
-    ref => ref.where('cliente','==',customer)
-              .where('marca','==',brand)
-              .where('sku','==',sku));
+      ref => ref.where('cliente', '==', customer)
+        .where('marca', '==', brand)
+        .where('sku', '==', sku));
     return this.skuCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as IBrand;
         const id = a.payload.doc.id;
-        return {id, ...data};
+        return { id, ...data };
       }))
     );
   }
