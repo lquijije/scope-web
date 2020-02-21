@@ -6,7 +6,7 @@ import { Subscription } from "rxjs";
 import { WorkOrdersService } from "../../../services/work-orders.service";
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import * as Excel from "node_modules/exceljs/dist/exceljs.min.js";
+import * as ExcelJS from "node_modules/exceljs/dist/exceljs.min.js";
 import * as fs from 'file-saver';
 import { CustomerService } from '../../../services/customer.service';
 //import { triggerAsyncId } from 'async_hooks';
@@ -34,7 +34,7 @@ export class VisitReportPageComponent implements OnInit {
         return this.http.get(this._jsonURL);
     }*/
 
-    prepareData = () => {
+    prepareDataFrom() {
         this.spinnerService.show();
         this.realData.forEach(el => {
             el['cliente'] = { 'id': el.sku[0].cliente, 'nombre': el.sku[0].ds_cliente.replace('.', '') };
@@ -112,7 +112,9 @@ export class VisitReportPageComponent implements OnInit {
         this.spinnerService.hide();
         this.preparedData = customers;
         //console.log(this.preparedData);
-        this.xls();
+        setTimeout(() => {
+            this.xls();
+        }, 3000);        
     }
 
     grouping(originalArray, prop, subprop?) {
@@ -140,7 +142,7 @@ export class VisitReportPageComponent implements OnInit {
     }
 
     xlsample() {
-        let workbook = new Excel.Workbook();
+        let workbook = new ExcelJS.Workbook();
         const title = 'Car Sell Report';
 
         const header = ["Year", "Month", "Make", "Model", "Quantity", "Quantity"]
@@ -197,61 +199,10 @@ export class VisitReportPageComponent implements OnInit {
 
     xls() {
         if (this.preparedData.length) {
+           
             let seekV = 0;
-            let workbook = new Excel.Workbook();
-            const setHeaderTitle = (array, data, prop) => {
-                let tag = '';
-                data.tags.forEach(sc => {
-                    if (tag != sc[prop]) {
-                        array.push(sc[prop]);
-                        tag = sc[prop];
-                    } else {
-                        array.push('');
-                    }
-                });
-                return array;
-            };
+            let workbook = new ExcelJS.Workbook();
 
-            const setHeaderDet = (array, data, prop) => {
-                data.tags.forEach(sc => {
-                    array.push(sc[prop]);
-                });
-                return array;
-            }
-
-            const mergeHeader = (data, worksheet, seek, prop) => {
-                let count = 1;
-                let sum = 0;
-                let seekH = 3;
-                let tag = '';
-                data.tags.forEach(sc => {
-                    seekH++;
-                    if (tag != sc[prop]) {
-                        tag = sc[prop];
-                        if (count > 1) {
-                            worksheet.mergeCells(`${this.numToChar(sum)}${seek}:${this.numToChar(seekH - 1)}${seek}`);
-                            worksheet.getCell(`${this.numToChar(sum)}${seek}`).alignment = { horizontal: 'center' };
-                            count = 1;
-                        }
-                        sum = seekH;
-                    } else {
-                        count++;
-                    }
-                });
-                if (count > 1) {
-                    worksheet.mergeCells(`${this.numToChar(sum)}${seek}:${this.numToChar(seekH)}${seek}`);
-                    worksheet.getCell(`${this.numToChar(sum)}${seek}`).alignment = { horizontal: 'center' };
-                }
-            }
-
-            const setStyle = (cell, style) => {
-                if (style.border) {
-                    cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } }
-                }
-                if (style.font) {
-                    cell.font = style.font;
-                }
-            }
             const period = `Desde el ${this.formatDate($('#fedesde').val())}, hasta el ${this.formatDate($('#fehasta').val())}`;
 
             this.preparedData.forEach(customer => {
@@ -260,9 +211,9 @@ export class VisitReportPageComponent implements OnInit {
                 customer.cadenas.forEach(superChain => {
                     seekV += 5;
                     worksheet.addRow([]);
-                    worksheet.addRow([customer.nombre]).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
-                    worksheet.addRow([superChain.nombre]).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
-                    worksheet.addRow([period]).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
+                    worksheet.addRow([customer.nombre]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
+                    worksheet.addRow([superChain.nombre]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
+                    worksheet.addRow([period]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
 
                     worksheet.mergeCells(`A${seekV - 3}:${this.numToChar(superChain.tags.length + 3)}${seekV - 3}`);
                     worksheet.getCell(`A${seekV - 3}`).alignment = { horizontal: 'center' };
@@ -271,13 +222,13 @@ export class VisitReportPageComponent implements OnInit {
                     worksheet.mergeCells(`A${seekV - 1}:${this.numToChar(superChain.tags.length + 3)}${seekV - 1}`);
                     worksheet.getCell(`A${seekV - 1}`).alignment = { horizontal: 'center' };
 
-                    worksheet.addRow(setHeaderTitle(['No', 'FECHA', 'LOCALES'], superChain, 'marca')).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
-                    mergeHeader(superChain, worksheet, seekV, 'marca');
-                    worksheet.addRow(setHeaderTitle(['', '', ''], superChain, 'producto')).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
-                    mergeHeader(superChain, worksheet, seekV + 1, 'producto');
-                    worksheet.addRow(setHeaderDet(['', '', ''], superChain, 'presentacion')).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
+                    worksheet.addRow(this.setHeaderTitle(['No', 'FECHA', 'LOCALES'], superChain, 'marca')).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
+                    this.mergeHeader(superChain, worksheet, seekV, 'marca');
+                    worksheet.addRow(this.setHeaderTitle(['', '', ''], superChain, 'producto')).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
+                    this.mergeHeader(superChain, worksheet, seekV + 1, 'producto');
+                    worksheet.addRow(this.setHeaderDet(['', '', ''], superChain, 'presentacion')).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
                     //mergeHeader(superChain, worksheet, seekV + 2, 'presentacion');
-                    worksheet.addRow(setHeaderDet(['', '', ''], superChain, 'sabor')).eachCell((cell, num) => setStyle(cell, { border: true, font: { bold: true } }));
+                    worksheet.addRow(this.setHeaderDet(['', '', ''], superChain, 'sabor')).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
 
                     worksheet.mergeCells(`A${seekV}:A${seekV + 3}`);
                     worksheet.getCell(`A${seekV}`).alignment = { vertical: 'middle', horizontal: 'center' };
@@ -317,8 +268,9 @@ export class VisitReportPageComponent implements OnInit {
                             });
 
                             let row = worksheet.addRow(finaldata);
+                            
                             row.eachCell((cell, num) => {
-                                setStyle(cell, { border: true });
+                                this.setStyle(cell, { border: true });
                                 if (num > 3 && cell.value === 0) {
                                     cell.fill = {
                                         type: 'pattern',
@@ -342,10 +294,12 @@ export class VisitReportPageComponent implements OnInit {
                     seekV += lengthData;
                 });
             });
-            workbook.xlsx.writeBuffer().then((data) => {
-                let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                fs.saveAs(blob, 'Informe de Visitas.xlsx');
-            });
+            setTimeout(async ()=> {
+                await workbook.xlsx.writeBuffer().then((data) => {
+                    let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                    fs.saveAs(blob, 'Informe de Visitas.xlsx');
+                });
+            },3000)            
         }
     }
 
@@ -365,7 +319,7 @@ export class VisitReportPageComponent implements OnInit {
         return day + ' ' + monthNames[monthIndex] + ' ' + year;
     }
 
-    numToChar = function (number) {
+    numToChar(number) {
         var numeric = (number - 1) % 26;
         var letter = this.chr(65 + numeric);
         var number2 = (number - 1) / 26;
@@ -376,7 +330,7 @@ export class VisitReportPageComponent implements OnInit {
         }
     }
 
-    chr = function (codePt) {
+    chr(codePt) {
         if (codePt > 0xFFFF) {
             codePt -= 0x10000;
             return String.fromCharCode(0xD800 + (codePt >> 10), 0xDC00 + (codePt & 0x3FF));
@@ -397,7 +351,59 @@ export class VisitReportPageComponent implements OnInit {
             console.log(result);
         });
     }
+    setHeaderTitle(array, data, prop) {
+        let tag = '';
+        data.tags.forEach(sc => {
+            if (tag != sc[prop]) {
+                array.push(sc[prop]);
+                tag = sc[prop];
+            } else {
+                array.push('');
+            }
+        });
+        return array;
+    };
 
+    setHeaderDet(array, data, prop) {
+        data.tags.forEach(sc => {
+            array.push(sc[prop]);
+        });
+        return array;
+    }
+
+    mergeHeader(data, worksheet, seek, prop) {
+        let count = 1;
+        let sum = 0;
+        let seekH = 3;
+        let tag = '';
+        data.tags.forEach(sc => {
+            seekH++;
+            if (tag != sc[prop]) {
+                tag = sc[prop];
+                if (count > 1) {
+                    worksheet.mergeCells(`${this.numToChar(sum)}${seek}:${this.numToChar(seekH - 1)}${seek}`);
+                    worksheet.getCell(`${this.numToChar(sum)}${seek}`).alignment = { horizontal: 'center' };
+                    count = 1;
+                }
+                sum = seekH;
+            } else {
+                count++;
+            }
+        });
+        if (count > 1) {
+            worksheet.mergeCells(`${this.numToChar(sum)}${seek}:${this.numToChar(seekH)}${seek}`);
+            worksheet.getCell(`${this.numToChar(sum)}${seek}`).alignment = { horizontal: 'center' };
+        }
+    }
+
+    setStyle(cell, style) {
+        if (style.border) {
+            cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } }
+        }
+        if (style.font) {
+            cell.font = style.font;
+        }
+    }
     processReport() {
         let opcion = "";
         if (!$("#fedesde").val() && !$("#fehasta").val()) {
@@ -425,8 +431,7 @@ export class VisitReportPageComponent implements OnInit {
                 this.orderSubscription.unsubscribe();
             }
             if (this.realData.length) {
-                this.prepareData();
-                //console.log(this.realData);
+                this.prepareDataFrom();
             }
         });
     }
