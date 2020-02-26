@@ -1,23 +1,23 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ISku} from '../../../models/customers/skus';
-import {IOrderStatus} from '../../../models/work-orders/order-status';
-import {CustomerService} from '../../../services/customer.service';
-import {SupermaketsService} from '../../../services/supermakets.service';
-import {UsersService} from '../../../services/users.service';
-import {WorkOrdersService} from '../../../services/work-orders.service';
-import {GeneralService} from '../../../services/general.service';
-import {MatDialog} from '@angular/material';
-import {NgForm} from '@angular/forms/src/directives/ng_form';
-import {ConfirmDialogComponent} from '../../dialog-components/confirm-dialog/confirm-dialog.component';
-import {AlertDialogComponent} from '../../dialog-components/alert-dialog/alert-dialog.component';
-import {IAssociatedBrands} from 'src/app/models/customers/associated-brands';
-import {IWorkOrder} from 'src/app/models/work-orders/work-order';
-import {of} from 'rxjs';
-import {groupBy, mergeMap, reduce, map} from 'rxjs/operators';
-import {Subscription} from 'rxjs';
-import {Ng4LoadingSpinnerService} from 'ng4-loading-spinner';
-import {ICustomer} from 'src/app/models/customers/customers';
-import {IUser} from 'src/app/models/users/user';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ISku } from '../../../models/customers/skus';
+import { IOrderStatus } from '../../../models/work-orders/order-status';
+import { CustomerService } from '../../../services/customer.service';
+import { SupermaketsService } from '../../../services/supermakets.service';
+import { UsersService } from '../../../services/users.service';
+import { WorkOrdersService } from '../../../services/work-orders.service';
+import { GeneralService } from '../../../services/general.service';
+import { MatDialog } from '@angular/material';
+import { NgForm } from '@angular/forms/src/directives/ng_form';
+import { ConfirmDialogComponent } from '../../dialog-components/confirm-dialog/confirm-dialog.component';
+import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
+import { IAssociatedBrands } from 'src/app/models/customers/associated-brands';
+import { IWorkOrder } from 'src/app/models/work-orders/work-order';
+import { of } from 'rxjs';
+import { groupBy, mergeMap, reduce, map } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
+import { ICustomer } from 'src/app/models/customers/customers';
+import { IUser } from 'src/app/models/users/user';
 
 declare var $: any;
 export interface IChainObj {
@@ -36,44 +36,44 @@ export interface IBrandObj {
     id?: string;
     razojnsocial?: string;
 }
-@Component({selector: 'app-order-mant-page', templateUrl: './order-mant-page.component.html', styleUrls: ['./order-mant-page.component.css']})
+@Component({ selector: 'app-order-mant-page', templateUrl: './order-mant-page.component.html', styleUrls: ['./order-mant-page.component.css'] })
 
 export class OrderMantPageComponent implements OnInit,
-OnDestroy {
-    undefined : any;
-    chainList : any;
-    chainObj : IChainObj;
-    storeList : any = [];
-    storeObj : IStoreObj;
-    customerList : any = [];
-    customerObj : ICustomerObj;
-    brandList : any = [];
-    brandObj : any;
-    skuList : any;
-    workOrderList : IWorkOrder[] = [];
-    merchantList : any;
-    merchantObj : IUser;
-    priorityList : any;
-    priorityObj : any;
-    oStatusList : any;
-    tempIdChain : string;
-    tempNameChain : string;
-    tempIdStore : string;
-    tempNameStore : string;
-    tempIdCustomer : string;
-    tempNameCustomer : string;
-    tempIdBrand : string;
-    tempNameBrand : string;
-    editState : any = false;
-    actionName : string = '';
+    OnDestroy {
+    undefined: any;
+    chainList: any;
+    chainObj: IChainObj;
+    storeList: any = [];
+    storeObj: IStoreObj;
+    customerList: any = [];
+    customerObj: ICustomerObj;
+    brandList: any = [];
+    brandObj: any;
+    skuList: any;
+    workOrderList: IWorkOrder[] = [];
+    merchantList: any;
+    merchantObj: IUser;
+    priorityList: any;
+    priorityObj: any;
+    oStatusList: any;
+    tempIdChain: string;
+    tempNameChain: string;
+    tempIdStore: string;
+    tempNameStore: string;
+    tempIdCustomer: string;
+    tempNameCustomer: string;
+    tempIdBrand: string;
+    tempNameBrand: string;
+    editState: any = false;
+    actionName: string = '';
     sequential = 1;
-    rowSkuList : any;
-    superChainSubscription : Subscription;
-    merchantSubscription : Subscription;
-    prioritySubscription : Subscription;
-    workOrderSubscription : Subscription;
-    secuentialSubscription : Subscription;
-    constructor(public dialog : MatDialog, private cs : CustomerService, private sc : SupermaketsService, private us : UsersService, private ow : WorkOrdersService, private gs : GeneralService, private spinnerService : Ng4LoadingSpinnerService) {}
+    rowSkuList: any;
+    superChainSubscription: Subscription;
+    merchantSubscription: Subscription;
+    prioritySubscription: Subscription;
+    workOrderSubscription: Subscription;
+    secuentialSubscription: Subscription;
+    constructor(public dialog: MatDialog, private cs: CustomerService, private sc: SupermaketsService, private us: UsersService, private ow: WorkOrdersService, private gs: GeneralService, private spinnerService: Ng4LoadingSpinnerService) { }
 
     ngOnInit() {
 
@@ -99,7 +99,7 @@ OnDestroy {
             dateFormat: 'yy-mm-dd'
         });
         $('.ui-datepicker').css('font-size', 12);
-        $('#txFeVis').datetimepicker({format: 'Y-m-d', lang: 'es', timepicker: false, closeOnDateSelect: true});
+        $('#txFeVis').datetimepicker({ format: 'Y-m-d', lang: 'es', timepicker: false, closeOnDateSelect: true });
         const n0 = new Option('', '', true, true);
         $('#cmbMerchant').append(n0).trigger('change');
         $('#cmbMerchant').select2({
@@ -274,7 +274,7 @@ OnDestroy {
                                     if (associated) {
                                         (associated as IAssociatedBrands[]).forEach(i => {
                                             i.sku = i.sku.sort((a, b) => {
-                                                return((a.orden < b.orden) ? -1 : 0);
+                                                return ((a.orden < b.orden) ? -1 : 0);
                                             });
                                             i.sku.forEach(s => {
                                                 s['ds_cliente'] = i.cliente.razonsocial;
@@ -330,7 +330,7 @@ OnDestroy {
             this.spinnerService.hide();
             if (d.length > 0) { // this.sequential = d.length + 1;
                 this.sequential = parseInt(d.reduce(function (a, b) {
-                    return(parseInt(a.numero) > parseInt(b.numero)) ? a : b;
+                    return (parseInt(a.numero) > parseInt(b.numero)) ? a : b;
                 }).numero) + 1;
             }
         });
@@ -356,7 +356,7 @@ OnDestroy {
         }
         return arr;
     }
-    onSubmit(myForm : NgForm) {
+    onSubmit(myForm: NgForm) {
 
         const dates = $('#calendar').multiDatesPicker('getDates');
         if (dates.length === 0) {
@@ -396,6 +396,7 @@ OnDestroy {
             this.workOrderList.push({ // numero: this.chainObj.nombre.trim().replace(' ', '').substr(0, 3) + '-' + this.generateUID(),
                 numero: ('00000' + this.sequential).slice(-5),
                 prioridad: this.priorityObj.nombre,
+                cliente: this.customerObj,
                 cadena: this.chainObj,
                 local: this.storeObj,
                 mercaderista: this.merchantObj,
@@ -407,7 +408,7 @@ OnDestroy {
                 },
                 sku: this.skuList
             });
-            this.sequential ++;
+            this.sequential++;
         });
 
         let count = 0;
@@ -423,7 +424,7 @@ OnDestroy {
                         });
                         this.openAlert('Scope Web', `Se generaron las siguientes órdenes:  ${
                             strOrders.join()
-                        }`);
+                            }`);
                         this.limpiar();
                     }
                 });
@@ -446,13 +447,13 @@ OnDestroy {
         // }, 3000);
 
     }
-    calendarizar() {}
+    calendarizar() { }
     move(array, element, delta) {
         var index = array.indexOf(element);
         var newIndex = index + delta;
-        if (newIndex < 0 || newIndex == array.length) 
+        if (newIndex < 0 || newIndex == array.length)
             return;
-        
+
 
 
         // Already at the top or bottom.
@@ -507,13 +508,13 @@ OnDestroy {
             nombre: 'NORMAL'
         };
     }
-    exclude(sku : any) {
+    exclude(sku: any) {
         const index: number = this.skuList.indexOf(sku);
         if (index !== -1) {
             this.skuList.splice(index, 1);
         }
     }
-    openAlert(tit : string, msg : string): void {
+    openAlert(tit: string, msg: string): void {
         const dialogRef = this.dialog.open(AlertDialogComponent, {
             width: '25%',
             data: {
@@ -522,7 +523,7 @@ OnDestroy {
             }
         });
 
-        dialogRef.afterClosed().subscribe((result) => {});
+        dialogRef.afterClosed().subscribe((result) => { });
     }
     generateUID() {
         return Math.floor(1e5 + (Math.random() * 5e5));

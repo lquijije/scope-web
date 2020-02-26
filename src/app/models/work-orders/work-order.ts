@@ -10,6 +10,7 @@ export interface IWorkOrder {
     id?: string;
     numero?: string;
     prioridad?: string;
+    cliente?: ICustomer;
     cadena?: ISuperChain;
     local?: ISuperStore;
     mercaderista?: IUser;
