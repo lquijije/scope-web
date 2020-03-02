@@ -60,6 +60,16 @@ export class SupermaketsService {
     );
   }
 
+  getSuperStore() {
+    return this.superStoreCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as ISuperChain;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
+
   addSuperChain(superChain: ISuperChain) {
     return this.superChainCollection.add(superChain);
   }

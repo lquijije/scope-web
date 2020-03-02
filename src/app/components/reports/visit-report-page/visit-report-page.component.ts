@@ -4,6 +4,7 @@ import { AlertDialogComponent } from "../../dialog-components/alert-dialog/alert
 import { Ng4LoadingSpinnerService } from "ng4-loading-spinner";
 import { Subscription } from "rxjs";
 import { WorkOrdersService } from "../../../services/work-orders.service";
+import { SupermaketsService } from '../../../services/supermakets.service';
 import * as ExcelJS from "node_modules/exceljs/dist/exceljs.min.js";
 import * as fs from 'file-saver';
 import { CustomerService } from '../../../services/customer.service';
@@ -18,14 +19,16 @@ export class VisitReportPageComponent implements OnInit {
     preparedData: any = [];
     orderSubscription: Subscription;
     customerSubscription: Subscription;
+    storeSubscription: Subscription;
     customerList: any;
     tempIdCustomer: string = '';
     tempNameCustomer: string = '';
-
+    storeList: any;
     constructor(public dialog: MatDialog,
         private spinnerService: Ng4LoadingSpinnerService,
         private ow: WorkOrdersService,
-        private cs: CustomerService) {
+        private cs: CustomerService,
+        private sc: SupermaketsService) {
     }
 
     ngOnInit() {
@@ -56,6 +59,12 @@ export class VisitReportPageComponent implements OnInit {
                 return a.razonsocial < b.razonsocial ? -1 : 1;
             });
         });
+
+        this.storeSubscription = this.sc.getSuperStore().subscribe(stores => {
+            this.spinnerService.hide();
+            this.storeList = stores;
+            console.log(this.storeList);
+          });
     }
 
     processReport() {
@@ -88,12 +97,10 @@ export class VisitReportPageComponent implements OnInit {
             }
             nombreArchivo = this.tempNameCustomer + '.xlsx';
         }
-        console.log(cliente);
         this.spinnerService.show();
         this.orderSubscription = this.ow.getWorkOrdersListFinalizedByCustomer(desde, hasta, opcion, cliente).subscribe(orders => {
             this.spinnerService.hide();
             this.realData = orders;
-            console.log(this.realData);
             if (this.orderSubscription) {
                 this.orderSubscription.unsubscribe();
             }
@@ -135,6 +142,13 @@ export class VisitReportPageComponent implements OnInit {
                     cu['cadenas'].forEach(sc => {
                         let superStore = this.realData.filter(obj => (obj.cliente.id == cu.id && obj.cadena.id == sc.id));
                         sc['locales'] = this.grouping(superStore, 'local', 'nombre');
+                        sc['locales'].forEach(st => {
+                            st['ciudad'] = this.storeList.filter(obj => (obj.id == st.id))[0].ciudad.trim();
+                        });
+                        sc['locales'] = sc['locales'].sort((a, b) => {
+                            return (a.ciudad > b.ciudad) ? 1 : -1;
+                        });
+
                         let skuBySuperChain = [];
                         sc['locales'].forEach(st => {
                             let visits = this.realData.filter(obj => (obj.cliente.id == cu.id && obj.cadena.id == sc.id && obj.local.id == st.id));
@@ -191,6 +205,7 @@ export class VisitReportPageComponent implements OnInit {
                 });
                 setTimeout(() => {
                     this.spinnerService.hide();
+                    console.log(customers);
                     resolve(customers);
                 }, 2000);
             } catch (err) {
@@ -200,7 +215,6 @@ export class VisitReportPageComponent implements OnInit {
     }
 
     xls(data) {
-
         return new Promise((resolve, reject) => {
             try {
                 if (data.length) {
@@ -218,21 +232,21 @@ export class VisitReportPageComponent implements OnInit {
                             worksheet.addRow([customer.nombre]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
                             worksheet.addRow([superChain.nombre]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
                             worksheet.addRow([period]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
-
-                            worksheet.mergeCells(`A${seekV - 3}:${this.numToChar(superChain.tags.length + 3)}${seekV - 3}`);
+                            
+                            worksheet.mergeCells(`A${seekV - 3}:${this.numToChar(superChain.tags.length + 4)}${seekV - 3}`);
                             worksheet.getCell(`A${seekV - 3}`).alignment = { horizontal: 'center' };
-                            worksheet.mergeCells(`A${seekV - 2}:${this.numToChar(superChain.tags.length + 3)}${seekV - 2}`);
+                            worksheet.mergeCells(`A${seekV - 2}:${this.numToChar(superChain.tags.length + 4)}${seekV - 2}`);
                             worksheet.getCell(`A${seekV - 2}`).alignment = { horizontal: 'center' };
-                            worksheet.mergeCells(`A${seekV - 1}:${this.numToChar(superChain.tags.length + 3)}${seekV - 1}`);
+                            worksheet.mergeCells(`A${seekV - 1}:${this.numToChar(superChain.tags.length + 4)}${seekV - 1}`);
                             worksheet.getCell(`A${seekV - 1}`).alignment = { horizontal: 'center' };
 
-                            worksheet.addRow(this.setHeaderTitle(['No', 'FECHA', 'LOCALES'], superChain, 'marca')).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
+                            worksheet.addRow(this.setHeaderTitle(['No', 'FECHA', 'CIUDAD', 'LOCALES'], superChain, 'marca')).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
                             this.mergeHeader(superChain, worksheet, seekV, 'marca');
-                            worksheet.addRow(this.setHeaderTitle(['', '', ''], superChain, 'producto')).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
+                            worksheet.addRow(this.setHeaderTitle(['', '', '', ''], superChain, 'producto')).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
                             this.mergeHeader(superChain, worksheet, seekV + 1, 'producto');
-                            worksheet.addRow(this.setHeaderDet(['', '', ''], superChain, 'presentacion')).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
+                            worksheet.addRow(this.setHeaderDet(['', '', '', ''], superChain, 'presentacion')).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
                             //mergeHeader(superChain, worksheet, seekV + 2, 'presentacion');
-                            worksheet.addRow(this.setHeaderDet(['', '', ''], superChain, 'sabor')).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
+                            worksheet.addRow(this.setHeaderDet(['', '', '', ''], superChain, 'sabor')).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
 
                             worksheet.mergeCells(`A${seekV}:A${seekV + 3}`);
                             worksheet.getCell(`A${seekV}`).alignment = { vertical: 'middle', horizontal: 'center' };
@@ -240,12 +254,14 @@ export class VisitReportPageComponent implements OnInit {
                             worksheet.getCell(`B${seekV}`).alignment = { vertical: 'middle', horizontal: 'center' };
                             worksheet.mergeCells(`C${seekV}:C${seekV + 3}`);
                             worksheet.getCell(`C${seekV}`).alignment = { vertical: 'middle', horizontal: 'center' };
+                            worksheet.mergeCells(`D${seekV}:D${seekV + 3}`);
+                            worksheet.getCell(`D${seekV}`).alignment = { vertical: 'middle', horizontal: 'center' };
                             seekV += 3;
                             let lengthData = 0;
                             superChain.locales.forEach(superStore => {
                                 superStore.visitas.forEach(visit => {
                                     lengthData++;
-                                    let finaldata = [lengthData, visit.visita, superStore.nombre];
+                                    let finaldata = [lengthData, visit.visita, superStore.ciudad , superStore.nombre];
                                     let minsValues = [];
                                     superChain.tags.forEach(col => {
                                         let skuMatch = visit.skus.filter(sku => sku.marca = col.marca && sku.producto == col.producto && sku.presentacion == col.presentacion && sku.sabor == col.sabor);
@@ -275,15 +291,15 @@ export class VisitReportPageComponent implements OnInit {
 
                                     row.eachCell((cell, num) => {
                                         this.setStyle(cell, { border: true });
-                                        if (num > 3 && cell.value === 0) {
+                                        if (num > 4 && cell.value === 0) {
                                             cell.fill = {
                                                 type: 'pattern',
                                                 pattern: 'solid',
                                                 fgColor: { argb: 'FF9999' }
                                             }
                                         }
-                                        if (num > 3 && minsValues[num - 4] > 0) {
-                                            const minimo = parseInt(minsValues[num - 4], 10);
+                                        if (num > 4 && minsValues[num - 5] > 0) {
+                                            const minimo = parseInt(minsValues[num - 5], 10);
                                             if (cell.value > 0 && cell.value < minimo) {
                                                 cell.fill = {
                                                     type: 'pattern',
@@ -453,7 +469,7 @@ export class VisitReportPageComponent implements OnInit {
     mergeHeader(data, worksheet, seek, prop) {
         let count = 1;
         let sum = 0;
-        let seekH = 3;
+        let seekH = 4;
         let tag = '';
         data.tags.forEach(sc => {
             seekH++;
@@ -487,6 +503,9 @@ export class VisitReportPageComponent implements OnInit {
     ngOnDestroy() {
         if (this.customerSubscription) {
             this.customerSubscription.unsubscribe();
+        }
+        if (this.storeSubscription) {
+            this.storeSubscription.unsubscribe();
         }
     }
 }
