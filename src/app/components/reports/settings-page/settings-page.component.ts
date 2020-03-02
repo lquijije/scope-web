@@ -1,18 +1,18 @@
-import {Component, OnInit} from '@angular/core';
-import {CustomerService} from '../../../services/customer.service';
-import {Ng4LoadingSpinnerService} from 'ng4-loading-spinner';
-import {MatDialog} from '@angular/material';
-import {AlertDialogComponent} from '../../dialog-components/alert-dialog/alert-dialog.component';
-import {Subscription} from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { CustomerService } from '../../../services/customer.service';
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
+import { MatDialog } from '@angular/material';
+import { AlertDialogComponent } from '../../dialog-components/alert-dialog/alert-dialog.component';
+import { Subscription } from 'rxjs';
 declare var $: any;
-@Component({selector: 'app-settings-page', templateUrl: './settings-page.component.html', styleUrls: ['./settings-page.component.css']})
+@Component({ selector: 'app-settings-page', templateUrl: './settings-page.component.html', styleUrls: ['./settings-page.component.css'] })
 export class SettingsPageComponent implements OnInit {
-    customerList : any;
-    tempIdCustomer : string = '';
-    tempNameCustomer : string = '';
-    brandList : any;
-    customerSubscription : Subscription;
-    constructor(public dialog : MatDialog, private spinnerService : Ng4LoadingSpinnerService, private cs : CustomerService) {}
+    customerList: any;
+    tempIdCustomer: string = '';
+    tempNameCustomer: string = '';
+    brandList: any;
+    customerSubscription: Subscription;
+    constructor(public dialog: MatDialog, private spinnerService: Ng4LoadingSpinnerService, private cs: CustomerService) { }
 
     ngOnInit() {
         const self = this;
@@ -68,7 +68,7 @@ export class SettingsPageComponent implements OnInit {
             });
         });
     }
-    openAlert(tit : string, msg : string): void {
+    openAlert(tit: string, msg: string): void {
         const dialogRef = this.dialog.open(AlertDialogComponent, {
             width: '25%',
             data: {
@@ -76,6 +76,11 @@ export class SettingsPageComponent implements OnInit {
                 msg: msg
             }
         });
-        dialogRef.afterClosed().subscribe((result) => {});
+        dialogRef.afterClosed().subscribe((result) => { });
+    }
+    ngOnDestroy() {
+        if (this.customerSubscription) {
+            this.customerSubscription.unsubscribe();
+        }
     }
 }

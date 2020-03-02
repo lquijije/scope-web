@@ -18,12 +18,17 @@
           <h4 class="text-center"><strong> Informe de Visitas </strong></h4>
           <div class="row">
             <div class="col-12">
-              <!-- <div class="row">
-                <select class="form-control w-100" id="cmbCustomer">
-                  <option *ngFor="let customer of customerList" value="{{customer.id}}">{{customer.razonsocial}}
-                  </option>
-                </select>
-              </div> -->
+              <div class="row">
+                <div class="col-12 col-md-2">
+                  <label for="">Cliente:</label>
+                </div>
+                <div class="col-12 col-md-10">
+                  <select class="form-control w-100" id="cmbCustomer">
+                    <option *ngFor="let customer of customerList" value="{{customer.id}}">{{customer.razonsocial}}
+                    </option>
+                  </select>
+                </div>
+              </div>
               <div class="row">
                 <div class="col">
                   <mat-form-field class="w-100">

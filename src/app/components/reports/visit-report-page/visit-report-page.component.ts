@@ -31,7 +31,7 @@ export class VisitReportPageComponent implements OnInit {
     ngOnInit() {
         $("#fedesde").datetimepicker({ format: "Y-m-d", lang: "es", timepicker: false, closeOnDateSelect: true });
         $("#fehasta").datetimepicker({ format: "Y-m-d", lang: "es", timepicker: false, closeOnDateSelect: true });
-        /*$('#cmbCustomer').append(new Option('', '', true, true)).trigger('change');
+        $('#cmbCustomer').append(new Option('', '', true, true)).trigger('change');
         $('#cmbCustomer').select2({
             placeholder: 'Seleccione...',
             language: {
@@ -55,10 +55,7 @@ export class VisitReportPageComponent implements OnInit {
             this.customerList = customers.filter(ch => ch.estado === 'A').sort((a, b) => {
                 return a.razonsocial < b.razonsocial ? -1 : 1;
             });
-            if (this.customerSubscription) {
-                this.customerSubscription.unsubscribe();
-            }
-        });*/
+        });
     }
 
     processReport() {
@@ -68,7 +65,7 @@ export class VisitReportPageComponent implements OnInit {
             return false;
         }
         /*
-        if( this.tempIdCustomer = '') {
+        if( this.tempIdCustomer == '') {
             this.openAlert("Scope Alert", "Debe escoger un cliente");
             return false;
         }*/
@@ -82,10 +79,21 @@ export class VisitReportPageComponent implements OnInit {
         let desde = $("#fedesde").val();
         let hasta = $("#fehasta").val();
 
+        let cliente = null;
+        let nombreArchivo = 'Informe de Visitas.xlsx';
+        if (this.tempIdCustomer != '' && this.tempNameCustomer != '') {
+            cliente = {
+                'id': this.tempIdCustomer,
+                'nombre': this.tempNameCustomer.trim()
+            }
+            nombreArchivo = this.tempNameCustomer + '.xlsx';
+        }
+        console.log(cliente);
         this.spinnerService.show();
-        this.orderSubscription = this.ow.getWorkOrdersListFinalized(desde, hasta, opcion).subscribe(orders => {
+        this.orderSubscription = this.ow.getWorkOrdersListFinalizedByCustomer(desde, hasta, opcion, cliente).subscribe(orders => {
             this.spinnerService.hide();
             this.realData = orders;
+            console.log(this.realData);
             if (this.orderSubscription) {
                 this.orderSubscription.unsubscribe();
             }
@@ -96,7 +104,7 @@ export class VisitReportPageComponent implements OnInit {
                         this.xls(data).then((workbook: ExcelJS.Workbook) => {
                             workbook.xlsx.writeBuffer().then((data) => {
                                 let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                                fs.saveAs(blob, 'Informe de Visitas.xlsx');
+                                fs.saveAs(blob, nombreArchivo);
                             });
                         });
                     }
@@ -110,7 +118,7 @@ export class VisitReportPageComponent implements OnInit {
             try {
                 this.spinnerService.show();
                 this.realData.forEach(el => {
-                    el['cliente'] = { 'id': el.sku[0].cliente, 'nombre': el.sku[0].ds_cliente.replace('.', '') };
+                    el.cliente.nombre = el.cliente.nombre.split('.').join('');
                     el['visita'] = el['visita'].substring(0, 10);
                 });
 
@@ -476,4 +484,9 @@ export class VisitReportPageComponent implements OnInit {
         }
     }
 
+    ngOnDestroy() {
+        if (this.customerSubscription) {
+            this.customerSubscription.unsubscribe();
+        }
+    }
 }

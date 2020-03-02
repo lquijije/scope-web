@@ -68,7 +68,13 @@ export class CustomerService {
     );
   }
   getCustomer() {
-    return this.customerObs;
+    return this.afs.collection<ICustomer>('customer').snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as ICustomer;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
   }
 
   addCustomer(customer: ICustomer) {

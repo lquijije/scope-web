@@ -27,14 +27,14 @@ export class WorkOrdersService {
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as IWorkOrder;
         const id = a.payload.doc.id;
-        return {id, ...data};
+        return { id, ...data };
       }))
     );
     this.oStatusObs = this.oStatusCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
         const data = a.payload.doc.data() as IOrderStatus;
         const id = a.payload.doc.id;
-        return {id, ...data};
+        return { id, ...data };
       }))
     );
   }
@@ -43,14 +43,14 @@ export class WorkOrdersService {
   }
 
   getWorkOrdersList(desde: string, hasta: string, condicion: string) {
-    if(condicion == 'creacion') {
+    if (condicion == 'creacion') {
       desde = desde + ' 00:00:00';
       hasta = hasta + ' 23:59:59';
       console.log(desde);
       console.log(hasta);
       return this.afs.collection<IWorkOrder>('work-orders', ref => ref
-      .where(condicion, '>=', new Date(desde))
-      .where(condicion, '<=', new Date(hasta))
+        .where(condicion, '>=', new Date(desde))
+        .where(condicion, '<=', new Date(hasta))
       ).snapshotChanges().pipe(
         map(actions => actions.map(a => {
           const data = a.payload.doc.data() as IWorkOrder;
@@ -64,8 +64,8 @@ export class WorkOrdersService {
       console.log(desde);
       console.log(hasta);
       return this.afs.collection<IWorkOrder>('work-orders', ref => ref
-      .where(condicion, '>=', desde)
-      .where(condicion, '<=', hasta)
+        .where(condicion, '>=', desde)
+        .where(condicion, '<=', hasta)
       ).snapshotChanges().pipe(
         map(actions => actions.map(a => {
           const data = a.payload.doc.data() as IWorkOrder;
@@ -76,15 +76,43 @@ export class WorkOrdersService {
     }
   }
 
-  getWorkOrdersListFinalized(desde: string, hasta: string, condicion: string) {
-    if(condicion == 'creacion') {
-      desde = desde + ' 00:00:00';
-      hasta = hasta + ' 23:59:59';
-      
+  getWorkOrdersListFinalized(desde: any, hasta: any, condicion: string) {
+    desde = desde + ' 00:00:00';
+    hasta = hasta + ' 23:59:59';
+
+    if (condicion == 'creacion') {
+      desde = new Date(desde);
+      hasta = new Date(hasta);
+    }
+
+    return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+      .where(condicion, '>=', desde)
+      .where(condicion, '<=', hasta)
+      .where('estado', '==', { "id": "kq5JBF6UyK26E2S7fEz1", "nombre": "FINALIZADA" })
+    ).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IWorkOrder;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
+
+
+  getWorkOrdersListFinalizedByCustomer(desde: any, hasta: any, condicion: string, cliente: string) {
+    desde = desde + ' 00:00:00';
+    hasta = hasta + ' 23:59:59';
+
+    if (condicion == 'creacion') {
+      desde = new Date(desde);
+      hasta = new Date(hasta);
+    }
+    if (cliente) {
       return this.afs.collection<IWorkOrder>('work-orders', ref => ref
-      .where(condicion, '>=', new Date(desde))
-      .where(condicion, '<=', new Date(hasta))
-      .where('estado', '==', {"id": "kq5JBF6UyK26E2S7fEz1","nombre": "FINALIZADA"})
+        .where(condicion, '>=', desde)
+        .where(condicion, '<=', hasta)
+        .where('estado', '==', { "id": "kq5JBF6UyK26E2S7fEz1", "nombre": "FINALIZADA" })
+        .where('cliente', '==', cliente)
       ).snapshotChanges().pipe(
         map(actions => actions.map(a => {
           const data = a.payload.doc.data() as IWorkOrder;
@@ -93,12 +121,10 @@ export class WorkOrdersService {
         }))
       );
     } else {
-      desde = desde + ' 00:00:00';
-      hasta = hasta + ' 23:59:59';
       return this.afs.collection<IWorkOrder>('work-orders', ref => ref
-      .where(condicion, '>=', desde)
-      .where(condicion, '<=', hasta)
-      .where('estado', '==', {"id": "kq5JBF6UyK26E2S7fEz1","nombre": "FINALIZADA"})
+        .where(condicion, '>=', desde)
+        .where(condicion, '<=', hasta)
+        .where('estado', '==', { "id": "kq5JBF6UyK26E2S7fEz1", "nombre": "FINALIZADA" })
       ).snapshotChanges().pipe(
         map(actions => actions.map(a => {
           const data = a.payload.doc.data() as IWorkOrder;
@@ -119,16 +145,16 @@ export class WorkOrdersService {
     return this.wOrderCollection.add(wOrder);
   }
   updWorkOrder(wOrder: IWorkOrder) {
-      this.wOrderDoc = this.afs.doc(`work-orders/${wOrder.id}`);
-      return this.wOrderDoc.update(wOrder);
+    this.wOrderDoc = this.afs.doc(`work-orders/${wOrder.id}`);
+    return this.wOrderDoc.update(wOrder);
   }
   addWorkOrders(wOrders: IWorkOrder[]) {
-      var reads = [];
-      wOrders.forEach(w => {
-        var promise =  this.wOrderCollection.add(w);
-        reads.push(promise);
-      });
-      return Promise.all(reads);
+    var reads = [];
+    wOrders.forEach(w => {
+      var promise = this.wOrderCollection.add(w);
+      reads.push(promise);
+    });
+    return Promise.all(reads);
   }
   delOrder(order: IWorkOrder) {
     this.wOrderDoc = this.afs.doc(`work-orders/${order.id}`);
