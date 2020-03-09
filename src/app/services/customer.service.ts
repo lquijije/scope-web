@@ -200,4 +200,112 @@ export class CustomerService {
     this.asocBrandsDoc = this.afs.doc(`associated-brands/${assoc.id}`);
     return this.asocBrandsDoc.delete();
   }
+  getAssociatedBrandsByAll(chain: string, store: string, customer: string, brand: string) {
+    let dataFilCollection: AngularFirestoreCollection<IAssociatedBrands>;
+    if(chain && store && customer && brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('cadena', '==', chain)
+        .where('cliente', '==', customer)
+        .where('local', '==', store)
+        .where('marca', '==', brand)
+      );
+    }
+    if(!chain && !store && !customer && !brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands');
+    }
+    if(chain && store && customer && !brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('cadena', '==', chain)
+        .where('local', '==', store)
+        .where('cliente', '==', customer)
+      );
+    }
+    if(chain && store && !customer && brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('cadena', '==', chain)
+        .where('local', '==', store)
+        .where('marca', '==', brand)
+      );
+    }
+    if(chain && !store && customer && brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('cadena', '==', chain)
+        .where('cliente', '==', customer)
+        .where('marca', '==', brand)
+      );
+    }
+    if(!chain && store && customer && brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('local', '==', store)
+        .where('cliente', '==', customer)
+        .where('marca', '==', brand)
+      );
+    }
+
+    if(chain && store && !customer && !brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('cadena', '==', chain)
+        .where('local', '==', store)
+      );
+    }
+    if(chain && !store && customer && !brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('cadena', '==', chain)
+        .where('cliente', '==', customer)
+      );
+    }
+    if(!chain && store && customer && !brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('local', '==', store)
+        .where('cliente', '==', customer)
+      );
+    }
+    if(chain && !store && !customer && brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('cadena', '==', chain)
+        .where('marca', '==', brand)
+      );
+    }
+    if(!chain && store && !customer && brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('local', '==', store)
+        .where('marca', '==', brand)
+      );
+    }
+    if(!chain && !store && customer && brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('cliente', '==', customer)
+        .where('marca', '==', brand)
+      );
+    }
+
+    if(chain && !store && !customer && !brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('cadena', '==', chain)
+      );
+    }
+    if(!chain && store && !customer && !brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('local', '==', store)
+      );
+    }
+    if(!chain && !store && customer && !brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('cliente', '==', customer)
+      );
+    }
+    if(!chain && !store && !customer && brand) {
+      dataFilCollection = this.afs.collection<IAssociatedBrands>('associated-brands', ref => ref
+        .where('marca', '==', brand)
+      );
+    }
+
+    return dataFilCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IAssociatedBrands;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
 }

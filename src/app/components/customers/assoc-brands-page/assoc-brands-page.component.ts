@@ -277,11 +277,11 @@ OnDestroy {
                 return a.nombre < b.nombre ? -1 : 1;
             });
         });
-        this.assocSubscription = this.cs.getAssociatedBrands().subscribe(assocBrands => {
+        /*this.assocSubscription = this.cs.getAssociatedBrands().subscribe(assocBrands => {
             this.spinnerService.hide();
             this.assocBrandList = assocBrands;
             this.assocList = assocBrands;
-        });
+        });*/
     }
     ngOnDestroy() {
         this.customerSubscription.unsubscribe();
@@ -649,26 +649,40 @@ OnDestroy {
     }
     consultar() {
         this.assocBrandList = this.assocList;
+        let chain = null;
+        let store = null;
+        let customer = null;
+        let brand = null;
 
         if ($('#cmbChainFilter').val() !== '') {
-            this.assocBrandList = this.assocBrandList.filter(e => {
-                return e.cadena.id === this.chainObjFilter.id;
-            });
+            // this.assocBrandList = this.assocBrandList.filter(e => {
+            //     return e.cadena.id === this.chainObjFilter.id;
+            // });
+            chain = this.chainObjFilter;
         }
         if ($('#cmbStoreFilter').val() !== '') {
-            this.assocBrandList = this.assocBrandList.filter(e => {
-                return e.local.id === this.storeObjFilter.id;
-            });
+            // this.assocBrandList = this.assocBrandList.filter(e => {
+            //     return e.local.id === this.storeObjFilter.id;
+            // });
+            store = this.storeObjFilter;
         }
         if ($('#cmbCustomerFilter').val() !== '') {
-            this.assocBrandList = this.assocBrandList.filter(e => {
-                return e.cliente.id === this.customerObjFilter.id;
-            });
+            // this.assocBrandList = this.assocBrandList.filter(e => {
+            //     return e.cliente.id === this.customerObjFilter.id;
+            // });
+            customer = this.customerObjFilter;
         }
         if ($('#cmbBrandFilter').val() !== '') {
-            this.assocBrandList = this.assocBrandList.filter(e => {
-                return e.marca.id === this.brandObjFilter.id;
-            });
+            // this.assocBrandList = this.assocBrandList.filter(e => {
+            //     return e.marca.id === this.brandObjFilter.id;
+            // });
+            brand = this.brandObjFilter;
         }
+        this.spinnerService.show();
+        this.assocSubscription = this.cs.getAssociatedBrandsByAll(chain, store, customer, brand).subscribe(assocBrands => {
+            this.spinnerService.hide();
+            this.assocBrandList = assocBrands;
+            this.assocList = assocBrands;
+        });
     }
 }

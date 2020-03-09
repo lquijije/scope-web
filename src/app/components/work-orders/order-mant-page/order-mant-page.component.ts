@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs';
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 import { ICustomer } from 'src/app/models/customers/customers';
 import { IUser } from 'src/app/models/users/user';
+import { ISequentials } from 'src/app/models/work-orders/sequentials';
 
 declare var $: any;
 export interface IChainObj {
@@ -51,6 +52,7 @@ export class OrderMantPageComponent implements OnInit,
     brandObj: any;
     skuList: any;
     workOrderList: IWorkOrder[] = [];
+    seqItem: ISequentials;
     merchantList: any;
     merchantObj: IUser;
     priorityList: any;
@@ -326,13 +328,17 @@ export class OrderMantPageComponent implements OnInit,
                 return a.nombre > b.nombre ? -1 : 1;
             });
         });
-        this.secuentialSubscription = this.ow.getWorkOrders().subscribe(d => {
+        this.secuentialSubscription = this.ow.getSequentials().subscribe(seq => {
             this.spinnerService.hide();
-            if (d.length > 0) { // this.sequential = d.length + 1;
-                this.sequential = parseInt(d.reduce(function (a, b) {
-                    return (parseInt(a.numero) > parseInt(b.numero)) ? a : b;
-                }).numero) + 1;
-            }
+            console.log(seq);
+            this.seqItem = seq[0];
+            this.sequential = seq[0].workorders;
+
+            // if (d.length > 0) { // this.sequential = d.length + 1;
+            //     this.sequential = parseInt(d.reduce(function (a, b) {
+            //         return (parseInt(a.numero) > parseInt(b.numero)) ? a : b;
+            //     }).numero) + 1;
+            // }
         });
 
     }
@@ -393,6 +399,7 @@ export class OrderMantPageComponent implements OnInit,
         });
         this.merchantObj.nombre = this.merchantObj.nombre.trim();
         dates.forEach(i => {
+            this.sequential++;
             this.workOrderList.push({ // numero: this.chainObj.nombre.trim().replace(' ', '').substr(0, 3) + '-' + this.generateUID(),
                 numero: ('00000' + this.sequential).slice(-5),
                 prioridad: this.priorityObj.nombre,
@@ -408,7 +415,6 @@ export class OrderMantPageComponent implements OnInit,
                 },
                 sku: this.skuList
             });
-            this.sequential++;
         });
 
         let count = 0;
@@ -426,26 +432,13 @@ export class OrderMantPageComponent implements OnInit,
                             strOrders.join()
                             }`);
                         this.limpiar();
+                        this.seqItem.workorders = this.sequential;
+                        this.ow.updSequential(this.seqItem);
                     }
                 });
                 clearInterval(inter);
             });
         }, 500);
-        // const inter = setInterval(() => {
-        /* this.ow.addWorkOrders(this.workOrderList).then(msg => {
-        // this.spinnerService.hide();
-        const strOrders = this.workOrderList.map(x => {
-          return x.numero;
-        });      
-        this.openAlert('Scope Web', `Se generaron las siguientes órdenes:  ${strOrders.join()}`);
-        this.limpiar();
-      }).catch(err => {
-        // this.spinnerService.hide();
-        this.openAlert('Scope Error', `No se generaron algunas órdenes, ${err.message}`);
-      }); */
-        // clearInterval(inter);
-        // }, 3000);
-
     }
     calendarizar() { }
     move(array, element, delta) {

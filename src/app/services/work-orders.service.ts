@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { IWorkOrder } from '../models/work-orders/work-order';
+import { ISequentials } from '../models/work-orders/sequentials';
 import { IOrderStatus } from '../models/work-orders/order-status';
 import { Observable } from 'rxjs';
 import { map, groupBy } from 'rxjs/operators';
@@ -12,6 +13,9 @@ export class WorkOrdersService {
   wOrderCollection: AngularFirestoreCollection<IWorkOrder>;
   wOrderObs: Observable<IWorkOrder[]>;
   wOrderDoc: AngularFirestoreDocument<IWorkOrder>;
+  wSeqDoc: AngularFirestoreDocument<ISequentials>;
+  wSeqCollection: AngularFirestoreCollection<ISequentials>;
+  wSeqObs: Observable<ISequentials[]>;
 
   oStatusCollection: AngularFirestoreCollection<IOrderStatus>;
   oStatusObs: Observable<IOrderStatus[]>;
@@ -22,10 +26,10 @@ export class WorkOrdersService {
     this.afs = objafs;
     this.wOrderCollection = this.afs.collection<IWorkOrder>('work-orders');
     this.oStatusCollection = this.afs.collection<IWorkOrder>('order-status');
-
-    this.wOrderObs = this.wOrderCollection.snapshotChanges().pipe(
+    this.wSeqCollection = this.afs.collection<ISequentials>('sequentials');
+    this.wSeqObs = this.wSeqCollection.snapshotChanges().pipe(
       map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as IWorkOrder;
+        const data = a.payload.doc.data() as ISequentials;
         const id = a.payload.doc.id;
         return { id, ...data };
       }))
@@ -38,8 +42,8 @@ export class WorkOrdersService {
       }))
     );
   }
-  getWorkOrders() {
-    return this.wOrderObs;
+  getSequentials() {
+     return this.wSeqObs;
   }
 
   getWorkOrdersList(desde: string, hasta: string, condicion: string) {
@@ -159,5 +163,9 @@ export class WorkOrdersService {
   delOrder(order: IWorkOrder) {
     this.wOrderDoc = this.afs.doc(`work-orders/${order.id}`);
     return this.wOrderDoc.delete();
+  }
+  updSequential(seq: ISequentials) {
+    this.wSeqDoc = this.afs.doc(`sequentials/${seq.id}`);
+    return this.wSeqDoc.update(seq);
   }
 }
