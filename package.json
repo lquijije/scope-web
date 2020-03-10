@@ -39,7 +39,7 @@
     "jquery-ui-multidatespicker": "^1.6.6",
     "jszip": "^3.2.1",
     "jszip-utils": "0.0.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "ng4-loading-spinner": "^1.2.3",
     "popper.js": "^1.14.6",
     "rxjs": "~6.2.0",
