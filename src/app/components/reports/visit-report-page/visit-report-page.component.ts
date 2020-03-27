@@ -93,7 +93,7 @@ export class VisitReportPageComponent implements OnInit {
         if (this.tempIdCustomer != '' && this.tempNameCustomer != '') {
             cliente = {
                 'id': this.tempIdCustomer,
-                'nombre': this.tempNameCustomer.trim()
+                'razonsocial': this.tempNameCustomer.trim()
             }
             nombreArchivo = this.tempNameCustomer + '.xlsx';
         }
@@ -125,11 +125,11 @@ export class VisitReportPageComponent implements OnInit {
             try {
                 this.spinnerService.show();
                 this.realData.forEach(el => {
-                    el.cliente.nombre = el.cliente.nombre.split('.').join('');
+                    el.cliente.razonsocial = el.cliente.razonsocial.split('.').join('');
                     el['visita'] = el['visita'].substring(0, 10);
                 });
 
-                let customers = this.grouping(this.realData, 'cliente', 'nombre');
+                let customers = this.grouping(this.realData, 'cliente', 'razonsocial');
                 customers.forEach(cu => {
                     let customerSubscription = this.cs.getBrandFromCustomer(cu.id).subscribe(data => {
                         cu['marcas'] = data;
@@ -143,7 +143,10 @@ export class VisitReportPageComponent implements OnInit {
                         let superStore = this.realData.filter(obj => (obj.cliente.id == cu.id && obj.cadena.id == sc.id));
                         sc['locales'] = this.grouping(superStore, 'local', 'nombre');
                         sc['locales'].forEach(st => {
-                            st['ciudad'] = this.storeList.filter(obj => (obj.id == st.id))[0].ciudad.trim();
+                            let city = this.storeList.filter(obj => (obj.id == st.id));
+                            if(city.length) {
+                                st['ciudad'] = city[0].ciudad.trim();
+                            }
                         });
                         sc['locales'] = sc['locales'].sort((a, b) => {
                             return (a.ciudad > b.ciudad) ? 1 : -1;
@@ -225,11 +228,11 @@ export class VisitReportPageComponent implements OnInit {
 
                     data.forEach(customer => {
                         seekV = 0;
-                        let worksheet = workbook.addWorksheet(customer.nombre);
+                        let worksheet = workbook.addWorksheet(customer.razonsocial);
                         customer.cadenas.forEach(superChain => {
                             seekV += 5;
                             worksheet.addRow([]);
-                            worksheet.addRow([customer.nombre]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
+                            worksheet.addRow([customer.razonsocial]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
                             worksheet.addRow([superChain.nombre]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
                             worksheet.addRow([period]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
                             
