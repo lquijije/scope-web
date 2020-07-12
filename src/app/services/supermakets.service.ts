@@ -171,6 +171,32 @@ export class SupermaketsService {
     );
   }
 
+  getAssocFromLocalAndChain(localObj: any, chainObj: any) {
+    this.associateCollection = this.afs.collection<IAssociatedBrands>('associated-brands',
+      ref => ref.where('cadena', '==', chainObj)
+        .where('local', '==', localObj));
+    return this.associateCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IAssociatedBrands;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
+
+  getAssocFromBrandAndCustomer(brandObj: any, customerObj: any) {
+    this.associateCollection = this.afs.collection<IAssociatedBrands>('associated-brands',
+      ref => ref.where('cliente', '==', customerObj)
+        .where('marca', '==', brandObj));
+    return this.associateCollection.snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IAssociatedBrands;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
+
   addSuperStore(superStore: ISuperStore) {
     return this.superStoreCollection.add(superStore);
   }

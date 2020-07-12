@@ -55,6 +55,8 @@ export class VisitReportPageComponent implements OnInit {
         this.spinnerService.show();
         this.customerSubscription = this.cs.getCustomer().subscribe(customers => {
             this.spinnerService.hide();
+            
+            
             this.customerList = customers.filter(ch => ch.estado === 'A').sort((a, b) => {
                 return a.razonsocial < b.razonsocial ? -1 : 1;
             });
@@ -63,7 +65,6 @@ export class VisitReportPageComponent implements OnInit {
         this.storeSubscription = this.sc.getSuperStore().subscribe(stores => {
             this.spinnerService.hide();
             this.storeList = stores;
-            console.log(this.storeList);
           });
     }
 
@@ -106,7 +107,7 @@ export class VisitReportPageComponent implements OnInit {
             }
             if (this.realData.length) {
                 this.prepareDataFrom().then(data => {
-                    this.customerList = data;
+                    //this.customerList = data;
                     if (data) {
                         this.xls(data).then((workbook: ExcelJS.Workbook) => {
                             workbook.xlsx.writeBuffer().then((data) => {
@@ -116,6 +117,8 @@ export class VisitReportPageComponent implements OnInit {
                         });
                     }
                 });
+            } else {
+                this.openAlert("Scope Alert", "No encontramos órdenes en ese rango de fecha");
             }
         });
     }

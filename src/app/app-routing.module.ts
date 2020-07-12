@@ -18,7 +18,10 @@ import {OrderInquiryPageComponent} from './components/work-orders/order-inquiry-
 import {VisitReportPageComponent} from './components/reports/visit-report-page/visit-report-page.component';
 import {PerformControlPageComponent} from './components/reports/perform-control-page/perform-control-page.component';
 import {SettingsPageComponent} from './components/reports/settings-page/settings-page.component';
-
+import {MantOrdersComponent} from './components/maintenance/mant-orders/mant-orders.component';
+import {MantImagesComponent} from './components/maintenance/mant-images/mant-images.component';
+import {MantBackupComponent} from './components/maintenance/mant-backup/mant-backup.component';
+import {MantFixesComponent} from './components/maintenance/mant-fixes/mant-fixes.component';
 import {AuthGuard} from './guards/auth.guard';
 
 const routes: Routes = [
@@ -83,6 +86,22 @@ const routes: Routes = [
     }, {
         path: 'perfcontrpt',
         component: PerformControlPageComponent,
+        canActivate: [AuthGuard]
+    }, {
+        path: 'mntbackup',
+        component: MantBackupComponent,
+        canActivate: [AuthGuard]
+    }, {
+        path: 'mntorders',
+        component: MantOrdersComponent,
+        canActivate: [AuthGuard]
+    }, {
+        path: 'mntimages',
+        component: MantImagesComponent,
+        canActivate: [AuthGuard]
+    }, {
+        path: 'mntfixes',
+        component: MantFixesComponent,
         canActivate: [AuthGuard]
     }, {
         path: 'settings',

@@ -57,4 +57,13 @@ export class GeneralService {
    getPriority() {
     return this.priorityObs;
    }
+   getDocument(doc: string) {
+     return this.afs.collection<any>(doc).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data();
+        const id = a.payload.doc.id;
+        return {id, ...data};
+      }))
+    );
+   }
 }

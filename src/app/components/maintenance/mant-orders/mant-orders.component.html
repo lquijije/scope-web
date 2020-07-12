@@ -1,0 +1,113 @@
+<div class="pt-2 px-xs-0 px-sm-3 px-md-5 w-100" style="height: 90vh;">
+  <div class="col-12 col-sm-10 col-md-8 mx-auto mt-1">
+    <div class="row">
+      <div class="col-12">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="javascript:void(0)"><i class="fa fa-home"></i></a></li>
+            <li class="breadcrumb-item d-block d-sm-none"><a href="javascript:void(0)">...</a></li>
+            <li class="breadcrumb-item d-none d-sm-block"><a href="javascript:void(0)">Mantenimiento</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Órdenes</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card-body bg-light border rounded" id='pnlList'>
+          <h4 class="text-center"><strong> <i class="fa fa-list"></i> Eliminar Órdenes </strong></h4>
+          <div class="row">
+            <div class="col-12">
+              <div class="row">
+                <div class="col">
+                  <mat-form-field class="w-100">
+                    <input matInput placeholder="Fecha Desde: " type="text" name="" id="fedesde">
+                  </mat-form-field>
+                </div>
+                <div class="col">
+                  <mat-form-field class="w-100">
+                    <input matInput placeholder="Fecha Hasta: " type="text" name="" id="fehasta">
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <div class="row">
+                    <div class="col">
+                      <div class="custom-control custom-radio">
+                        <input type="radio" id="rd-crea" name="fecha" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="rd-crea">Creaci&oacute;n</label>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="custom-control custom-radio">
+                        <input type="radio" id="rd-vis" name="fecha" class="custom-control-input">
+                        <label class="custom-control-label" for="rd-vis">Visita</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="row">
+                    <div class="col-12 col-md-6">
+                      <button type="button" class="btn btn-block btn-default rounded btn-sm px-4 pt-2 ml-1 pb-2 btUpd"
+                        (click)="get()">
+                        <i class="fa fa-search"></i> Consultar
+                      </button>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <button type="button" class="btn btn-block btn-danger rounded btn-sm px-4 pt-2 ml-1 pb-2 btDel"
+                        (click)="delete()">
+                        <i class="fa fa-trash"></i> Eliminar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-1" *ngIf="orderList">
+      <div class="col">
+        <table id="table_orders" class="table table-bordered table-sm">
+          <thead class="text-center bg-primary text-white">
+            <th>#Orden</th>
+            <th>Estado</th>
+            <th>Cadena</th>
+            <th>Local</th>
+            <th>Mercaderista</th>
+            <th>Cliente</th>
+            <!-- <th>Creaci&oacute;n</th> -->
+            <th>Visita</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of orderList">
+              <td>{{order.numero}}</td>
+              <td [ngClass]="{
+                      'text-success':order.estado.nombre === 'CREADA',
+                      'text-primary':order.estado.nombre === 'FINALIZADA',
+                      'text-warning':order.estado.nombre === 'EN PROGRESO',
+                      'text-semi-warning':order.estado.nombre === 'INICIADA'
+                    }">{{order.estado.nombre}}
+              </td>
+              <td>{{order.cadena.nombre}}</td>
+              <td>{{order.local.nombre}}</td>
+              <td>{{order.mercaderista.nombre}}</td>
+              <td>{{order.sku[0].ds_cliente}}</td>
+              <!-- <td>{{order.creacion.toDate() | date: 'y-MM-dd HH:mm:ss'}}</td> -->
+              <td>{{order.visita | date: 'y-MM-dd HH:mm:ss'}}</td>
+              <td>{{order.iniciada}}</td>
+              <td>{{order.finalizada}}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

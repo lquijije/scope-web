@@ -102,6 +102,27 @@ export class WorkOrdersService {
     );
   }
 
+  getWorkOrdersByLocal(desde: any, hasta: any, condicion: string) {
+    desde = desde + ' 00:00:00';
+    hasta = hasta + ' 23:59:59';
+
+    if (condicion == 'creacion') {
+      desde = new Date(desde);
+      hasta = new Date(hasta);
+    }
+
+    return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+      .where(condicion, '>=', desde)
+      .where(condicion, '<=', hasta)
+      .where('local', '==', { "id": "jXo0titimM1qfrUc6vZM", "nombre": "AKI TUMBACO" })
+    ).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IWorkOrder;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
 
   getWorkOrdersListFinalizedByCustomer(desde: any, hasta: any, condicion: string, cliente: string) {
     desde = desde + ' 00:00:00';
@@ -137,6 +158,57 @@ export class WorkOrdersService {
         }))
       );
     }
+  }
+
+  getWorkOrdersByLocalAndChain(localObj: any, chainObj: any) {
+    return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+      .where('local', '==', localObj)
+      .where('cadena', '==', chainObj)
+    ).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IWorkOrder;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
+  getWorkOrdersByCustomer(customerObj: any) {
+    return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+      .where('cliente', '==', customerObj)
+    ).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IWorkOrder;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
+
+  getWorkOrdersByCustomerAndChain(customerObj: any, chain: any) {
+    return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+      .where('cliente', '==', customerObj)
+      .where('cadena', '==', chain)
+    ).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IWorkOrder;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
+  }
+
+  getWorkOrdersByCustomerAndChainAndLocal(customerObj: any, chain: any, local: any) {
+    return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+      .where('cliente', '==', customerObj)
+      .where('cadena', '==', chain)
+      .where('local', '==', local)
+    ).snapshotChanges().pipe(
+      map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as IWorkOrder;
+        const id = a.payload.doc.id;
+        return { id, ...data };
+      }))
+    );
   }
 
   getOrderStatus() {

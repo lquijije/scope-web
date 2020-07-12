@@ -46,6 +46,10 @@ import {NewSkuAssocComponent} from './components/dialog-components/new-sku-assoc
 import {PerformControlPageComponent} from './components/reports/perform-control-page/perform-control-page.component';
 import {VisitReportPageComponent} from './components/reports/visit-report-page/visit-report-page.component';
 import { SettingsPageComponent } from './components/reports/settings-page/settings-page.component';
+import { MantOrdersComponent } from './components/maintenance/mant-orders/mant-orders.component';
+import { MantImagesComponent } from './components/maintenance/mant-images/mant-images.component';
+import { MantBackupComponent } from './components/maintenance/mant-backup/mant-backup.component';
+import { MantFixesComponent } from './components/maintenance/mant-fixes/mant-fixes.component';
 
 @NgModule({
     declarations: [
@@ -72,7 +76,11 @@ import { SettingsPageComponent } from './components/reports/settings-page/settin
         NewSkuAssocComponent,
         PerformControlPageComponent,
         VisitReportPageComponent,
-        SettingsPageComponent
+        SettingsPageComponent,
+        MantOrdersComponent,
+        MantImagesComponent,
+        MantBackupComponent,
+        MantFixesComponent
     ],
     imports: [
         AngularFireModule.initializeApp(environment.firebaseConfig),

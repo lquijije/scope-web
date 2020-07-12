@@ -30,7 +30,7 @@ export class NavbarComponent implements OnInit {
                         this.user = usr[0];
                         if (this.user.perfil) {
                             const perfil = this.user.perfil.filter(e => {
-                                return e.id === 'TACSbISZsdMQKsHRGiKc' || e.id === 'l4ICDa0d6ZbY325Z3RSY';
+                                return e.id === 'TACSbISZsdMQKsHRGiKc' || e.id === 'l4ICDa0d6ZbY325Z3RSY' || e.id === 'ZTXUHZiANHGvwphg9lRP';
                             });
                             if (perfil.length === 0) {
                                 this.openDialog('Scope Authorization', 'No está autorizado para usar esta aplicación');

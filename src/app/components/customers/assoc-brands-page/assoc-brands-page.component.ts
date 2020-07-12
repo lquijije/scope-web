@@ -284,9 +284,15 @@ OnDestroy {
         });*/
     }
     ngOnDestroy() {
-        this.customerSubscription.unsubscribe();
-        this.superChainSubscription.unsubscribe();
-        this.assocSubscription.unsubscribe();
+        if(this.customerSubscription) {
+            this.customerSubscription.unsubscribe();
+        }
+        if(this.superChainSubscription) {
+            this.superChainSubscription.unsubscribe();
+        }
+        if(this.assocSubscription) {
+            this.assocSubscription.unsubscribe();
+        }
     }
     onSubmit(myForm : NgForm) {
         if ($('#cmbChain').val() != '') {
