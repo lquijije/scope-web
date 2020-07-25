@@ -396,10 +396,7 @@ export class OrderInquiryPageComponent implements OnInit,
         }
     }
     delete(order: any) {
-        if (order.estado.nombre !== "CREADA" && order.estado.nombre !== "INICIADA") {
-            this.openAlert("Scope Alert", "Sólo se pueden eliminar ordenes CREADAS o INICIADAS, la orden seleccionada está en estado " + order.estado.nombre);
-            return false;
-        }
+        
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
             width: "300px",
             data: {
