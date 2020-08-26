@@ -55,8 +55,8 @@ export class VisitReportPageComponent implements OnInit {
         this.spinnerService.show();
         this.customerSubscription = this.cs.getCustomer().subscribe(customers => {
             this.spinnerService.hide();
-            
-            
+
+
             this.customerList = customers.filter(ch => ch.estado === 'A').sort((a, b) => {
                 return a.razonsocial < b.razonsocial ? -1 : 1;
             });
@@ -65,7 +65,7 @@ export class VisitReportPageComponent implements OnInit {
         this.storeSubscription = this.sc.getSuperStore().subscribe(stores => {
             this.spinnerService.hide();
             this.storeList = stores;
-          });
+        });
     }
 
     processReport() {
@@ -147,7 +147,7 @@ export class VisitReportPageComponent implements OnInit {
                         sc['locales'] = this.grouping(superStore, 'local', 'nombre');
                         sc['locales'].forEach(st => {
                             let city = this.storeList.filter(obj => (obj.id == st.id));
-                            if(city.length) {
+                            if (city.length) {
                                 st['ciudad'] = city[0].ciudad.trim();
                             }
                         });
@@ -238,7 +238,7 @@ export class VisitReportPageComponent implements OnInit {
                             worksheet.addRow([customer.razonsocial]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
                             worksheet.addRow([superChain.nombre]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
                             worksheet.addRow([period]).eachCell((cell, num) => this.setStyle(cell, { border: true, font: { bold: true } }));
-                            
+
                             worksheet.mergeCells(`A${seekV - 3}:${this.numToChar(superChain.tags.length + 4)}${seekV - 3}`);
                             worksheet.getCell(`A${seekV - 3}`).alignment = { horizontal: 'center' };
                             worksheet.mergeCells(`A${seekV - 2}:${this.numToChar(superChain.tags.length + 4)}${seekV - 2}`);
@@ -267,7 +267,7 @@ export class VisitReportPageComponent implements OnInit {
                             superChain.locales.forEach(superStore => {
                                 superStore.visitas.forEach(visit => {
                                     lengthData++;
-                                    let finaldata = [lengthData, visit.visita, superStore.ciudad , superStore.nombre];
+                                    let finaldata = [lengthData, visit.visita, superStore.ciudad, superStore.nombre];
                                     let minsValues = [];
                                     superChain.tags.forEach(col => {
                                         let skuMatch = visit.skus.filter(sku => sku.marca = col.marca && sku.producto == col.producto && sku.presentacion == col.presentacion && sku.sabor == col.sabor);
@@ -297,6 +297,7 @@ export class VisitReportPageComponent implements OnInit {
 
                                     row.eachCell((cell, num) => {
                                         this.setStyle(cell, { border: true });
+
                                         if (num > 4 && cell.value === 0) {
                                             cell.fill = {
                                                 type: 'pattern',
@@ -304,6 +305,7 @@ export class VisitReportPageComponent implements OnInit {
                                                 fgColor: { argb: 'FF9999' }
                                             }
                                         }
+
                                         if (num > 4 && minsValues[num - 5] > 0) {
                                             const minimo = parseInt(minsValues[num - 5], 10);
                                             if (cell.value > 0 && cell.value < minimo) {
@@ -312,6 +314,23 @@ export class VisitReportPageComponent implements OnInit {
                                                     pattern: 'solid',
                                                     fgColor: { argb: 'c9c9c9' }
                                                 }
+                                            }
+                                        }
+                                        if (superChain.nombre.includes('FAVORITA') || superChain.nombre.includes('AKI')) {
+                                            if (num > 4 && cell.value === 0) {
+                                                cell.value = 'PV';
+                                                cell.alignment = {
+                                                    horizontal: 'center'
+                                                }
+                                            }
+                                            if (cell.value === '') {
+                                                cell.value = '-';
+                                                cell.alignment = {
+                                                    horizontal: 'center'
+                                                }
+                                            }
+                                            if (cell.value == 1) {
+                                                cell.value = '';
                                             }
                                         }
                                     });
