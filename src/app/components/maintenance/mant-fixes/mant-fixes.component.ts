@@ -38,14 +38,14 @@ export class MantFixesComponent implements OnInit {
       console.log(data);
     });
   }
-  fixAssocByBrandAndCustomer() {
+  fixAssoc() {
     let cliente = {
       "id": "R5iC6GZfIxGD4gVSIMa6",
       "razonsocial": "INCREMAR CIA. LTDA."
     };
     let marca = {
-      "id": "0kzJ9tUvksjplStHuwjw",
-      "nombre": "MISS CATY F."
+      "id": "rsEVGskoRG0FfJJAnN1b",
+      "nombre": "BANAVIT SM"
     };
     this.spinnerService.show();
     this.itemSubscription = this.sc.getAssocFromBrandAndCustomer(marca, cliente).subscribe(data => {
@@ -72,7 +72,12 @@ export class MantFixesComponent implements OnInit {
       if(data) {
         data.forEach(el => {
           ping = false;
-          if(el['sku']) {
+          this.cs.delAssocBrand(el).then(() => {
+            console.log(`assoc eliminada ${el}`);
+          }).catch((er) => {
+              console.log(`assoc ${el} error ${er}`);
+          });
+          /* if(el['sku']) {
             el['sku'].forEach(sku => {
               if(sku['id'] == 'cC5emCEbMjVX59Mu2TbJ') {
                 //sku['marca'] = "LTjKWWeGEmepnOIMMzOh";
@@ -93,21 +98,21 @@ export class MantFixesComponent implements OnInit {
               }).catch((er) => {
                   console.log(`assoc ${el} error ${er}`);
               });
-            }
-          }
+            } */
+          //}
         });
       }
     });
   }
 
-  fixAssoc() {
+  fixAssoc1() {
     let local = {
-      "id": "ylj335NHgq9ZwtK0MGaL",
-      "nombre": "LA VICENTINA"
+      "id": "iVWYtjWWe1KzUIUyVPuc",
+      "nombre": "CENTRO"
     };
     let chain = {
-      "id": "zAr3tJCCZe8gzTd2al1T",
-      "nombre": "FAVORITA"
+      "id": "Bs1mZF3XIvOb9TCwBha7",
+      "nombre": "MI COMISARIATO"
     };
     this.spinnerService.show();
     this.itemSubscription = this.sc.getAssocFromLocalAndChain(local, chain).subscribe(data => {
@@ -117,8 +122,8 @@ export class MantFixesComponent implements OnInit {
       }
       if(data) {
         data.forEach(el => {
-          if(el['cadena']) {
-              el['cadena'] = { 'id': 'vhnJ0x5eTu4sN8dNSZF4', 'nombre': 'AKI' };
+          if(el['local']) {
+              el['local'] = { 'id': 'iVWYtjWWe1KzUIUyVPuc', 'nombre': 'CENTRO GYE' };
               //el['marca'] = { 'id': 'LEK6dOn9ZzopfrwfxR2a', 'nombre': 'ALMA VERDE F' };
               this.cs.updAssocBrand(el).then(() => {
                   console.log(`assoc modificada ${el}`);
@@ -145,14 +150,14 @@ export class MantFixesComponent implements OnInit {
       console.log(data);
     });
   }
-  fixOrders() {
+  fixOrders1() {
     let local = {
-        "id": "ylj335NHgq9ZwtK0MGaL",
-        "nombre": "LA VICENTINA"
+        "id": "iVWYtjWWe1KzUIUyVPuc",
+        "nombre": "CENTRO"
     };
     let chain = {
-      "id": "zAr3tJCCZe8gzTd2al1T",
-      "nombre": "FAVORITA"
+      "id": "Bs1mZF3XIvOb9TCwBha7",
+      "nombre": "MI COMISARIATO"
     };
    this.spinnerService.show();
     this.itemSubscription = this.ow.getWorkOrdersByLocalAndChain(local, chain).subscribe(data => {
@@ -162,8 +167,8 @@ export class MantFixesComponent implements OnInit {
       }
       if(data) {
         data.forEach(el => {
-          if(el['cadena']) {
-              el['cadena'] = { 'id': 'vhnJ0x5eTu4sN8dNSZF4', 'nombre': 'AKI' };
+          if(el['local']) {
+              el['local'] = { 'id': 'iVWYtjWWe1KzUIUyVPuc', 'nombre': 'CENTRO GYE' };
               //el['local'] = { 'id': 'i0fSpH4e1m1bxryYRNMy', 'nombre': 'AKI GUAJALO' };
               this.ow.updWorkOrder(el).then(() => {
                   console.log(`orden modificada ${el}`);
@@ -206,7 +211,7 @@ export class MantFixesComponent implements OnInit {
       }
     });
   }
-  fixOrdersByCustomer() {
+  fixOrders() {
     let cliente = {
       "id": "R5iC6GZfIxGD4gVSIMa6",
       "razonsocial": "INCREMAR CIA. LTDA."
@@ -236,15 +241,9 @@ export class MantFixesComponent implements OnInit {
             if(el['sku']) {
               ping = false;
               el['sku'].forEach(sku => {
-                if(sku['id'] == 'cC5emCEbMjVX59Mu2TbJ') {
-                  sku['descripcion'] = "CREMA TOMATE";
-                  // sku['marca'] = "LTjKWWeGEmepnOIMMzOh";
-                  // sku['presentacion'] = "40 GR";
-                  // sku['sabor'] = "TE NEGRO";
-                  ping = true;
-                }
-                if(sku['id'] == 'cC5emCEbMjVX59Mu2TbJ') {
-                  sku['descripcion'] = "CREMA TOMATE";
+   
+                if(sku['id'] == 'TxInQHhN0xWfhIHt8AAr') {
+                  sku['descripcion'] = "PURE PAPA";
                   // sku['marca'] = "LTjKWWeGEmepnOIMMzOh";
                   // sku['presentacion'] = "40 GR";
                   // sku['sabor'] = "TE NEGRO";
@@ -318,6 +317,38 @@ export class MantFixesComponent implements OnInit {
       //     }
       //   });
       // }
+    });
+  }
+
+  getOrderByNumber() {
+    this.itemSubscription = this.ow.getWorkOrderbyNumber("10391").subscribe(data => {
+      this.spinnerService.hide();
+      console.log(data);
+      if (this.itemSubscription) {
+        this.itemSubscription.unsubscribe();
+      }
+      let ping = false;
+      if(data) {
+        data.forEach(el => {
+          ping = false;
+          if(el['sku']) {
+            el['sku'].forEach(sku => {
+              if(sku['id'] == 'NDMWVsXjhziDrl59SsDw' && sku['descripcion'] == 'QUINUAVENA') {
+                sku['descripcion'] = 'QUINUAVENA SUPERIOR';
+                ping = true;
+              }
+            });
+            if(ping) {
+              console.log(el);
+            }
+            this.ow.updWorkOrder(el).then(() => {
+              console.log(`orden modificada ${el}`);
+            }).catch((er) => {
+                console.log(`orden ${el} error ${er}`);
+            });
+          }
+        });
+      }
     });
   }
 }

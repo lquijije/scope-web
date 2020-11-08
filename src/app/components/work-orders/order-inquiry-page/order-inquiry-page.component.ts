@@ -623,8 +623,10 @@ export class OrderInquiryPageComponent implements OnInit,
         this.orderCurrent = Object.assign({}, order);
         $("#fevisita").val(this.orderCurrent.visita);
         $("#hTitEdit").html("Editar Orden #" + this.orderCurrent.numero);
-        $("#cmbMerchantOrder").val(this.orderCurrent.mercaderista.id).trigger("change");
+        console.log(this.orderCurrent.mercaderista);
+        
         $("#cmbPriority").val($("#cmbPriority option:contains(" + this.orderCurrent.prioridad + ")").val()).trigger("change");
+        let merchantId = this.orderCurrent.mercaderista.id;
         // $('#cmbMerchantOrder').text(this.orderCurrent.mercaderista.nombre);
         let inter = setInterval(function () {
             $("#fevisita").datetimepicker({ format: "Y-m-d H:i", lang: "es", timepicker: true, closeOnDateSelect: true });
@@ -645,8 +647,12 @@ export class OrderInquiryPageComponent implements OnInit,
                     }
                 }
             });
+            
+            $("#cmbMerchantOrder").val(merchantId).trigger("change");    
             clearInterval(inter);
         }, 500);
+
+
         this.showEditView();
     }
     exclude(sku: any) {
