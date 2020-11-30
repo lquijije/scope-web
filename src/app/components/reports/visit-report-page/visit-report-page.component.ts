@@ -145,6 +145,7 @@ export class VisitReportPageComponent implements OnInit {
                     cu['cadenas'].forEach(sc => {
                         let superStore = this.realData.filter(obj => (obj.cliente.id == cu.id && obj.cadena.id == sc.id));
                         sc['locales'] = this.grouping(superStore, 'local', 'nombre');
+                        console.log(sc['locales']);
                         sc['locales'].forEach(st => {
                             let city = this.storeList.filter(obj => (obj.id == st.id));
                             if (city.length) {
