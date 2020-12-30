@@ -445,6 +445,7 @@ export class OrderInquiryPageComponent implements OnInit,
         }
         $("#lbCrea").text(order.creacion.toDate().toLocaleString());
         this.skuList = order.sku;
+        //this.skuList.sort(this.fieldSorter(['ds_marca', 'descripcion', 'presentacion']));
         this.showDetailView();
         let inter = setInterval(function () {
             $(".txInt").keypress(e => {
@@ -454,6 +455,25 @@ export class OrderInquiryPageComponent implements OnInit,
             });
             clearInterval(inter);
         }, 500);
+    }
+
+    fieldSorter(fields) {
+        return function (a, b) {
+            return fields
+                .map(function (o) {
+                    var dir = 1;
+                    if (o[0] === '-') {
+                       dir = -1;
+                       o=o.substring(1);
+                    }
+                    if (a[o] > b[o]) return dir;
+                    if (a[o] < b[o]) return -(dir);
+                    return 0;
+                })
+                .reduce(function firstNonZeroValue (p,n) {
+                    return p ? p : n;
+                }, 0);
+        };
     }
     images(order: any) {
         this.estado = order.estado.nombre;
