@@ -278,15 +278,11 @@ export class OrderMantPageComponent implements OnInit,
                                             // i.sku = i.sku.sort((a, b) => {
                                             //     return ((a.orden < b.orden) ? -1 : 0);
                                             // });
-                                            console.log('antes');
-                                            console.log(i.sku);
                                             i.sku.forEach(s => {
                                                 s['medida'] = parseInt(self.getNumbersInString(s['presentacion']), 10);
                                             });
 
                                             i.sku = i.sku.sort(self.fieldSorter(['ds_marca', 'descripcion', 'medida']));
-                                            console.log('despues');
-                                            console.log(i.sku);
                                             i.sku.forEach(s => {
                                                 s['ds_cliente'] = i.cliente.razonsocial;
                                                 s['ds_marca'] = i.marca.nombre;

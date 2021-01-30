@@ -133,6 +133,7 @@ export class VisitReportPageComponent implements OnInit {
                 });
 
                 let customers = this.grouping(this.realData, 'cliente', 'razonsocial');
+                
                 customers.forEach(cu => {
                     let customerSubscription = this.cs.getBrandFromCustomer(cu.id).subscribe(data => {
                         cu['marcas'] = data;
@@ -145,7 +146,7 @@ export class VisitReportPageComponent implements OnInit {
                     cu['cadenas'].forEach(sc => {
                         let superStore = this.realData.filter(obj => (obj.cliente.id == cu.id && obj.cadena.id == sc.id));
                         sc['locales'] = this.grouping(superStore, 'local', 'nombre');
-                        console.log(sc['locales']);
+                        
                         sc['locales'].forEach(st => {
                             let city = this.storeList.filter(obj => (obj.id == st.id));
                             if (city.length) {
@@ -187,16 +188,27 @@ export class VisitReportPageComponent implements OnInit {
                             })
                         });
                         let brands = this.grouping(skuBySuperChain, 'marca');
+                        console.log('brands');
+                        console.log(brands);
                         sc['tags'] = [];
                         brands.forEach(br => {
                             let arrayProducts = skuBySuperChain.filter(obj => obj.marca == br);
                             let products = this.grouping(arrayProducts, 'producto');
+                            products = products.sort((a, b) => {
+                                return ((a < b) ? -1 : 0);
+                            });
                             products.forEach(pr => {
                                 let arrayPresentations = skuBySuperChain.filter(obj => obj.marca == br && obj.producto == pr);
                                 let presentations = this.grouping(arrayPresentations, 'presentacion');
+                                presentations = presentations.sort((a, b) => {
+                                        return ((parseInt(this.getNumbersInString(a),10) < (parseInt(this.getNumbersInString(b),10))) ? -1 : 0);
+                                });
                                 presentations.forEach(pt => {
                                     let arrayFlavors = skuBySuperChain.filter(obj => obj.marca == br && obj.producto == pr && obj.presentacion == pt);
                                     let flavors = this.grouping(arrayFlavors, 'sabor');
+                                    flavors = flavors.sort((a, b) => {
+                                        return ((a < b) ? -1 : 0);
+                                    });
                                     flavors.forEach(fl => {
                                         sc['tags'].push({
                                             'marca': br,
@@ -271,7 +283,7 @@ export class VisitReportPageComponent implements OnInit {
                                     let finaldata = [lengthData, visit.visita, superStore.ciudad, superStore.nombre];
                                     let minsValues = [];
                                     superChain.tags.forEach(col => {
-                                        let skuMatch = visit.skus.filter(sku => sku.marca = col.marca && sku.producto == col.producto && sku.presentacion == col.presentacion && sku.sabor == col.sabor);
+                                        let skuMatch = visit.skus.filter(sku => sku.marca == col.marca && sku.producto == col.producto && sku.presentacion == col.presentacion && sku.sabor == col.sabor);
                                         let brandMatch = customer.marcas.filter(brand => brand.nombre == col.marca);
                                         if (brandMatch) {
                                             if (brandMatch.length) {
@@ -533,5 +545,39 @@ export class VisitReportPageComponent implements OnInit {
         if (this.storeSubscription) {
             this.storeSubscription.unsubscribe();
         }
+    }
+
+    fieldSorter(fields) {
+        return function (a, b) {
+            return fields
+                .map(function (o) {
+                    var dir = 1;
+                    if (o[0] === '-') {
+                       dir = -1;
+                       o=o.substring(1);
+                    }
+                    if (a[o] > b[o]) return dir;
+                    if (a[o] < b[o]) return -(dir);
+                    return 0;
+                })
+                .reduce(function firstNonZeroValue (p,n) {
+                    return p ? p : n;
+                }, 0);
+        };
+    }
+
+    getNumbersInString(string) {
+        var tmp = string.split("");
+        var map = tmp.map(function(current) {
+          if (!isNaN(parseInt(current))) {
+            return current;
+          }
+        });
+      
+        var numbers = map.filter(function(value) {
+          return value != undefined;
+        });
+      
+        return numbers.join("");
     }
 }
