@@ -23,6 +23,7 @@ import {MantImagesComponent} from './components/maintenance/mant-images/mant-ima
 import {MantBackupComponent} from './components/maintenance/mant-backup/mant-backup.component';
 import {MantFixesComponent} from './components/maintenance/mant-fixes/mant-fixes.component';
 import {AuthGuard} from './guards/auth.guard';
+import {FrontReportPageComponent} from './components/reports/front-report-page/front-report-page.component';
 
 const routes: Routes = [
     {
@@ -82,6 +83,10 @@ const routes: Routes = [
     }, {
         path: 'visitrpt',
         component: VisitReportPageComponent,
+        canActivate: [AuthGuard]
+    }, {
+        path: 'frontrpt',
+        component: FrontReportPageComponent,
         canActivate: [AuthGuard]
     }, {
         path: 'perfcontrpt',
