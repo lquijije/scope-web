@@ -160,6 +160,40 @@ export class WorkOrdersService {
     }
   }
 
+  getWorkOrdersListByMerchant(desde: any, hasta: any, condicion: string, merchant: string) {
+    desde = desde + ' 00:00:00';
+    hasta = hasta + ' 23:59:59';
+
+    if (condicion == 'creacion') {
+      desde = new Date(desde);
+      hasta = new Date(hasta);
+    }
+    if (merchant) {
+      return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+        .where(condicion, '>=', desde)
+        .where(condicion, '<=', hasta)
+        .where('mercaderista', '==', merchant)
+      ).snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as IWorkOrder;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      );
+    } else {
+      return this.afs.collection<IWorkOrder>('work-orders', ref => ref
+        .where(condicion, '>=', desde)
+        .where(condicion, '<=', hasta)
+      ).snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as IWorkOrder;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      );
+    }
+  }
+
   getWorkOrdersByLocalAndChain(localObj: any, chainObj: any) {
     return this.afs.collection<IWorkOrder>('work-orders', ref => ref
       .where('local', '==', localObj)
