@@ -92,7 +92,7 @@ export class OrderMantPageComponent implements OnInit,
                     htm += `<div class="row">
                     <div class="col d-flex flex-row align-items-center">
                       <small>${d}</small>:
-                      <input type="time" class="form-control form-control-sm w-50" style="width=20px;!important" value="09:00" id="${d}"/>
+                      <input type="time" class="form-control form-control-sm w-50" style="width=20px;!important"  list="listalimitestiempo" min="09:00" max="18:00" value="09:00" id="${d}"/>
                     </div>
                   </div>`;
                 });
