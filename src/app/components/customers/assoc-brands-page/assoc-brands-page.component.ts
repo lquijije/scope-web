@@ -11,6 +11,7 @@ import {NewSkuAssocComponent} from '../../dialog-components/new-sku-assoc/new-sk
 import {Ng4LoadingSpinnerService} from 'ng4-loading-spinner';
 import {ExcelService} from '../../../services/excel.service';
 import {IAssociatedBrands} from 'src/app/models/customers/associated-brands';
+import {IAssociatedLogs} from 'src/app/models/logs/assoc-logs';
 import {Subscription} from 'rxjs';
 declare var $: any;
 export interface IChainObj {
@@ -46,6 +47,8 @@ OnDestroy {
     storeObjFilter : IStoreObj;
     brandObjFilter : IBrandObj;
     skuList : any;
+    skuDel: any = [];
+    skuIns: any = [];
     assocBrandList : any;
     tempIdChain : string;
     tempNameChain : string;
@@ -77,6 +80,7 @@ OnDestroy {
         },
         sku: []
     }
+    //associatedLog : IAssociatedLogs = {};
     assocBrandDetail : any = {
         cadena: '',
         local: '',
@@ -337,9 +341,27 @@ OnDestroy {
                                         id: this.tempIdStore,
                                         nombre: this.tempNameStore
                                     };
+
                                     this.associatedBrand.sku = this.skuList;
+
+                                    this.skuList.forEach(skuX => {
+                                        let associatedLog : IAssociatedLogs = {};
+                                        let d = new Date();
+                                        const datestring = d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+                                        associatedLog.fecha = datestring;
+                                        associatedLog.accion = 'INGRESO';
+                                        associatedLog.cadena = this.associatedBrand.cadena;
+                                        associatedLog.cliente = this.associatedBrand.cliente;
+                                        associatedLog.local = this.associatedBrand.local;
+                                        associatedLog.marca = this.associatedBrand.marca;
+                                        associatedLog.sku = skuX;
+                                        
+                                        this.cs.addAssocLog(associatedLog);
+                                    });
+
                                     this.spinnerService.show();
                                     this.cs.addAssocBrand(this.associatedBrand).then(() => {
+
                                         this.spinnerService.hide();
                                     }).catch(er => {
                                         this.spinnerService.hide();
@@ -350,10 +372,40 @@ OnDestroy {
                                 }
                             });
                         } else {
+                            this.skuDel.forEach(skuX => {
+                                let associatedLog : IAssociatedLogs = {};
+                                let d = new Date();
+                                const datestring = d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+                                associatedLog.fecha = datestring;
+                                associatedLog.accion = 'ELIMINADO';
+                                associatedLog.cadena = this.associatedBrand.cadena;
+                                associatedLog.cliente = this.associatedBrand.cliente;
+                                associatedLog.local = this.associatedBrand.local;
+                                associatedLog.marca = this.associatedBrand.marca;
+                                associatedLog.sku = skuX;
+                                
+                                this.cs.addAssocLog(associatedLog);
+                            });
+                            this.skuIns.forEach(skuX => {
+                                let associatedLog : IAssociatedLogs = {};
+                                let d = new Date();
+                                const datestring = d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+                                associatedLog.fecha = datestring;
+                                associatedLog.accion = 'INGRESO';
+                                associatedLog.cadena = this.associatedBrand.cadena;
+                                associatedLog.cliente = this.associatedBrand.cliente;
+                                associatedLog.local = this.associatedBrand.local;
+                                associatedLog.marca = this.associatedBrand.marca;
+                                associatedLog.sku = skuX;
+                                
+                                this.cs.addAssocLog(associatedLog);
+                            });
                             this.cs.updAssocBrand(this.associatedBrand);
                             this.editState = false;
                             this.clearObject();
                             this.salir();
+                            this.skuDel = [];
+                            this.skuIns = [];
                         }
                     } else {
                         this.openAlert('Scope Alert!', 'Debe escojer una Marca');
@@ -384,6 +436,8 @@ OnDestroy {
                 const index: number = this.skuList.indexOf(sku);
                 if (index !== -1) {
                     this.skuList.splice(index, 1);
+                    this.skuDel.push(sku);
+                    console.log(this.skuDel);
                 }
             }
         });
@@ -398,6 +452,21 @@ OnDestroy {
         });
         dialogRef.afterClosed().subscribe((result) => {
             if (result) { // this.cs.updBrand(brand); // Cambia estado a I
+                assoc.sku.forEach(skuX => {
+                    let associatedLog : IAssociatedLogs = {};
+                    let d = new Date();
+                    const datestring = d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+                    associatedLog.fecha = datestring;
+                    associatedLog.accion = 'ELIMINADO';
+                    associatedLog.cadena = assoc.cadena;
+                    associatedLog.cliente = assoc.cliente;
+                    associatedLog.local = assoc.local;
+                    associatedLog.marca = assoc.marca;
+                    associatedLog.sku = skuX;
+                    
+                    this.cs.addAssocLog(associatedLog);
+                });
+
                 this.spinnerService.show();
                 this.cs.delAssocBrand(assoc).then(() => { // Elimina permanentemente de la base
                     this.spinnerService.hide();
@@ -638,6 +707,7 @@ OnDestroy {
                     if (result) {
                         result.forEach(rs => {
                             this.skuList.push(rs);
+                            this.skuIns.push(rs);
                         });
                     }
                 });

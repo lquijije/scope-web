@@ -4,6 +4,7 @@ import { ICustomer } from '../models/customers/customers';
 import { IBrand } from '../models/customers/brands';
 import { ISku } from '../models/customers/skus';
 import { IAssociatedBrands } from '../models/customers/associated-brands';
+import { IAssociatedLogs } from '../models/logs/assoc-logs';
 import { Observable } from 'rxjs';
 import { map, groupBy } from 'rxjs/operators';
 
@@ -26,6 +27,8 @@ export class CustomerService {
   asocBrandsCollection: AngularFirestoreCollection<IAssociatedBrands>;
   asocBrandsObs: Observable<IAssociatedBrands[]>;
   asocBrandsDoc: AngularFirestoreDocument<IAssociatedBrands>;
+
+  asocLogsCollection: AngularFirestoreCollection<IAssociatedLogs>;
 
   afs: AngularFirestore;
   constructor(public objafs: AngularFirestore) {
@@ -191,6 +194,10 @@ export class CustomerService {
   addAssocBrand(assoc: IAssociatedBrands) {
     this.asocBrandsCollection = this.afs.collection<IAssociatedBrands>('associated-brands');
     return this.asocBrandsCollection.add(assoc);
+  }
+  addAssocLog(assocLogs: IAssociatedLogs) {
+    this.asocLogsCollection = this.afs.collection<IAssociatedLogs>('associated-logs');
+    return this.asocLogsCollection.add(assocLogs);
   }
   updAssocBrand(assoc: IAssociatedBrands) {
     this.asocBrandsDoc = this.afs.doc(`associated-brands/${assoc.id}`);

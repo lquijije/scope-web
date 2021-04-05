@@ -44,8 +44,8 @@ export class MantFixesComponent implements OnInit {
       "razonsocial": "INCREMAR CIA. LTDA."
     };
     let marca = {
-      "id": "rsEVGskoRG0FfJJAnN1b",
-      "nombre": "BANAVIT SM"
+      "id": "porve9I6T5NhJGpitebS",
+      "nombre": "TAPIOKITA LISTA"
     };
     this.spinnerService.show();
     this.itemSubscription = this.sc.getAssocFromBrandAndCustomer(marca, cliente).subscribe(data => {
@@ -72,25 +72,29 @@ export class MantFixesComponent implements OnInit {
       if(data) {
         data.forEach(el => {
           ping = false;
-          this.cs.delAssocBrand(el).then(() => {
+          /*this.cs.delAssocBrand(el).then(() => {
             console.log(`assoc eliminada ${el}`);
           }).catch((er) => {
               console.log(`assoc ${el} error ${er}`);
-          });
-          /* if(el['sku']) {
+          });*/
+          el['marca'] = {
+            "id": "ZLgUMnqRBDwWkW8U1uK8",
+            "nombre": "TAPIOKITA LISTA"
+          };
+          if(el['sku']) {
             el['sku'].forEach(sku => {
-              if(sku['id'] == 'cC5emCEbMjVX59Mu2TbJ') {
-                //sku['marca'] = "LTjKWWeGEmepnOIMMzOh";
-                sku['descripcion'] = "CREMA TOMATE";
-                // sku['sabor'] = "TE NEGRO";
+              if(sku['descripcion'] == 'TAPIOKITA LISTA INSTANTANEA') {
+                sku['marca'] = "ZLgUMnqRBDwWkW8U1uK8";
+                sku['descripcion'] = "COLADA INSTANTANEA";
+                sku['id'] = "zJoldldYVYoNWZK4Eo1r";
                 ping = true;
               }
-              if(sku['id'] == 'voorrbmojXQMxudtV8sG') {
+              /*if(sku['id'] == 'voorrbmojXQMxudtV8sG') {
                 //sku['marca'] = "LTjKWWeGEmepnOIMMzOh";
                 sku['descripcion'] = "SOPA POLLO CON FIDEOS";
                 // sku['sabor'] = "TE NEGRO";
                 ping = true;
-              }
+              }*/
             });
             if(ping) {
               this.cs.updAssocBrand(el).then(() => {
@@ -98,8 +102,8 @@ export class MantFixesComponent implements OnInit {
               }).catch((er) => {
                   console.log(`assoc ${el} error ${er}`);
               });
-            } */
-          //}
+            } 
+          }
         });
       }
     });
@@ -107,12 +111,12 @@ export class MantFixesComponent implements OnInit {
 
   fixAssoc1() {
     let local = {
-      "id": "iVWYtjWWe1KzUIUyVPuc",
-      "nombre": "CENTRO"
+      "id": "x6cVMv0M64p0kmkUL3oB",
+      "nombre": "TERMINAL GUAMANI"
     };
     let chain = {
-      "id": "Bs1mZF3XIvOb9TCwBha7",
-      "nombre": "MI COMISARIATO"
+      "id": "vhnJ0x5eTu4sN8dNSZF4",
+      "nombre": "AKI"
     };
     this.spinnerService.show();
     this.itemSubscription = this.sc.getAssocFromLocalAndChain(local, chain).subscribe(data => {
@@ -123,7 +127,7 @@ export class MantFixesComponent implements OnInit {
       if(data) {
         data.forEach(el => {
           if(el['local']) {
-              el['local'] = { 'id': 'iVWYtjWWe1KzUIUyVPuc', 'nombre': 'CENTRO GYE' };
+              el['local'] = { 'id': 'x6cVMv0M64p0kmkUL3oB', 'nombre': 'SUPER AKI TERMINAL GUAMANI' };
               //el['marca'] = { 'id': 'LEK6dOn9ZzopfrwfxR2a', 'nombre': 'ALMA VERDE F' };
               this.cs.updAssocBrand(el).then(() => {
                   console.log(`assoc modificada ${el}`);
@@ -152,12 +156,12 @@ export class MantFixesComponent implements OnInit {
   }
   fixOrders1() {
     let local = {
-        "id": "iVWYtjWWe1KzUIUyVPuc",
-        "nombre": "CENTRO"
+        "id": "x6cVMv0M64p0kmkUL3oB",
+        "nombre": "TERMINAL GUAMANI"
     };
     let chain = {
-      "id": "Bs1mZF3XIvOb9TCwBha7",
-      "nombre": "MI COMISARIATO"
+      "id": "vhnJ0x5eTu4sN8dNSZF4",
+      "nombre": "AKI"
     };
    this.spinnerService.show();
     this.itemSubscription = this.ow.getWorkOrdersByLocalAndChain(local, chain).subscribe(data => {
@@ -168,8 +172,8 @@ export class MantFixesComponent implements OnInit {
       if(data) {
         data.forEach(el => {
           if(el['local']) {
-              el['local'] = { 'id': 'iVWYtjWWe1KzUIUyVPuc', 'nombre': 'CENTRO GYE' };
-              //el['local'] = { 'id': 'i0fSpH4e1m1bxryYRNMy', 'nombre': 'AKI GUAJALO' };
+              el['local'] = { 'id': 'x6cVMv0M64p0kmkUL3oB', 'nombre': 'SUPER AKI TERMINAL GUAMANI' };
+              //el['local'] = { 'id': 'TERMINAL GUAMANINMy', 'nombre': 'AKI GUAJALO' };
               this.ow.updWorkOrder(el).then(() => {
                   console.log(`orden modificada ${el}`);
               }).catch((er) => {
@@ -218,8 +222,8 @@ export class MantFixesComponent implements OnInit {
     };
     
     let cadena = {
-      "id": "zAr3tJCCZe8gzTd2al1T",
-      "nombre": "FAVORITA"
+      "id": "RbHlaoQb9NAdvHpvt8wg",
+      "nombre": "CORAL"
     };
 
     // let local = {
@@ -242,10 +246,10 @@ export class MantFixesComponent implements OnInit {
               ping = false;
               el['sku'].forEach(sku => {
    
-                if(sku['id'] == 'TxInQHhN0xWfhIHt8AAr') {
-                  sku['descripcion'] = "PURE PAPA";
-                  // sku['marca'] = "LTjKWWeGEmepnOIMMzOh";
-                  // sku['presentacion'] = "40 GR";
+                if(sku['descripcion'] == 'TAPIOKITA LISTA INSTANTANEA') {
+                  sku['descripcion'] = "COLADA INSTANTANEA";
+                  //sku['marca'] = "ZLgUMnqRBDwWkW8U1uK8";
+                  //sku['id'] = "zJoldldYVYoNWZK4Eo1r";
                   // sku['sabor'] = "TE NEGRO";
                   ping = true;
                 }
