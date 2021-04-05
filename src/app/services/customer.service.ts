@@ -315,4 +315,32 @@ export class CustomerService {
       }))
     );
   }
+  getAssocLogByCustomer(desde: any, hasta: any, merchant: string) {
+    desde = desde + ' 00:00:00';
+    hasta = hasta + ' 23:59:59';
+    if (merchant) {
+      return this.afs.collection<IAssociatedLogs>('associated-logs', ref => ref
+        .where('fecha', '>=', desde)
+        .where('fecha', '<=', hasta)
+        .where('cliente', '==', merchant)
+      ).snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as IAssociatedLogs;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      );
+    } else {
+      return this.afs.collection<IAssociatedLogs>('associated-logs', ref => ref
+        .where('fecha', '>=', desde)
+        .where('fecha', '<=', hasta)
+      ).snapshotChanges().pipe(
+        map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as IAssociatedLogs;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        }))
+      );
+    }
+  }
 }

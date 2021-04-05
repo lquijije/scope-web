@@ -22,6 +22,7 @@ import {MantOrdersComponent} from './components/maintenance/mant-orders/mant-ord
 import {MantImagesComponent} from './components/maintenance/mant-images/mant-images.component';
 import {MantBackupComponent} from './components/maintenance/mant-backup/mant-backup.component';
 import {MantFixesComponent} from './components/maintenance/mant-fixes/mant-fixes.component';
+import {NewVsBlockedComponent} from './components/reports/new-vs-blocked/new-vs-blocked.component';
 import {AuthGuard} from './guards/auth.guard';
 import {FrontReportPageComponent} from './components/reports/front-report-page/front-report-page.component';
 
@@ -91,6 +92,10 @@ const routes: Routes = [
     }, {
         path: 'perfcontrpt',
         component: PerformControlPageComponent,
+        canActivate: [AuthGuard]
+    }, {
+        path: 'nwvsblockrpt',
+        component: NewVsBlockedComponent,
         canActivate: [AuthGuard]
     }, {
         path: 'mntbackup',

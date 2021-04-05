@@ -51,6 +51,7 @@ import { MantImagesComponent } from './components/maintenance/mant-images/mant-i
 import { MantBackupComponent } from './components/maintenance/mant-backup/mant-backup.component';
 import { MantFixesComponent } from './components/maintenance/mant-fixes/mant-fixes.component';
 import { FrontReportPageComponent } from './components/reports/front-report-page/front-report-page.component';
+import { NewVsBlockedComponent } from './components/reports/new-vs-blocked/new-vs-blocked.component';
 
 @NgModule({
     declarations: [
@@ -82,7 +83,8 @@ import { FrontReportPageComponent } from './components/reports/front-report-page
         MantImagesComponent,
         MantBackupComponent,
         MantFixesComponent,
-        FrontReportPageComponent
+        FrontReportPageComponent,
+        NewVsBlockedComponent
     ],
     imports: [
         AngularFireModule.initializeApp(environment.firebaseConfig),
