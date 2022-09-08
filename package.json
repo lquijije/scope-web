@@ -37,7 +37,7 @@
     "jquery-datetimepicker": "^2.5.20",
     "jquery-ui-dist": "^1.12.1",
     "jquery-ui-multidatespicker": "^1.6.6",
-    "jszip": "^3.2.1",
+    "jszip": "^3.7.0",
     "jszip-utils": "0.0.2",
     "lodash": "^4.17.11",
     "ng4-loading-spinner": "^1.2.3",
